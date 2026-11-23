@@ -1,0 +1,337 @@
+/* ==========================================================================
+   YuTara — Public Info Pages (css/pages/info.css)
+   About Us hero, problem/solution cards, Team Cri-Ters, and Services grid.
+   ========================================================================== */
+
+.team-card {
+  text-align: center;
+}
+
+.team-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 12px;
+  border: 3px solid var(--green-border);
+}
+
+/* Clean & Neat About Page (about.html) */
+.about-hero {
+  background: linear-gradient(180deg, #F5F8F1 0%, #FFFFFF 100%);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 52px 0 40px;
+}
+
+.about-hero-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-eyebrow {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--earth-brown);
+  margin-bottom: 8px;
+}
+
+.about-hero-title {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--forest-green);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.about-hero-subtitle {
+  font-size: 1.02rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto 22px;
+}
+
+.about-pillars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.about-pillar-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background-color: var(--white);
+  border: 1px solid var(--green-border);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--forest-green);
+  box-shadow: 0 2px 6px rgba(49, 91, 25, 0.05);
+}
+
+.about-section {
+  padding: 48px 0;
+}
+
+.about-story-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.about-story-card {
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 28px 28px 26px;
+  box-shadow: 0 4px 16px rgba(37, 51, 41, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.about-story-card.story-problem {
+  border-top: 3px solid var(--earth-brown);
+}
+
+.about-story-card.story-solution {
+  border-top: 3px solid var(--forest-green);
+}
+
+.about-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.about-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-card-icon.icon-problem {
+  background-color: var(--brown-tint);
+  color: var(--earth-brown);
+  border: 1px solid var(--brown-border);
+}
+
+.about-card-icon.icon-solution {
+  background-color: var(--green-tint);
+  color: var(--forest-green);
+  border: 1px solid var(--green-border);
+}
+
+.about-story-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.about-story-label.label-problem {
+  color: var(--earth-brown);
+}
+
+.about-story-label.label-solution {
+  color: var(--forest-green);
+}
+
+.about-card-title {
+  font-family: var(--font-display);
+  font-size: 1.24rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.about-card-desc {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.58;
+  margin-bottom: 16px;
+}
+
+.about-bullet-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-top: 14px;
+  border-top: 1px solid #EEF1EC;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.about-bullet-list li {
+  position: relative;
+  padding-left: 18px;
+  line-height: 1.45;
+}
+
+.about-bullet-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--earth-brown);
+}
+
+.about-bullet-list.list-green li::before {
+  background-color: var(--forest-green);
+}
+
+/* Team Cri-Ters Section */
+.about-team-section {
+  background-color: #F7F9F4;
+  border-top: 1px solid var(--border-subtle);
+  padding: 52px 0 60px;
+}
+
+.about-section-head {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto 32px;
+}
+
+.about-section-title {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--forest-green);
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+}
+
+.about-section-sub {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.about-team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.team-card-clean {
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(37, 51, 41, 0.05);
+  transition: transform var(--anim-duration-fast) var(--anim-ease),
+    box-shadow var(--anim-duration-fast) var(--anim-ease),
+    border-color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.team-card-clean:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(37, 51, 41, 0.09);
+  border-color: var(--green-border);
+}
+
+.team-card-banner {
+  height: 64px;
+}
+
+.team-card-banner.banner-green {
+  background: linear-gradient(135deg, #E4F0D7 0%, #F4F7EE 100%);
+}
+
+.team-card-banner.banner-earth {
+  background: linear-gradient(135deg, #F5E8DC 0%, #FAF4EE 100%);
+}
+
+.team-card-body {
+  padding: 0 24px 26px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team-avatar-clean {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  margin-top: -44px;
+  margin-bottom: 14px;
+  background-color: var(--white);
+  border: 4px solid var(--white);
+  box-shadow: 0 4px 12px rgba(37, 51, 41, 0.14);
+}
+
+.team-member-name {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.team-role-pill {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.team-role-pill.role-green {
+  background-color: var(--green-tint);
+  color: var(--forest-green);
+  border: 1px solid var(--green-border);
+}
+
+.team-role-pill.role-earth {
+  background-color: var(--brown-tint);
+  color: var(--earth-brown);
+  border: 1px solid var(--brown-border);
+}
+
+.team-member-bio {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.about-page-footer {
+  margin-top: 0;
+}
+
+.services-cards-grid .card {
+  display: flex;
+  flex-direction: column;
+}
+
+.services-card-cta {
+  margin-top: auto;
+  padding-top: 16px;
+}

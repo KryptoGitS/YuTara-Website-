@@ -8,7 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=30" />
+  <link rel="stylesheet" href="css/base.css?v=31" />
+  <link rel="stylesheet" href="css/components.css?v=31" />
+  <link rel="stylesheet" href="css/pages/workspace.css?v=31" />
+  <link rel="stylesheet" href="css/utilities.css?v=31" />
 </head>
 <body>
 
@@ -174,7 +177,7 @@
             </div>
           </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=30 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/pages/tracker-reservations.js -->
           </div>
         </div>
 
@@ -182,7 +185,7 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=30 -->
+            <!-- Populated dynamically via js/pages/tracker-reservations.js -->
           </div>
         </div>
       </div>
@@ -267,7 +270,7 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=30 -->
+              <!-- Populated dynamically via js/pages/tracker-admin.js -->
             </tbody>
           </table>
         </div>
@@ -295,7 +298,7 @@
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=30 -->
+              <!-- Populated dynamically via js/pages/tracker-admin.js -->
             </tbody>
           </table>
         </div>
@@ -315,7 +318,7 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=30 for Admin role only -->
+            <!-- Populated dynamically via js/pages/tracker-listings.js for Admin role only -->
           </div>
         </div>
 
@@ -429,7 +432,14 @@
     </main>
   </div>
 
-  <script src="js/data.js?v=30"></script>
-  <script src="js/app.js?v=30"></script>
+  <script src="js/data.js?v=31"></script>
+  <script src="js/core/utils.js?v=31"></script>
+  <script src="js/core/store.js?v=31"></script>
+  <script src="js/core/auth.js?v=31"></script>
+  <script src="js/core/ui.js?v=31"></script>
+  <script src="js/pages/tracker-listings.js?v=31"></script>
+  <script src="js/pages/tracker-reservations.js?v=31"></script>
+  <script src="js/pages/tracker-admin.js?v=31"></script>
+  <script src="js/pages/tracker.js?v=31"></script>
 </body>
 </html>

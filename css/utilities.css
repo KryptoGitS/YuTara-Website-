@@ -1,0 +1,333 @@
+/* ==========================================================================
+   YuTara — Animations, Responsive Overrides & Visibility Utilities
+   Loaded LAST so breakpoints and .hidden always win without special overrides.
+   ========================================================================== */
+
+/* Easy-to-Debug Named Keyframes & Utility Classes
+   Inspect any animated element via its [data-anim] attribute in DevTools,
+   or toggle timing live in Console with YuTaraAnimDebug.slow() / .off() / .normal() */
+@keyframes ytFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ytTabEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ytModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes ytOverlayFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.anim-fade-up {
+  animation: ytFadeInUp var(--anim-duration-base) var(--anim-ease) both;
+}
+
+.anim-tab-enter {
+  animation: ytTabEnter var(--anim-duration-base) var(--anim-ease) both;
+}
+
+.anim-card {
+  transition: transform var(--anim-duration-fast) var(--anim-ease),
+    box-shadow var(--anim-duration-fast) var(--anim-ease),
+    border-color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.anim-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Global Animation Debug Modes (Controlled via YuTaraAnimDebug in js/app.js) */
+body.anim-debug-slow {
+  --anim-duration-fast: 900ms;
+  --anim-duration-base: 1400ms;
+  --anim-duration-slow: 2000ms;
+}
+
+body.anim-debug-off {
+  --anim-duration-fast: 1ms;
+  --anim-duration-base: 1ms;
+  --anim-duration-slow: 1ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --anim-duration-fast: 1ms;
+    --anim-duration-base: 1ms;
+    --anim-duration-slow: 1ms;
+  }
+}
+
+@media (max-width: 960px) {
+  .doc-verify-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .seller-form-shell {
+    padding: 20px 18px;
+  }
+  .seller-docs-box {
+    padding: 16px 16px 4px;
+  }
+  .seller-form-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Responsive Breakpoints (1080px, 960px, 720px, 480px, 400px) */
+@media (max-width: 1080px) {
+  .grid-5,
+  .process-steps-visual {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .process-steps-visual::before {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .hero-grid,
+  .detail-layout,
+  .auth-layout,
+  .marketplace-layout,
+  .workspace-shell,
+  .workspace-shell.sidebar-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-workspace-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 120;
+  }
+
+  .mobile-drawer-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background-color: transparent;
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .mobile-topbar-logo {
+    height: 28px;
+    width: auto;
+    background-color: #FFFFFF;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+
+  .workspace-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 268px;
+    max-width: 82vw;
+    height: 100vh;
+    transform: translateX(-104%);
+    transition: transform var(--anim-duration-base) var(--anim-ease);
+    z-index: 250;
+    box-shadow: 0 20px 44px rgba(14, 27, 62, 0.35);
+  }
+
+  .workspace-shell.drawer-open .workspace-sidebar {
+    transform: translateX(0);
+  }
+
+  .workspace-shell.drawer-open .sidebar-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(14, 27, 62, 0.55);
+    z-index: 240;
+  }
+
+  .sidebar-collapse-btn {
+    display: none;
+  }
+
+  .workspace-main {
+    padding: 20px 18px 44px;
+  }
+
+  .provision-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kpi-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-sidebar {
+    position: static;
+    display: none;
+  }
+
+  .filter-sidebar.open {
+    display: block;
+  }
+
+  .mobile-filter-toggle {
+    display: inline-flex;
+  }
+
+  .search-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .grid-4,
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-3,
+  .about-team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-story-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .about-hero {
+    padding: 36px 0 30px;
+  }
+  .about-hero-title {
+    font-size: 1.75rem;
+  }
+  .about-team-grid {
+    grid-template-columns: 1fr;
+  }
+  .section {
+    padding: 48px 0;
+  }
+  .hero {
+    padding: 40px 0 72px;
+  }
+  .hero h1 {
+    font-size: 2rem;
+  }
+  .menu-toggle {
+    display: inline-block;
+  }
+  .nav-links,
+  .nav-actions {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 0;
+  }
+  .navbar {
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+  .navbar.open .nav-links,
+  .navbar.open .nav-actions {
+    display: flex;
+  }
+  .search-grid,
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .grid-5,
+  .kpi-grid-3,
+  .kpi-grid-4,
+  .provision-form-grid,
+  .process-steps-visual,
+  .metrics-grid,
+  .highlights-grid,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace-main {
+    padding: 16px 12px 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .container {
+    padding: 0 14px;
+  }
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+  .step-indicator {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.hidden,
+.btn.hidden,
+.alert.hidden,
+.tab-panel.hidden,
+.workspace-shell.hidden,
+.reg-step-panel.hidden,
+.reg-actions .btn.hidden {
+  display: none;
+}

@@ -1,0 +1,795 @@
+/* ==========================================================================
+   YuTara — User & Admin Workspace Styles (css/pages/workspace.css)
+   Collapsible sidebar, role navigation, KPI cards, reservation milestone
+   tracker, Admin tables, and Add Land for Sale form.
+   ========================================================================== */
+
+/* 13. MVP WORKFLOWS HUB (TRACKER, SELLER INTAKE, AGENCY DESK) */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 12px;
+}
+
+.tab-btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--white);
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.tab-btn:hover {
+  border-color: var(--forest-green);
+  color: var(--forest-green);
+}
+
+.tab-btn.active {
+  background-color: var(--forest-green);
+  border-color: var(--forest-green);
+  color: var(--white);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--forest-green);
+  margin: 12px 0 6px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 9px;
+  background-color: var(--border-subtle);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--forest-green);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.milestone-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--soft-off-white);
+  font-size: 0.91rem;
+}
+
+.milestone-item.completed {
+  background-color: var(--green-tint);
+  border-color: var(--green-border);
+  color: var(--forest-green);
+  font-weight: 600;
+}
+
+.stat-card {
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+}
+
+.stat-number {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--forest-green);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* 13B. SANDBOX-STYLE LEFT SIDEBAR WORKSPACE (User, Admin & Lucky Seven Portal) */
+.workspace-shell {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  min-height: 100vh;
+  background-color: var(--soft-off-white);
+  transition: grid-template-columns var(--anim-duration-base) var(--anim-ease);
+}
+
+.workspace-shell.sidebar-collapsed {
+  grid-template-columns: 78px minmax(0, 1fr);
+}
+
+.workspace-sidebar {
+  background-color: var(--white);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 18px 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 90;
+}
+
+.sidebar-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidebar-collapse-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background-color: transparent;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color var(--anim-duration-fast) var(--anim-ease),
+    color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.sidebar-collapse-btn:hover {
+  background-color: var(--soft-off-white);
+  color: var(--forest-green);
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-brand-sub,
+.workspace-shell.sidebar-collapsed .sidebar-group-title,
+.workspace-shell.sidebar-collapsed .sidebar-nav-label,
+.workspace-shell.sidebar-collapsed .sidebar-profile-meta,
+.workspace-shell.sidebar-collapsed .sidebar-logout-label {
+  display: none;
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-brand-box {
+  padding: 4px 0 14px;
+  text-align: center;
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-top-row {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-logo-img,
+.workspace-shell.sidebar-collapsed .sidebar-lucky-logo {
+  max-height: 32px;
+  width: 44px;
+  padding: 2px;
+  margin-bottom: 0;
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-nav-btn {
+  justify-content: center;
+  padding: 10px;
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-profile-card {
+  justify-content: center;
+  padding: 8px;
+}
+
+.workspace-shell.sidebar-collapsed .sidebar-logout-btn {
+  justify-content: center;
+  padding: 10px;
+}
+
+.mobile-workspace-topbar {
+  display: none;
+}
+
+.sidebar-mobile-backdrop {
+  display: none;
+}
+
+.sidebar-brand-box {
+  padding: 4px 10px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 18px;
+}
+
+.sidebar-logo-img {
+  max-height: 44px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.sidebar-lucky-logo {
+  max-height: 54px;
+  width: 100%;
+  object-fit: contain;
+  background-color: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  border: 1px solid #E5D3A1;
+  margin-bottom: 6px;
+}
+
+.sidebar-brand-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--forest-green);
+  line-height: 1.15;
+}
+
+.sidebar-brand-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.sidebar-group-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.sidebar-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-nav-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color var(--anim-duration-fast) var(--anim-ease),
+    color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.sidebar-nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sidebar-nav-btn:hover {
+  background-color: var(--soft-off-white);
+  color: var(--forest-green);
+}
+
+.sidebar-nav-btn.active {
+  background-color: var(--green-tint);
+  color: var(--forest-green);
+  font-weight: 700;
+}
+
+.sidebar-footer-box {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+.sidebar-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--green-tint);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--white);
+  color: var(--forest-green);
+  border: 1px solid var(--green-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+
+.sidebar-profile-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.sidebar-profile-email {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.sidebar-logout-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color var(--anim-duration-fast) var(--anim-ease),
+    color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.sidebar-logout-btn:hover {
+  background-color: var(--brown-tint);
+  color: var(--dark-brown);
+}
+
+.workspace-main {
+  padding: 28px 36px 56px;
+  max-width: 1520px;
+  margin: 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.workspace-eyebrow {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--forest-green);
+  margin-bottom: 4px;
+}
+
+.workspace-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--forest-green);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.workspace-subtitle {
+  font-size: 0.96rem;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin-bottom: 24px;
+}
+
+.kpi-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.kpi-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.kpi-box {
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+}
+
+.kpi-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--forest-green);
+}
+
+.kpi-value-role {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--forest-green);
+  text-transform: uppercase;
+}
+
+.provisioning-card {
+  background-color: var(--green-tint);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 28px;
+}
+
+.provision-form-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr 1.2fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.data-table-card {
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-xs);
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 0.73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.quick-fill-box {
+  background-color: var(--green-tint);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-top: 20px;
+}
+
+.quick-fill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-fill-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.15s ease, transform 0.12s ease;
+}
+
+.quick-fill-pill:hover {
+  border-color: var(--forest-green);
+  color: var(--forest-green);
+  transform: translateY(-1px);
+}
+
+/* Admin Land Listings Table Property Thumbnail Cell */
+.table-prop-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-prop-thumb {
+  width: 58px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Clean Seller Listing Intake Form Card */
+.seller-form-shell {
+  padding: 28px 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(37, 51, 41, 0.05);
+}
+
+.seller-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.seller-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.seller-header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background-color: var(--green-tint);
+  border: 1px solid var(--green-border);
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.seller-form-title {
+  margin-bottom: 4px;
+}
+
+.seller-form-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.seller-intake-form .grid {
+  gap: 16px;
+}
+
+.seller-intake-form .form-group {
+  margin-bottom: 16px;
+}
+
+.seller-step-group {
+  margin-bottom: 8px;
+}
+
+.seller-step-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--forest-green);
+  margin-bottom: 14px;
+}
+
+.seller-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label-hint {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.seller-docs-box {
+  background-color: #F6FAF2;
+  border: 1px solid #C9E2B7;
+  border-left: 3.5px solid var(--forest-green);
+  border-radius: 12px;
+  padding: 20px 22px 6px;
+  margin: 10px 0 22px;
+}
+
+.seller-docs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 6px;
+}
+
+.seller-docs-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--forest-green);
+}
+
+.seller-docs-title {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--forest-green);
+}
+
+.seller-docs-req-pill {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--forest-green);
+  background-color: var(--white);
+  border: 1px solid #C9E2B7;
+  border-radius: 999px;
+  padding: 3px 11px;
+}
+
+.seller-docs-hint {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.seller-desc-area {
+  min-height: 98px;
+}
+
+.seller-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-top: 18px;
+  margin-top: 8px;
+  border-top: 1px solid #EEF1EC;
+}
+
+.seller-footer-note {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+}
+
+/* 4-Stage Land-to-Lucky-Seven Verification Progress Bar */
+.seller-lifecycle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  background-color: #F7FAF4;
+  border: 1px solid #DCECCB;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 22px;
+}
+
+.lifecycle-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.81rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.lifecycle-step.active {
+  color: var(--forest-green);
+}
+
+.lifecycle-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #E2E8DF;
+  color: #4A5A4F;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lifecycle-step.active .lifecycle-dot {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.lifecycle-arrow {
+  color: #9FB396;
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+
+.seller-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seller-photo-thumb {
+  width: 56px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.seller-file-input {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+
+.seller-doc-file-input {
+  display: block;
+  width: 100%;
+  margin-top: 7px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
