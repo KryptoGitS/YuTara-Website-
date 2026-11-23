@@ -1,13 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register — YuTara Land Marketplace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=23" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=24" />
 </head>
-<body>
+<body class="register-page-body">
 
   <!-- Sticky Navigation Bar -->
   <header class="site-header">
@@ -33,84 +36,122 @@
     </div>
   </header>
 
-  <main class="section">
-    <div class="container auth-layout">
-      <!-- Left Branding Banner -->
-      <div class="auth-banner">
-        <div>
-          <span class="hero-eyebrow">Verified PropTech Onboarding</span>
-          <h1>Create Your YuTara Account</h1>
-          <p>
-            Join YuTara's 4-step identity and role onboarding flow to browse verified Panabo City land parcels, submit clean-titled properties, or coordinate agency transactions.
+  <main class="register-stage">
+    <div class="container register-layout">
+      <!-- Left Soft Botanical Branding Panel -->
+      <section class="reg-brand-panel anim-fade-up" data-anim="ytFadeInUp" aria-label="Create Your YuTara Account">
+        <!-- Layered Organic Sage Waves -->
+        <svg class="reg-brand-waves" viewBox="0 0 460 190" preserveAspectRatio="none" aria-hidden="true">
+          <path class="reg-wave-back" d="M0,126 C88,108 164,148 258,130 C338,114 402,78 460,64 L460,190 L0,190 Z"></path>
+          <path class="reg-wave-mid" d="M0,48 C96,68 168,142 276,144 C354,146 414,126 460,112 L460,190 L0,190 Z"></path>
+          <path class="reg-wave-front" d="M0,118 C108,126 196,162 308,150 C376,142 426,120 460,104 L460,190 L0,190 Z"></path>
+        </svg>
+
+        <div class="reg-brand-content">
+          <img src="assets/yutara-logo.png" alt="YuTara" class="reg-brand-logo" />
+
+          <h1 class="reg-brand-title">
+            Create Your<br />YuTara Account
+          </h1>
+
+          <p class="reg-brand-subtitle">
+            Join YuTara's <strong>marketplace</strong> and start buying and selling land with ease.
           </p>
         </div>
+      </section>
 
-        <div>
-          <span class="badge badge-solid-green">4-Step Identity Verification Flow</span>
+      <!-- Right 4-Step Verification Registration Card -->
+      <section class="reg-card anim-fade-up" data-anim="ytFadeInUp" aria-label="Account Registration Form">
+        <span class="reg-eyebrow">Account Registration</span>
+        <h2 class="reg-title">4-Step Verification Setup</h2>
+        <p class="reg-subtitle">Complete the steps to verify your account.</p>
+
+        <!-- Connected 4-Step Circular Stepper -->
+        <div class="reg-stepper" role="list" aria-label="Registration progress">
+          <div class="reg-step active" id="step-pill-1" role="listitem">
+            <div class="reg-step-circle"><span class="reg-step-num">1</span></div>
+            <span class="reg-step-label">Info</span>
+          </div>
+          <div class="reg-step" id="step-pill-2" role="listitem">
+            <div class="reg-step-circle"><span class="reg-step-num">2</span></div>
+            <span class="reg-step-label">Gov ID</span>
+          </div>
+          <div class="reg-step" id="step-pill-3" role="listitem">
+            <div class="reg-step-circle"><span class="reg-step-num">3</span></div>
+            <span class="reg-step-label">Face Check</span>
+          </div>
+          <div class="reg-step" id="step-pill-4" role="listitem">
+            <div class="reg-step-circle"><span class="reg-step-num">4</span></div>
+            <span class="reg-step-label">Review</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Right 4-Step Registration Card -->
-      <div class="card">
-        <span class="section-tag">Account Registration</span>
-        <h2 class="section-title mb-2">4-Step Verification Setup</h2>
+        <div id="reg-feedback" class="alert hidden" role="alert"></div>
 
-        <!-- Step Indicator Pills -->
-        <div class="step-indicator">
-          <div class="step-pill active" id="step-pill-1">1. Info</div>
-          <div class="step-pill" id="step-pill-2">2. Gov ID</div>
-          <div class="step-pill" id="step-pill-3">3. Face Check</div>
-          <div class="step-pill" id="step-pill-4">4. Review</div>
-        </div>
-
-        <div id="reg-feedback" class="alert hidden"></div>
-
-        <form id="register-form">
+        <form id="register-form" novalidate>
           <!-- Step 1: Account & Role Information -->
-          <div id="reg-step-1">
-            <div class="form-group">
-              <label class="form-label" for="reg-name">Full Name</label>
-              <input type="text" id="reg-name" class="form-control" placeholder="e.g., Juan Dela Cruz" value="Juan Dela Cruz" />
+          <div id="reg-step-1" class="reg-step-panel">
+            <div class="reg-form-group">
+              <label class="reg-label" for="reg-name">Full Name</label>
+              <input type="text" id="reg-name" class="reg-input" placeholder="Juan Dela Cruz" value="Juan Dela Cruz" autocomplete="name" />
             </div>
 
-            <div class="grid grid-2">
-              <div class="form-group">
-                <label class="form-label" for="reg-email">Email Address</label>
-                <input type="email" id="reg-email" class="form-control" placeholder="you@example.com" value="juan.delacruz@yutara.demo" />
+            <div class="reg-grid-2">
+              <div class="reg-form-group">
+                <label class="reg-label" for="reg-email">Email Address</label>
+                <input type="email" id="reg-email" class="reg-input" placeholder="juan.delacruz@yutara.demo" value="juan.delacruz@yutara.demo" autocomplete="email" />
               </div>
-              <div class="form-group">
-                <label class="form-label" for="reg-phone">Mobile Number</label>
-                <input type="text" id="reg-phone" class="form-control" placeholder="09XX-XXX-XXXX" value="0917-555-0192" />
+              <div class="reg-form-group">
+                <label class="reg-label" for="reg-phone">Mobile Number</label>
+                <input type="text" id="reg-phone" class="reg-input" placeholder="0917-555-0192" value="0917-555-0192" autocomplete="tel" />
               </div>
             </div>
 
-            <div class="grid grid-2">
-              <div class="form-group">
-                <label class="form-label" for="reg-role">Account Role</label>
-                <select id="reg-role" class="form-select">
+            <div class="reg-grid-2">
+              <div class="reg-form-group">
+                <label class="reg-label" for="reg-role">Account Role</label>
+                <select id="reg-role" class="reg-select">
                   <option value="User">User (Buyer &amp; Landowner)</option>
                   <option value="Admin">Admin (YuTara Platform Administrator)</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label class="form-label" for="reg-password">Create Password</label>
-                <div class="password-wrapper">
-                  <input type="password" id="reg-password" class="form-control" placeholder="At least 6 characters" value="yutara2026" />
-                  <button type="button" class="password-toggle-btn" data-toggle-password="reg-password" aria-label="Show password">Show</button>
+              <div class="reg-form-group">
+                <label class="reg-label" for="reg-password">Create Password</label>
+                <div class="password-wrapper reg-pw-wrap">
+                  <input type="password" id="reg-password" class="reg-input reg-input-pw" placeholder="At least 6 characters" value="yutara2026" autocomplete="new-password" />
+                  <button
+                    type="button"
+                    class="reg-pw-toggle"
+                    data-toggle-password="reg-password"
+                    data-toggle-icon="true"
+                    aria-label="Show password"
+                    aria-pressed="false"
+                  >
+                    <svg class="pw-icon-hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+                      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path>
+                      <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    <svg class="pw-icon-shown" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Step 2: Government ID Upload (Simulated) -->
-          <div id="reg-step-2" class="hidden">
-            <div class="alert alert-warning">
+          <div id="reg-step-2" class="reg-step-panel hidden">
+            <div class="reg-info-callout">
               <strong>Identity Screening:</strong> Select a valid Philippine government-issued ID to prevent fraudulent or anonymous property listings.
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="reg-id-type">Government ID Type</label>
-              <select id="reg-id-type" class="form-select">
+            <div class="reg-form-group">
+              <label class="reg-label" for="reg-id-type">Government ID Type</label>
+              <select id="reg-id-type" class="reg-select">
                 <option value="Philippine National ID (PhilSys)">Philippine National ID (PhilSys)</option>
                 <option value="Driver's License (LTO)">Driver's License (LTO)</option>
                 <option value="Philippine Passport">Philippine Passport</option>
@@ -118,20 +159,20 @@
               </select>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="reg-id-num">ID Reference Number (Demo)</label>
-              <input type="text" id="reg-id-num" class="form-control" value="PHL-8842-2026-PANABO" />
+            <div class="reg-form-group">
+              <label class="reg-label" for="reg-id-num">ID Reference Number (Demo)</label>
+              <input type="text" id="reg-id-num" class="reg-input" value="PHL-8842-2026-PANABO" />
             </div>
           </div>
 
           <!-- Step 3: Face Verification Check (Simulated) -->
-          <div id="reg-step-3" class="hidden">
-            <div class="card-soft mb-2">
-              <h3 class="mb-1">Simulated Biometric Liveness Check</h3>
-              <p class="mb-2">
+          <div id="reg-step-3" class="reg-step-panel hidden">
+            <div class="reg-soft-box">
+              <h3 class="reg-box-title">Simulated Biometric Liveness Check</h3>
+              <p class="reg-box-copy">
                 In the production system, YuTara compares your live camera selfie against your submitted Government ID before allowing land listing publication or reservation booking.
               </p>
-              <label class="checkbox-row" for="reg-face-check">
+              <label class="checkbox-row reg-checkbox-row" for="reg-face-check">
                 <input type="checkbox" id="reg-face-check" checked />
                 <span>I confirm the simulated face verification step for this MVP prototype demo.</span>
               </label>
@@ -139,31 +180,46 @@
           </div>
 
           <!-- Step 4: Summary Review -->
-          <div id="reg-step-4" class="hidden">
-            <div class="card-soft mb-2">
-              <h3 class="mb-2">Review Your Registration Details</h3>
-              <ul class="list-indented">
-                <li><strong>Full Name:</strong> <span id="review-name"></span></li>
-                <li><strong>Email Address:</strong> <span id="review-email"></span></li>
-                <li><strong>Mobile Number:</strong> <span id="review-phone"></span></li>
-                <li><strong>Selected Role:</strong> <span id="review-role"></span></li>
-                <li><strong>Submitted ID:</strong> <span id="review-id-type"></span></li>
-              </ul>
+          <div id="reg-step-4" class="reg-step-panel hidden">
+            <div class="reg-soft-box">
+              <h3 class="reg-box-title">Review Your Registration Details</h3>
+              <dl class="reg-review-grid">
+                <div class="reg-review-row">
+                  <dt>Full Name</dt>
+                  <dd id="review-name"></dd>
+                </div>
+                <div class="reg-review-row">
+                  <dt>Email Address</dt>
+                  <dd id="review-email"></dd>
+                </div>
+                <div class="reg-review-row">
+                  <dt>Mobile Number</dt>
+                  <dd id="review-phone"></dd>
+                </div>
+                <div class="reg-review-row">
+                  <dt>Selected Role</dt>
+                  <dd id="review-role"></dd>
+                </div>
+                <div class="reg-review-row">
+                  <dt>Submitted ID</dt>
+                  <dd id="review-id-type"></dd>
+                </div>
+              </dl>
             </div>
           </div>
 
           <!-- Navigation Buttons -->
-          <div class="flex-between-wrap mt-3">
-            <button type="button" class="btn btn-outline hidden" id="reg-prev-btn">&larr; Previous Step</button>
-            <button type="button" class="btn btn-primary" id="reg-next-btn">Next Step &rarr;</button>
-            <button type="submit" class="btn btn-primary hidden" id="reg-submit-btn">Complete Registration &checkmark;</button>
+          <div class="reg-actions">
+            <button type="button" class="btn btn-outline reg-prev-btn hidden" id="reg-prev-btn">&larr; Previous Step</button>
+            <button type="button" class="btn btn-primary reg-next-btn" id="reg-next-btn">Next Step &rarr;</button>
+            <button type="submit" class="btn btn-primary reg-submit-btn hidden" id="reg-submit-btn">Complete Registration &checkmark;</button>
           </div>
         </form>
 
-        <p class="mt-3 text-center">
-          Already have an account? <a href="login.html" class="text-green inline-action-link">Log In Here &rarr;</a>
+        <p class="reg-login-prompt">
+          Already have an account? <a href="login.html" class="reg-login-link">Log In Here</a>
         </p>
-      </div>
+      </section>
     </div>
   </main>
 
@@ -193,7 +249,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=23"></script>
-  <script src="js/app.js?v=23"></script>
+  <script src="js/data.js?v=24"></script>
+  <script src="js/app.js?v=24"></script>
 </body>
 </html>

@@ -625,8 +625,13 @@ function initPasswordToggles() {
       if (!input) return;
       const isPassword = input.type === "password";
       input.type = isPassword ? "text" : "password";
-      btn.textContent = isPassword ? "Hide" : "Show";
+      if (btn.hasAttribute("data-toggle-icon")) {
+        btn.classList.toggle("is-visible", isPassword);
+      } else {
+        btn.textContent = isPassword ? "Hide" : "Show";
+      }
       btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+      btn.setAttribute("aria-pressed", isPassword ? "true" : "false");
     });
   });
 }
@@ -1590,7 +1595,11 @@ function initRegisterPage() {
       panel.classList.toggle("hidden", i !== currentStep);
 
       pill.classList.remove("active", "done");
-      if (i === currentStep) pill.classList.add("active");
+      pill.removeAttribute("aria-current");
+      if (i === currentStep) {
+        pill.classList.add("active");
+        pill.setAttribute("aria-current", "step");
+      }
       if (i < currentStep) pill.classList.add("done");
     }
 

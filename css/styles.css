@@ -5780,14 +5780,6 @@ body.anim-debug-off {
   }
 }
 
-/* Final Visibility Utility Override (ensures .btn.hidden and .alert.hidden stay hidden) */
-.hidden,
-.btn.hidden,
-.alert.hidden,
-.tab-panel.hidden {
-  display: none;
-}
-
 /* ===== Buyer-Seller Message Thread (YuTara Brand Theme) ===== */
 .inline-block-link {
   display: inline-block;
@@ -5898,4 +5890,572 @@ body.anim-debug-off {
     width: 100%;
     justify-content: center;
   }
+}
+
+/* ===== Modern Split-Screen 4-Step Registration Page (register.html) ===== */
+.register-page-body {
+  font-family: "Plus Jakarta Sans", var(--font-sans);
+  background-color: #F7F7F2;
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-page-body .site-header {
+  background-color: var(--white);
+  border-bottom: 1.5px solid #C6D5B8;
+  box-shadow: 0 1px 4px rgba(28, 36, 24, 0.03);
+}
+
+.register-page-body .navbar {
+  gap: 24px;
+}
+
+.register-page-body .brand {
+  padding-right: 22px;
+  border-right: 1px solid #D5DDD0;
+}
+
+.register-page-body .nav-links {
+  margin-right: auto;
+}
+
+.register-page-body .nav-actions .btn-primary {
+  background-color: var(--forest-green);
+  border-color: var(--forest-green);
+  border-radius: 9px;
+  padding: 8px 18px;
+}
+
+.register-page-body .nav-actions .btn-register {
+  border-radius: 9px;
+  padding: 8px 18px;
+}
+
+.register-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 36px 0 46px;
+}
+
+.register-layout {
+  display: grid;
+  grid-template-columns: 0.78fr 1.22fr;
+  gap: 28px;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Left Botanical Sage Branding Panel */
+.reg-brand-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #F0F4EB 0%, #ECF1E6 100%);
+  border: 1px solid rgba(49, 91, 25, 0.08);
+  padding: 50px 40px 168px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 6px 24px rgba(28, 36, 24, 0.03);
+}
+
+.reg-brand-content {
+  position: relative;
+}
+
+.reg-brand-logo {
+  height: 62px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  margin-bottom: 34px;
+}
+
+.reg-brand-title {
+  font-family: "Plus Jakarta Sans", var(--font-display);
+  font-size: clamp(2.05rem, 3.1vw, 2.7rem);
+  font-weight: 800;
+  line-height: 1.13;
+  letter-spacing: -0.025em;
+  color: #1D2B19;
+  margin-bottom: 20px;
+}
+
+.reg-brand-subtitle {
+  font-size: 1.02rem;
+  line-height: 1.62;
+  color: #465343;
+  max-width: 300px;
+}
+
+.reg-brand-subtitle strong {
+  color: #1F2D1B;
+  font-weight: 700;
+}
+
+.reg-brand-waves {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 165px;
+  display: block;
+  pointer-events: none;
+}
+
+.reg-wave-back {
+  fill: #DCE7D2;
+  opacity: 0.85;
+}
+
+.reg-wave-mid {
+  fill: #C7D9B7;
+  opacity: 0.72;
+}
+
+.reg-wave-front {
+  fill: #B8CE9F;
+  opacity: 0.56;
+}
+
+/* Right Registration Form Card */
+.reg-card {
+  background-color: var(--white);
+  border: 1px solid rgba(28, 36, 24, 0.07);
+  border-radius: 20px;
+  padding: 36px 44px 30px;
+  box-shadow: 0 10px 30px rgba(28, 36, 24, 0.05), 0 2px 6px rgba(28, 36, 24, 0.025);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reg-eyebrow {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest-green);
+  margin-bottom: 4px;
+}
+
+.reg-title {
+  font-family: "Plus Jakarta Sans", var(--font-display);
+  font-size: clamp(1.55rem, 2.3vw, 1.92rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #1C2418;
+  margin-bottom: 4px;
+}
+
+.reg-subtitle {
+  font-size: 0.94rem;
+  color: #6B7468;
+  margin-bottom: 24px;
+}
+
+/* Connected Circular 4-Step Progress Bar */
+.reg-stepper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  position: relative;
+  margin-bottom: 26px;
+}
+
+.reg-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.reg-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: calc(50% + 22px);
+  width: calc(100% - 44px);
+  height: 1.5px;
+  background-color: #E2E6DE;
+  transition: background-color var(--anim-duration-base) var(--anim-ease);
+}
+
+.reg-step.done:not(:last-child)::after {
+  background-color: var(--forest-green);
+}
+
+.reg-step-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.86rem;
+  font-weight: 700;
+  background-color: #FFFFFF;
+  border: 1.5px solid #D5DBD0;
+  color: #4D574A;
+  position: relative;
+  z-index: 2;
+  transition: background-color var(--anim-duration-fast) var(--anim-ease),
+    border-color var(--anim-duration-fast) var(--anim-ease),
+    color var(--anim-duration-fast) var(--anim-ease),
+    box-shadow var(--anim-duration-fast) var(--anim-ease);
+}
+
+.reg-step.active .reg-step-circle {
+  background-color: var(--forest-green);
+  border-color: var(--forest-green);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(49, 91, 25, 0.24);
+}
+
+.reg-step.done .reg-step-circle {
+  background-color: var(--green-tint);
+  border-color: var(--forest-green);
+  color: var(--forest-green);
+}
+
+.reg-step-label {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #6B7468;
+  line-height: 1.2;
+}
+
+.reg-step.active .reg-step-label {
+  color: var(--forest-green);
+  font-weight: 700;
+}
+
+.reg-step.done .reg-step-label {
+  color: var(--forest-green);
+  font-weight: 600;
+}
+
+/* Registration Form Controls */
+.reg-form-group {
+  margin-bottom: 16px;
+}
+
+.reg-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.reg-label {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #232D20;
+  margin-bottom: 6px;
+}
+
+.reg-input,
+.reg-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #D5DBD0;
+  border-radius: 10px;
+  background-color: var(--white);
+  color: #2A3527;
+  font-size: 0.93rem;
+  transition: border-color var(--anim-duration-fast) var(--anim-ease),
+    box-shadow var(--anim-duration-fast) var(--anim-ease);
+}
+
+.reg-input::placeholder {
+  color: #9AA396;
+}
+
+.reg-input:focus,
+.reg-select:focus {
+  outline: none;
+  border-color: var(--forest-green);
+  box-shadow: 0 0 0 3px rgba(49, 91, 25, 0.13);
+}
+
+.reg-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234A5547' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  background-size: 16px 16px;
+}
+
+.reg-pw-wrap .reg-input-pw {
+  padding-right: 44px;
+}
+
+.reg-pw-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #4A5547;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--anim-duration-fast) var(--anim-ease),
+    color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.reg-pw-toggle:hover {
+  background-color: #F2F5EE;
+  color: var(--forest-green);
+}
+
+.reg-pw-toggle .pw-icon-shown {
+  display: none;
+}
+
+.reg-pw-toggle.is-visible .pw-icon-hidden {
+  display: none;
+}
+
+.reg-pw-toggle.is-visible .pw-icon-shown {
+  display: block;
+}
+
+/* Steps 2, 3 & 4 Inner Surfaces */
+.reg-info-callout {
+  padding: 13px 16px;
+  border-radius: 10px;
+  background-color: #F6F8F2;
+  border: 1px solid #D7E2CD;
+  color: #35472E;
+  font-size: 0.89rem;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.reg-soft-box {
+  background-color: #F8FAF5;
+  border: 1px solid #E2E8DC;
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.reg-box-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #1D2B19;
+  margin-bottom: 8px;
+}
+
+.reg-box-copy {
+  font-size: 0.91rem;
+  color: #4D574A;
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.reg-checkbox-row {
+  padding: 11px 14px;
+  border-radius: 10px;
+  background-color: var(--white);
+  border: 1px solid #D9E2D1;
+  font-size: 0.9rem;
+  color: #253321;
+}
+
+.reg-review-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.reg-review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #E6ECE0;
+  font-size: 0.91rem;
+}
+
+.reg-review-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.reg-review-row dt {
+  color: #657061;
+  font-weight: 600;
+}
+
+.reg-review-row dd {
+  color: #1D2B19;
+  font-weight: 700;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Primary Action Bar & Bottom Login Link */
+.reg-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.reg-next-btn,
+.reg-submit-btn {
+  flex: 1 1 auto;
+  min-height: 46px;
+  border-radius: 10px;
+  background-color: var(--forest-green);
+  border-color: var(--forest-green);
+  font-size: 0.95rem;
+  font-weight: 700;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(49, 91, 25, 0.18);
+}
+
+.reg-next-btn:hover,
+.reg-submit-btn:hover {
+  background-color: #274A14;
+  border-color: #274A14;
+}
+
+.reg-prev-btn {
+  min-height: 46px;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+}
+
+.reg-login-prompt {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.86rem;
+  color: #6B7468;
+}
+
+.reg-login-link {
+  color: var(--forest-green);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.reg-login-link:hover {
+  color: #244512;
+}
+
+@media (max-width: 960px) {
+  .register-page-body .brand {
+    padding-right: 0;
+    border-right: none;
+  }
+
+  .register-page-body .nav-links {
+    margin-right: 0;
+  }
+
+  .register-stage {
+    padding: 24px 0 36px;
+    align-items: flex-start;
+  }
+
+  .register-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .reg-brand-panel {
+    padding: 34px 28px 96px;
+  }
+
+  .reg-brand-logo {
+    height: 46px;
+    margin-bottom: 20px;
+  }
+
+  .reg-brand-waves {
+    height: 104px;
+  }
+
+  .reg-card {
+    padding: 30px 26px 26px;
+  }
+}
+
+@media (max-width: 640px) {
+  .reg-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .reg-card {
+    padding: 24px 18px 22px;
+    border-radius: 16px;
+  }
+
+  .reg-brand-panel {
+    padding: 26px 20px 80px;
+    border-radius: 16px;
+  }
+
+  .reg-step-circle {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  .reg-step:not(:last-child)::after {
+    top: 15px;
+    left: calc(50% + 19px);
+    width: calc(100% - 38px);
+  }
+
+  .reg-step-label {
+    font-size: 0.75rem;
+  }
+
+  .reg-actions {
+    flex-direction: column-reverse;
+  }
+
+  .reg-actions .btn {
+    width: 100%;
+  }
+
+  .reg-review-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .reg-review-row dd {
+    text-align: left;
+  }
+}
+
+/* Final Visibility Utility Override (ensures .btn.hidden, .alert.hidden, and step panels stay hidden) */
+.hidden,
+.btn.hidden,
+.alert.hidden,
+.tab-panel.hidden,
+.reg-step-panel.hidden,
+.reg-actions .btn.hidden {
+  display: none;
 }
