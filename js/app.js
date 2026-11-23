@@ -218,7 +218,11 @@ function setSession(userObj) {
 
 function logoutUser() {
   localStorage.removeItem(STORAGE_KEYS.session);
-  window.location.reload();
+  if (window.location.pathname.indexOf("tracker.html") >= 0) {
+    window.location.href = "login.html";
+  } else {
+    window.location.reload();
+  }
 }
 
 function resetDemoData() {
@@ -1236,14 +1240,124 @@ function initContactPage() {
 }
 
 /* --------------------------------------------------------------------------
-   11. MVP WORKFLOW HUB (tracker.html — Buyer Tracker, Property CRUD, Agency, Inquiries)
+   11. MVP WORKFLOW HUB (tracker.html — Strict Role-Based Access Control)
    -------------------------------------------------------------------------- */
 function initTrackerPage() {
   const tabContainer = document.getElementById("workflow-tabs");
   if (!tabContainer) return;
 
+  const session = getSession();
+  const currentRole = session && session.role ? session.role : "Guest";
+  const isAdmin = currentRole === "Admin";
+  const isVerifier = currentRole === "Lucky Seven Land Verifier" || currentRole === "Agency";
+
   const tabBtns = tabContainer.querySelectorAll("[data-tab]");
+  const rbacAlert = document.getElementById("rbac-alert");
+
+  function isTabAllowedForRole(targetId) {
+    if (isAdmin) return true;
+    if (isVerifier) {
+      return targetId === "panel-agency" || targetId === "panel-inquiries" || targetId === "panel-buyer";
+    }
+    // Standard User / Buyer / Seller / Guest: cannot access Lucky Seven Land Verifier Desk (panel-agency)
+    return targetId === "panel-buyer" || targetId === "panel-seller" || targetId === "panel-inquiries";
+  }
+
+  function applyRolePermissionsToUI() {
+    const roleTag = document.getElementById("dashboard-role-tag");
+    const heading = document.getElementById("dashboard-heading");
+    const subtitle = document.getElementById("dashboard-subtitle");
+    const displayEl = document.getElementById("active-account-display");
+    const permsEl = document.getElementById("active-role-permissions");
+    const adminCrudCard = document.getElementById("admin-crud-card");
+    const tabBtnSeller = document.getElementById("tab-btn-seller");
+    const tabBtnAgency = document.getElementById("tab-btn-agency");
+    const sellerFormTag = document.getElementById("seller-form-tag");
+    const sellerFormSubtitle = document.getElementById("seller-form-subtitle");
+    const inqBanner = document.getElementById("inquiries-role-banner");
+
+    if (displayEl) {
+      if (!session) {
+        displayEl.textContent = "Guest Session (Not Signed In)";
+      } else {
+        displayEl.textContent =
+          "Signed in as: " + session.name + " (" + session.email + ") • Role: " + session.role;
+      }
+    }
+
+    if (isAdmin) {
+      if (roleTag) roleTag.textContent = "Administrator Console (Full System Access)";
+      if (heading) heading.textContent = "YuTara Admin Console — Property & System Management";
+      if (subtitle) {
+        subtitle.textContent =
+          "Full CRUD control over all Panabo City property listings, inquiry management, and milestone verification oversight.";
+      }
+      if (permsEl) {
+        permsEl.textContent =
+          "Permissions: Full Admin CRUD (Create, Edit, Delete Properties), Inquiry Management, and Verification Oversight.";
+      }
+      if (adminCrudCard) adminCrudCard.classList.remove("hidden");
+      if (tabBtnSeller) {
+        tabBtnSeller.classList.remove("hidden");
+        tabBtnSeller.textContent = "Admin Property Management (CRUD)";
+      }
+      if (tabBtnAgency) tabBtnAgency.classList.remove("hidden");
+      if (sellerFormTag) sellerFormTag.textContent = "Admin Property CRUD";
+      if (sellerFormSubtitle) {
+        sellerFormSubtitle.textContent =
+          "Create a new Panabo City property listing or click Edit on any existing listing below to modify it in real time.";
+      }
+    } else if (isVerifier) {
+      if (roleTag) roleTag.textContent = "Partner Verification Agency Console";
+      if (heading) heading.textContent = "Lucky Seven Land Verifier — Title & Milestone Console";
+      if (subtitle) {
+        subtitle.textContent =
+          "Review Transfer Certificate of Title (TCT) & Tax Declaration submissions, advance 5-stage buyer milestones, and coordinate site visits.";
+      }
+      if (permsEl) {
+        permsEl.textContent =
+          "Permissions: Lucky Seven Land Verifier Desk (Advance/Reset Milestones) & Site Visit Coordination. Admin Property Delete is restricted.";
+      }
+      if (adminCrudCard) adminCrudCard.classList.add("hidden");
+      if (tabBtnSeller) tabBtnSeller.classList.add("hidden");
+      if (tabBtnAgency) tabBtnAgency.classList.remove("hidden");
+      if (inqBanner) {
+        inqBanner.innerHTML =
+          "<strong>Lucky Seven Land Verifier Inquiry Desk:</strong> Coordinate site visits and advance inquiry status (<em>Open &rarr; Scheduled &rarr; Resolved</em>).";
+      }
+    } else {
+      // Standard User (Buyer / Seller) or Guest
+      if (roleTag) roleTag.textContent = "User Account Dashboard";
+      if (heading) heading.textContent = "User Dashboard & Property Transaction Tracker";
+      if (subtitle) {
+        subtitle.textContent =
+          "Track your 5-stage property reservation milestones, submit a land parcel for pre-listing screening, and view your inquiries.";
+      }
+      if (permsEl) {
+        permsEl.textContent =
+          "Permissions: Standard User access. Admin Property Inventory (Edit/Delete) and Lucky Seven Land Verifier settings are restricted.";
+      }
+      if (adminCrudCard) adminCrudCard.classList.add("hidden");
+      if (tabBtnSeller) {
+        tabBtnSeller.classList.remove("hidden");
+        tabBtnSeller.textContent = "Submit Property for Listing";
+      }
+      if (tabBtnAgency) tabBtnAgency.classList.add("hidden");
+    }
+  }
+
   function activateTab(targetId) {
+    if (!isTabAllowedForRole(targetId)) {
+      if (rbacAlert) {
+        rbacAlert.textContent =
+          "Access Restricted: Your current role (" +
+          currentRole +
+          ") is not authorized to access Admin or Lucky Seven Land Verifier settings.";
+        rbacAlert.classList.remove("hidden");
+      }
+      targetId = getDefaultTabForRole(currentRole);
+    }
+
     tabBtns.forEach(function (b) {
       b.classList.toggle("active", b.getAttribute("data-tab") === targetId);
     });
@@ -1254,55 +1368,22 @@ function initTrackerPage() {
 
   tabBtns.forEach(function (btn) {
     btn.addEventListener("click", function () {
+      if (rbacAlert) rbacAlert.classList.add("hidden");
       activateTab(btn.getAttribute("data-tab"));
     });
   });
 
+  applyRolePermissionsToUI();
+
   const initialTab = getQueryParam("tab");
-  const currentSession = getSession();
   if (initialTab && document.getElementById(initialTab)) {
     activateTab(initialTab);
-  } else if (currentSession && currentSession.role) {
-    const roleTab = getDefaultTabForRole(currentSession.role);
+  } else {
+    const roleTab = getDefaultTabForRole(currentRole);
     if (document.getElementById(roleTab)) {
       activateTab(roleTab);
     }
   }
-
-  function renderActiveAccountBanner() {
-    const displayEl = document.getElementById("active-account-display");
-    if (!displayEl) return;
-    const sess = getSession();
-    if (!sess) {
-      displayEl.textContent = "Not Signed In — Click an account button on the right to switch roles";
-    } else {
-      displayEl.textContent =
-        "Signed in as: " +
-        sess.name +
-        " (" +
-        sess.email +
-        ") • Role: " +
-        sess.role;
-    }
-  }
-
-  document.querySelectorAll("[data-switch-account]").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      const role = btn.getAttribute("data-demo-role");
-      const name = btn.getAttribute("data-demo-name");
-      const email = btn.getAttribute("data-demo-email");
-      const targetTab = btn.getAttribute("data-demo-tab") || getDefaultTabForRole(role);
-      setSession({ name: name, email: email, role: role });
-      initNavbar();
-      renderActiveAccountBanner();
-      if (targetTab && document.getElementById(targetTab)) {
-        activateTab(targetTab);
-      }
-      showToast("Switched active account to: " + name + " (" + role + ")");
-    });
-  });
-
-  renderActiveAccountBanner();
 
   const brgySelect = document.getElementById("seller-barangay");
   if (brgySelect) {
@@ -1336,6 +1417,12 @@ function initTrackerPage() {
     const container = document.getElementById("managed-properties-list");
     const countBadge = document.getElementById("managed-prop-count");
     if (!container) return;
+
+    // Strict RBAC guard: Only Admin can view or use the Managed Property Edit/Delete Inventory
+    if (!isAdmin) {
+      container.innerHTML = "";
+      return;
+    }
 
     const properties = getProperties();
     if (countBadge) {
@@ -1391,6 +1478,7 @@ function initTrackerPage() {
 
     container.querySelectorAll("[data-edit-prop-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
+        if (!isAdmin) return;
         const targetId = Number(btn.getAttribute("data-edit-prop-id"));
         const prop = getProperties().find(function (p) {
           return p.id === targetId;
@@ -1422,6 +1510,7 @@ function initTrackerPage() {
 
     container.querySelectorAll("[data-delete-prop-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
+        if (!isAdmin) return;
         const targetId = Number(btn.getAttribute("data-delete-prop-id"));
         const list = getProperties().filter(function (p) {
           return p.id !== targetId;
@@ -1452,6 +1541,9 @@ function initTrackerPage() {
       return;
     }
 
+    // Only Admin and Lucky Seven Land Verifier can advance status or delete inquiries
+    const canManageInquiries = isAdmin || isVerifier;
+
     container.innerHTML = inquiries
       .map(function (inq, idx) {
         const badgeClass =
@@ -1460,6 +1552,17 @@ function initTrackerPage() {
             : inq.status === "Scheduled"
             ? "badge-promoted"
             : "badge-brown-soft";
+        const actionControlsHtml = canManageInquiries
+          ? '<div class="flex-wrap-gap">' +
+            '  <button type="button" class="btn btn-primary btn-sm" data-cycle-inq-idx="' +
+            idx +
+            '">Advance Inquiry Status</button>' +
+            '  <button type="button" class="btn btn-outline btn-sm" data-delete-inq-idx="' +
+            idx +
+            '">Delete Inquiry</button>' +
+            "</div>"
+          : '<div class="text-muted">Status managed by Lucky Seven Land Verifier &amp; YuTara Admin</div>';
+
         return (
           '<div class="card mb-2">' +
           '  <div class="tx-card-header">' +
@@ -1486,18 +1589,13 @@ function initTrackerPage() {
           '  <p class="mt-1 mb-2">' +
           escapeHtml(inq.message) +
           "</p>" +
-          '  <div class="flex-wrap-gap">' +
-          '    <button type="button" class="btn btn-primary btn-sm" data-cycle-inq-idx="' +
-          idx +
-          '">Advance Inquiry Status</button>' +
-          '    <button type="button" class="btn btn-outline btn-sm" data-delete-inq-idx="' +
-          idx +
-          '">Delete Inquiry</button>' +
-          "  </div>" +
+          actionControlsHtml +
           "</div>"
         );
       })
       .join("");
+
+    if (!canManageInquiries) return;
 
     container.querySelectorAll("[data-cycle-inq-idx]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -1552,7 +1650,7 @@ function initTrackerPage() {
         "</div>";
       agencyList.innerHTML =
         '<div class="card text-center">' +
-        "  <h3>Agency verification queue is empty</h3>" +
+        "  <h3>Lucky Seven verification queue is empty</h3>" +
         "  <p>New buyer reservations will appear here for milestone verification.</p>" +
         "</div>";
       return;
@@ -1598,6 +1696,12 @@ function initTrackerPage() {
       bar.style.width = bar.getAttribute("data-progress-width") + "%";
     });
 
+    // Strict RBAC guard: Only Lucky Seven Land Verifier and Admin can view or use the Verification Queue
+    if (!isVerifier && !isAdmin) {
+      agencyList.innerHTML = "";
+      return;
+    }
+
     agencyList.innerHTML = transactions
       .map(function (tx, idx) {
         const isDone = tx.stageIndex >= MILESTONE_STEPS.length - 1;
@@ -1622,6 +1726,7 @@ function initTrackerPage() {
 
     agencyList.querySelectorAll("[data-advance-idx]").forEach(function (btn) {
       btn.addEventListener("click", function () {
+        if (!isVerifier && !isAdmin) return;
         const index = Number(btn.getAttribute("data-advance-idx"));
         const list = getTransactions();
         if (list[index] && list[index].stageIndex < MILESTONE_STEPS.length - 1) {
@@ -1635,6 +1740,7 @@ function initTrackerPage() {
 
     agencyList.querySelectorAll("[data-reset-tx-idx]").forEach(function (btn) {
       btn.addEventListener("click", function () {
+        if (!isVerifier && !isAdmin) return;
         const index = Number(btn.getAttribute("data-reset-tx-idx"));
         const list = getTransactions();
         if (list[index]) {
