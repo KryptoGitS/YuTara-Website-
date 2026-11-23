@@ -19,12 +19,12 @@
    1. STORAGE KEYS, DIAGNOSTIC REPORTER & HELPER UTILITIES
    -------------------------------------------------------------------------- */
 const STORAGE_KEYS = {
-  properties: "yutara_v3_properties",
-  saved: "yutara_v3_saved",
-  transactions: "yutara_v3_transactions",
-  inquiries: "yutara_v3_inquiries",
-  accounts: "yutara_v3_accounts",
-  session: "yutara_v3_session"
+  properties: "yutara_v4_properties",
+  saved: "yutara_v4_saved",
+  transactions: "yutara_v4_transactions",
+  inquiries: "yutara_v4_inquiries",
+  accounts: "yutara_v4_accounts",
+  session: "yutara_v4_session"
 };
 
 let toastTimer = null;
@@ -115,7 +115,7 @@ function getProperties() {
   if (!raw) return DEFAULT_PROPERTIES.slice();
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : DEFAULT_PROPERTIES.slice();
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PROPERTIES.slice();
   } catch (err) {
     reportDiagnostic("DataStore", "Properties", "getProperties", err);
     return DEFAULT_PROPERTIES.slice();
@@ -164,7 +164,7 @@ function getTransactions() {
   if (!raw) return DEFAULT_TRANSACTIONS.slice();
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : DEFAULT_TRANSACTIONS.slice();
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_TRANSACTIONS.slice();
   } catch (err) {
     reportDiagnostic("DataStore", "Transactions", "getTransactions", err);
     return DEFAULT_TRANSACTIONS.slice();
@@ -230,7 +230,10 @@ function getInitials(name) {
 
 function getSession() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.session) || "null");
+    const raw =
+      localStorage.getItem(STORAGE_KEYS.session) ||
+      localStorage.getItem("yutara_v3_session");
+    return JSON.parse(raw || "null");
   } catch (err) {
     reportDiagnostic("DataStore", "AuthSession", "getSession", err);
     return null;
@@ -240,6 +243,7 @@ function getSession() {
 function setSession(userObj) {
   try {
     localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(userObj));
+    localStorage.removeItem("yutara_v3_session");
   } catch (err) {
     reportDiagnostic("DataStore", "AuthSession", "setSession", err);
   }
@@ -247,6 +251,7 @@ function setSession(userObj) {
 
 function logoutUser() {
   localStorage.removeItem(STORAGE_KEYS.session);
+  localStorage.removeItem("yutara_v3_session");
   if (window.location.pathname.indexOf("tracker.html") >= 0) {
     window.location.href = "login.html";
   } else {
@@ -1338,6 +1343,8 @@ function initTrackerPage() {
   }
 
   function applyRolePermissionsToUI() {
+    const workspaceShell = document.getElementById("workspace-shell");
+    const sidebarLogoImg = document.getElementById("sidebar-logo-img");
     const brandSub = document.getElementById("sidebar-brand-sub");
     const groupTitle = document.getElementById("sidebar-group-title");
     const avatarEl = document.getElementById("sidebar-avatar");
@@ -1360,6 +1367,12 @@ function initTrackerPage() {
     if (emailEl) emailEl.textContent = currentEmail;
 
     if (isAdmin) {
+      if (workspaceShell) workspaceShell.classList.remove("theme-lucky-seven");
+      if (sidebarLogoImg) {
+        sidebarLogoImg.src = "assets/yutara-logo.png";
+        sidebarLogoImg.alt = "YuTara Logo";
+        sidebarLogoImg.className = "sidebar-logo-img";
+      }
       if (brandSub) brandSub.textContent = "Admin Workspace";
       if (groupTitle) groupTitle.textContent = "Administration";
       if (navUserProps) navUserProps.classList.add("hidden");
@@ -1370,8 +1383,14 @@ function initTrackerPage() {
       if (navInquiries) navInquiries.classList.remove("hidden");
       if (adminCrudCard) adminCrudCard.classList.remove("hidden");
     } else if (isVerifier) {
-      if (brandSub) brandSub.textContent = "Lucky Seven Verifier";
-      if (groupTitle) groupTitle.textContent = "Verification";
+      if (workspaceShell) workspaceShell.classList.add("theme-lucky-seven");
+      if (sidebarLogoImg) {
+        sidebarLogoImg.src = "assets/lucky-seven-logo.jpg";
+        sidebarLogoImg.alt = "Lucky Seven Property Management Solutions, Inc.";
+        sidebarLogoImg.className = "sidebar-lucky-logo";
+      }
+      if (brandSub) brandSub.textContent = "Property Management Solutions, Inc.";
+      if (groupTitle) groupTitle.textContent = "Lucky Seven Verification";
       if (navUserProps) navUserProps.classList.add("hidden");
       if (navUserSell) navUserSell.classList.add("hidden");
       if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
@@ -1382,6 +1401,12 @@ function initTrackerPage() {
       if (tabBtnAgency) tabBtnAgency.classList.remove("hidden");
     } else {
       // Standard User (Matches yutarasandbox.vercel.app/dashboard)
+      if (workspaceShell) workspaceShell.classList.remove("theme-lucky-seven");
+      if (sidebarLogoImg) {
+        sidebarLogoImg.src = "assets/yutara-logo.png";
+        sidebarLogoImg.alt = "YuTara Logo";
+        sidebarLogoImg.className = "sidebar-logo-img";
+      }
       if (brandSub) brandSub.textContent = "Yuta ba? YuTara!";
       if (groupTitle) groupTitle.textContent = "Navigation";
       if (heading) heading.textContent = "Welcome back, " + currentName + "!";
@@ -1462,6 +1487,55 @@ function initTrackerPage() {
     });
   }
 
+  function loadPropertyIntoEditForm(targetId) {
+    if (!isAdmin) return;
+    const prop = getProperties().find(function (p) {
+      return p.id === Number(targetId);
+    });
+    if (!prop) return;
+
+    activateTab("panel-seller");
+    if (editIdInput) editIdInput.value = String(prop.id);
+    document.getElementById("seller-title").value = prop.title;
+    document.getElementById("seller-type").value = prop.type;
+    document.getElementById("seller-barangay").value = prop.barangay;
+    document.getElementById("seller-price").value = prop.price || 0;
+    document.getElementById("seller-area").value = prop.area;
+    document.getElementById("seller-road").value = prop.roadAccess;
+    document.getElementById("seller-desc").value = prop.description;
+
+    if (formHeading) {
+      formHeading.textContent = "Edit Property Listing #" + prop.id + " (" + prop.barangay + ")";
+    }
+    if (submitBtn) {
+      submitBtn.innerHTML = "Save Property Changes &checkmark;";
+    }
+    if (cancelEditBtn) {
+      cancelEditBtn.classList.remove("hidden");
+    }
+    if (sellerForm) {
+      sellerForm.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    showToast("Loaded listing #" + prop.id + " for editing");
+  }
+
+  function deletePropertyListingById(targetId) {
+    if (!isAdmin) return;
+    const remaining = getProperties().filter(function (p) {
+      return p.id !== Number(targetId);
+    });
+    if (remaining.length === 0) {
+      localStorage.removeItem(STORAGE_KEYS.properties);
+      showToast("Restored 6 default Panabo listings so Marketplace is never empty");
+    } else {
+      saveProperties(remaining);
+      showToast("Deleted property listing #" + targetId);
+    }
+    renderManagedProperties();
+    renderAdminAccountsPortal();
+    renderUserWorkspace();
+  }
+
   function renderManagedProperties() {
     const container = document.getElementById("managed-properties-list");
     const countBadge = document.getElementById("managed-prop-count");
@@ -1478,27 +1552,24 @@ function initTrackerPage() {
       countBadge.textContent = properties.length + " Listings";
     }
 
-    if (properties.length === 0) {
-      container.innerHTML =
-        '<div class="card-soft text-center">' +
-        "  <h3>No property listings in storage</h3>" +
-        '  <p class="mb-2">Use the form above to add a new Panabo City listing or click Reset Demo Data in the footer.</p>' +
-        "</div>";
-      return;
-    }
-
     container.innerHTML = properties
       .map(function (prop) {
         return (
           '<div class="card-soft mb-2">' +
           '  <div class="agency-card-row">' +
-          "    <div>" +
-          "      <h3>#" +
+          '    <div class="table-prop-cell">' +
+          '      <img src="' +
+          escapeHtml(prop.image) +
+          '" alt="' +
+          escapeHtml(prop.title) +
+          '" class="table-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
+          "      <div>" +
+          "        <h3>#" +
           prop.id +
           " &mdash; " +
           escapeHtml(prop.title) +
           "</h3>" +
-          '      <p class="text-no-margin">Brgy. ' +
+          '        <p class="text-no-margin">Brgy. ' +
           escapeHtml(prop.barangay) +
           " &bull; " +
           escapeHtml(prop.type) +
@@ -1507,6 +1578,7 @@ function initTrackerPage() {
           " sqm &bull; <strong>" +
           escapeHtml(formatPropertyPrice(prop)) +
           "</strong></p>" +
+          "      </div>" +
           "    </div>" +
           '    <div class="flex-wrap-gap">' +
           '      <a href="property.html?id=' +
@@ -1527,46 +1599,13 @@ function initTrackerPage() {
 
     container.querySelectorAll("[data-edit-prop-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        if (!isAdmin) return;
-        const targetId = Number(btn.getAttribute("data-edit-prop-id"));
-        const prop = getProperties().find(function (p) {
-          return p.id === targetId;
-        });
-        if (!prop) return;
-
-        if (editIdInput) editIdInput.value = String(prop.id);
-        document.getElementById("seller-title").value = prop.title;
-        document.getElementById("seller-type").value = prop.type;
-        document.getElementById("seller-barangay").value = prop.barangay;
-        document.getElementById("seller-price").value = prop.price || 0;
-        document.getElementById("seller-area").value = prop.area;
-        document.getElementById("seller-road").value = prop.roadAccess;
-        document.getElementById("seller-desc").value = prop.description;
-
-        if (formHeading) {
-          formHeading.textContent = "Edit Property Listing #" + prop.id + " (" + prop.barangay + ")";
-        }
-        if (submitBtn) {
-          submitBtn.innerHTML = "Save Property Changes &checkmark;";
-        }
-        if (cancelEditBtn) {
-          cancelEditBtn.classList.remove("hidden");
-        }
-        sellerForm.scrollIntoView({ behavior: "smooth", block: "start" });
-        showToast("Loaded listing #" + prop.id + " for editing");
+        loadPropertyIntoEditForm(btn.getAttribute("data-edit-prop-id"));
       });
     });
 
     container.querySelectorAll("[data-delete-prop-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        if (!isAdmin) return;
-        const targetId = Number(btn.getAttribute("data-delete-prop-id"));
-        const list = getProperties().filter(function (p) {
-          return p.id !== targetId;
-        });
-        saveProperties(list);
-        renderManagedProperties();
-        showToast("Deleted property listing #" + targetId);
+        deletePropertyListingById(btn.getAttribute("data-delete-prop-id"));
       });
     });
   }
@@ -1754,16 +1793,52 @@ function initTrackerPage() {
     agencyList.innerHTML = transactions
       .map(function (tx, idx) {
         const isDone = tx.stageIndex >= MILESTONE_STEPS.length - 1;
+        const percent = Math.round(((tx.stageIndex + 1) / MILESTONE_STEPS.length) * 100);
+        const stepsHtml = MILESTONE_STEPS.map(function (label, stepIdx) {
+          const done = stepIdx <= tx.stageIndex;
+          return (
+            '<li class="milestone-item ' + (done ? "completed" : "") + '">' +
+            "<span>" + (done ? "✓" : stepIdx + 1) + "</span> " +
+            escapeHtml(label) +
+            "</li>"
+          );
+        }).join("");
+
+        const docsHtml = (tx.documents || [])
+          .map(function (doc) {
+            return "<li><strong>" + escapeHtml(doc.name) + ":</strong> " + escapeHtml(doc.status) + "</li>";
+          })
+          .join("");
+
+        const txPriceDisplay = tx.priceLabel || formatPeso(tx.salePrice);
+
         return (
           '<div class="card mb-2">' +
-          '  <div class="agency-card-row">' +
+          '  <div class="tx-card-header">' +
           "    <div>" +
-          "      <h3>" + escapeHtml(tx.id) + " — " + escapeHtml(tx.propertyTitle) + "</h3>" +
-          "      <p>Buyer: " + escapeHtml(tx.buyerName) + " &bull; Current Stage: <strong>" + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</strong></p>" +
+          "      <h3>" + escapeHtml(tx.id) + " &mdash; " + escapeHtml(tx.propertyTitle) + "</h3>" +
+          '      <p class="text-no-margin">' +
+          escapeHtml(tx.location) +
+          " &bull; Buyer: <strong>" +
+          escapeHtml(tx.buyerName) +
+          "</strong> &bull; Seller: " +
+          escapeHtml(tx.sellerName) +
+          "</p>" +
           "    </div>" +
           '    <div class="flex-wrap-gap">' +
+          '      <span class="badge badge-lucky-navy">' + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</span>" +
+          '      <span class="badge badge-lucky-gold">' + escapeHtml(txPriceDisplay) + "</span>" +
+          "    </div>" +
+          "  </div>" +
+          '  <div class="progress-header"><span>Lucky Seven Verification Milestone: ' + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</span><span>" + percent + "%</span></div>" +
+          '  <div class="progress-track"><div class="progress-fill" data-agency-progress-width="' + percent + '"></div></div>' +
+          '  <ul class="milestone-list">' + stepsHtml + "</ul>" +
+          '  <div class="mt-2 mb-2 doc-vault-box"><strong>TCT &amp; Tax Declaration Verification Vault:</strong><ul class="doc-vault-list">' + docsHtml + "</ul></div>" +
+          '  <div class="agency-card-row">' +
+          '    <span class="text-muted">Verified by Lucky Seven Property Management Solutions, Inc.</span>' +
+          '    <div class="flex-wrap-gap">' +
           '      <button type="button" class="btn btn-primary btn-sm" data-advance-idx="' + idx + '" ' + (isDone ? "disabled" : "") + ">" +
-          (isDone ? "Completed ✓" : "Advance to Next Milestone &rarr;") +
+          (isDone ? "All Milestones Verified ✓" : "Verify &amp; Advance Milestone &rarr;") +
           "      </button>" +
           '      <button type="button" class="btn btn-outline btn-sm" data-reset-tx-idx="' + idx + '">Reset Stage</button>' +
           "    </div>" +
@@ -1772,6 +1847,10 @@ function initTrackerPage() {
         );
       })
       .join("");
+
+    agencyList.querySelectorAll("[data-agency-progress-width]").forEach(function (bar) {
+      bar.style.width = bar.getAttribute("data-agency-progress-width") + "%";
+    });
 
     agencyList.querySelectorAll("[data-advance-idx]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -1843,6 +1922,8 @@ function initTrackerPage() {
           saveProperties(list);
           exitEditMode();
           renderManagedProperties();
+          renderAdminAccountsPortal();
+          renderUserWorkspace();
           feedback.className = "alert alert-success";
           feedback.innerHTML =
             "<strong>Updated Property Listing #" +
@@ -2001,6 +2082,87 @@ function initTrackerPage() {
         renderAdminAccountsPortal();
         showToast("Removed account " + (removed[0] ? removed[0].email : ""));
       });
+    });
+
+    const listingsTbody = document.getElementById("admin-overview-listings-tbody");
+    if (listingsTbody) {
+      listingsTbody.innerHTML = props
+        .map(function (prop) {
+          return (
+            "<tr>" +
+            '  <td><div class="table-prop-cell">' +
+            '    <img src="' +
+            escapeHtml(prop.image) +
+            '" alt="' +
+            escapeHtml(prop.title) +
+            '" class="table-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
+            "    <div><strong>#" +
+            prop.id +
+            " &mdash; " +
+            escapeHtml(prop.title) +
+            '</strong><div class="text-muted">Seller: ' +
+            escapeHtml(prop.seller || "Verified Landowner") +
+            "</div></div>" +
+            "  </div></td>" +
+            "  <td><strong>Brgy. " +
+            escapeHtml(prop.barangay) +
+            ", Panabo City</strong><div class='mt-1'><span class='badge badge-brown-soft'>" +
+            escapeHtml(prop.type) +
+            "</span></div></td>" +
+            "  <td><strong>" +
+            escapeHtml(formatPropertyPrice(prop)) +
+            "</strong><div class='text-muted'>" +
+            Number(prop.area).toLocaleString() +
+            " sqm &bull; " +
+            escapeHtml(prop.roadAccess || "Direct Road Access") +
+            "</div></td>" +
+            '  <td><span class="badge badge-green">OPEN FOR OFFERS &bull; ' +
+            escapeHtml(prop.badgeText || "Verified") +
+            "</span></td>" +
+            '  <td><div class="flex-wrap-gap">' +
+            '    <a href="property.html?id=' +
+            prop.id +
+            '" class="btn btn-outline btn-sm">View</a>' +
+            '    <button type="button" class="btn btn-outline btn-sm" data-admin-edit-id="' +
+            prop.id +
+            '">Edit</button>' +
+            '    <button type="button" class="btn btn-secondary btn-sm" data-admin-delete-id="' +
+            prop.id +
+            '">Delete</button>' +
+            "  </div></td>" +
+            "</tr>"
+          );
+        })
+        .join("");
+
+      listingsTbody.querySelectorAll("[data-admin-edit-id]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          loadPropertyIntoEditForm(btn.getAttribute("data-admin-edit-id"));
+        });
+      });
+
+      listingsTbody.querySelectorAll("[data-admin-delete-id]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          deletePropertyListingById(btn.getAttribute("data-admin-delete-id"));
+        });
+      });
+    }
+  }
+
+  const adminGoAddBtn = document.getElementById("admin-go-add-listing-btn");
+  if (adminGoAddBtn) {
+    adminGoAddBtn.addEventListener("click", function () {
+      if (!isAdmin) return;
+      exitEditMode();
+      activateTab("panel-seller");
+    });
+  }
+
+  const adminResetDataBtn = document.getElementById("admin-reset-data-btn");
+  if (adminResetDataBtn) {
+    adminResetDataBtn.addEventListener("click", function () {
+      if (!isAdmin) return;
+      resetDemoData();
     });
   }
 

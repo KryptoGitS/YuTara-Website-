@@ -2150,6 +2150,24 @@ h1, h2, h3, h4 {
   margin-bottom: 18px;
 }
 
+.sidebar-logo-img {
+  max-height: 44px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.sidebar-lucky-logo {
+  max-height: 54px;
+  width: 100%;
+  object-fit: contain;
+  background-color: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  border: 1px solid #E5D3A1;
+  margin-bottom: 6px;
+}
+
 .sidebar-brand-name {
   font-size: 1.35rem;
   font-weight: 800;
@@ -2161,6 +2179,7 @@ h1, h2, h3, h4 {
   font-size: 0.78rem;
   color: var(--text-muted);
   margin-top: 2px;
+  font-weight: 600;
 }
 
 .sidebar-group-title {
@@ -2434,6 +2453,227 @@ h1, h2, h3, h4 {
   border-color: var(--forest-green);
   color: var(--forest-green);
   transform: translateY(-1px);
+}
+
+/* Admin Land Listings Table Property Thumbnail Cell */
+.table-prop-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-prop-thumb {
+  width: 58px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   13C. LUCKY SEVEN PROPERTY MANAGEMENT SOLUTIONS THEME (.theme-lucky-seven)
+   Aligned with the official Lucky Seven Logo (Royal Navy #0F256E & Gold #C5921E)
+   ========================================================================== */
+.theme-lucky-seven {
+  background-color: #F6F8FC;
+}
+
+.theme-lucky-seven .workspace-sidebar {
+  background-color: #0D1F5C;
+  border-right: 2px solid #C5921E;
+  color: #FFFFFF;
+}
+
+.theme-lucky-seven .sidebar-brand-box {
+  border-bottom-color: rgba(197, 146, 30, 0.35);
+}
+
+.theme-lucky-seven .sidebar-brand-sub {
+  color: #F3D17C;
+}
+
+.theme-lucky-seven .sidebar-group-title {
+  color: #B9C7EE;
+}
+
+.theme-lucky-seven .sidebar-nav-btn {
+  color: #E2E9FA;
+}
+
+.theme-lucky-seven .sidebar-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #F7D888;
+}
+
+.theme-lucky-seven .sidebar-nav-btn.active {
+  background: linear-gradient(135deg, #C5921E 0%, #DFB140 100%);
+  color: #0B1948;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(197, 146, 30, 0.32);
+}
+
+.theme-lucky-seven .sidebar-footer-box {
+  border-top-color: rgba(197, 146, 30, 0.35);
+}
+
+.theme-lucky-seven .sidebar-profile-card {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: #C5921E;
+}
+
+.theme-lucky-seven .sidebar-avatar {
+  background-color: #C5921E;
+  color: #0B1948;
+  border-color: #F3D17C;
+}
+
+.theme-lucky-seven .sidebar-profile-name {
+  color: #FFFFFF;
+}
+
+.theme-lucky-seven .sidebar-profile-email {
+  color: #C8D4F5;
+}
+
+.theme-lucky-seven .sidebar-logout-btn {
+  color: #F3D17C;
+  border: 1px solid rgba(197, 146, 30, 0.45);
+  text-align: center;
+}
+
+.theme-lucky-seven .sidebar-logout-btn:hover {
+  background-color: #C5921E;
+  color: #0B1948;
+}
+
+.lucky-partner-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: linear-gradient(125deg, #0D1F5C 0%, #173493 65%, #1E3FA8 100%);
+  border: 2px solid #C5921E;
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 26px;
+  color: var(--white);
+  box-shadow: 0 12px 28px rgba(13, 31, 92, 0.16);
+}
+
+.lucky-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.lucky-banner-logo {
+  height: 74px;
+  width: auto;
+  background-color: var(--white);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 2px solid #DFB140;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.lucky-banner-eyebrow {
+  display: inline-block;
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #0B1948;
+  background: linear-gradient(135deg, #DFB140, #F5D77F);
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.lucky-banner-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.lucky-banner-sub {
+  font-size: 0.9rem;
+  color: #D6E0FA;
+  max-width: 560px;
+}
+
+.theme-lucky-seven .workspace-eyebrow {
+  color: #A87914;
+}
+
+.theme-lucky-seven .workspace-title,
+.theme-lucky-seven .section-title {
+  color: #0D1F5C;
+}
+
+.theme-lucky-seven .kpi-box {
+  border-top: 3px solid #C5921E;
+}
+
+.theme-lucky-seven .kpi-value {
+  color: #0D1F5C;
+}
+
+.theme-lucky-seven .btn-primary {
+  background-color: #0F256E;
+  border-color: #0F256E;
+  color: #FFFFFF;
+}
+
+.theme-lucky-seven .btn-primary:hover {
+  background-color: #1A3A9C;
+  border-color: #C5921E;
+  box-shadow: 0 4px 12px rgba(15, 37, 110, 0.28);
+}
+
+.theme-lucky-seven .btn-secondary {
+  background-color: #C5921E;
+  border-color: #C5921E;
+  color: #0B1948;
+  font-weight: 700;
+}
+
+.theme-lucky-seven .btn-secondary:hover {
+  background-color: #DFB140;
+}
+
+.theme-lucky-seven .btn-outline {
+  color: #0F256E;
+  border-color: #0F256E;
+}
+
+.theme-lucky-seven .btn-outline:hover {
+  background-color: #EDF1FA;
+}
+
+.theme-lucky-seven .badge-lucky-gold {
+  background-color: #FDF4DC;
+  color: #8F6408;
+  border: 1px solid #E5C168;
+}
+
+.theme-lucky-seven .badge-lucky-navy {
+  background-color: #0F256E;
+  color: #F5D77F;
+  border: 1px solid #C5921E;
+}
+
+.theme-lucky-seven .progress-fill {
+  background: linear-gradient(90deg, #0F256E, #C5921E);
+}
+
+.theme-lucky-seven .milestone-item.completed {
+  background-color: #EDF2FC;
+  border-color: #B8C8F2;
+  color: #0D1F5C;
 }
 
 /* 14. FOOTER & TOAST NOTIFICATIONS */

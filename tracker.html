@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YuTara | Workspace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=6" />
+  <link rel="stylesheet" href="css/styles.css?v=7" />
 </head>
 <body>
 
-  <div class="workspace-shell">
-    <!-- Left White Sidebar Navigation (Matches yutarasandbox.vercel.app) -->
+  <div class="workspace-shell" id="workspace-shell">
+    <!-- Left Sidebar Navigation (Matches yutarasandbox.vercel.app; auto-themes for Lucky Seven) -->
     <aside class="workspace-sidebar">
       <div>
         <div class="sidebar-brand-box">
           <a href="index.html">
-            <div class="sidebar-brand-name">YuTara</div>
+            <img src="assets/yutara-logo.png" alt="Logo" id="sidebar-logo-img" class="sidebar-logo-img" />
             <div class="sidebar-brand-sub" id="sidebar-brand-sub">Yuta ba? YuTara!</div>
           </a>
         </div>
@@ -42,7 +42,7 @@
           <!-- Admin Links (Hidden for User & Lucky Seven) -->
           <li id="nav-item-admin-accounts" class="hidden">
             <button type="button" class="sidebar-nav-btn" data-tab="panel-accounts" id="tab-btn-accounts">
-              <span>User &amp; Admin Accounts</span>
+              <span>Admin Portal &amp; Overview</span>
             </button>
           </li>
           <!-- Lucky Seven Verifier Links (Hidden for User) -->
@@ -104,7 +104,7 @@
           <div class="workspace-eyebrow">Seller Workspace</div>
           <h2 class="section-title mb-2">Land on sale</h2>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with clean Panabo property cards via js/app.js?v=6 -->
+            <!-- Populated dynamically with clean Panabo property cards via js/app.js?v=7 -->
           </div>
         </div>
 
@@ -112,12 +112,12 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=6 -->
+            <!-- Populated dynamically via js/app.js?v=7 -->
           </div>
         </div>
       </div>
 
-      <!-- PANEL 2: ADMIN ACCOUNTS PORTAL (Matches yutarasandbox.vercel.app/admin) -->
+      <!-- PANEL 2: ADMIN PORTAL (Matches yutarasandbox.vercel.app/admin — Accounts + All Land Listings Overview) -->
       <div id="panel-accounts" class="tab-panel hidden">
         <div class="workspace-eyebrow">Admin Workspace &middot; Owner &amp; Account Support</div>
         <h1 class="workspace-title">Admin Portal</h1>
@@ -195,7 +195,36 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=6 -->
+              <!-- Populated dynamically via js/app.js?v=7 -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Owner Support: All Land Listings Table (Directly visible on Admin Portal just like yutarasandbox.vercel.app/admin) -->
+        <div class="data-table-card">
+          <div class="flex-between-wrap">
+            <div>
+              <div class="workspace-eyebrow">Owner Support &middot; Panabo City Property Inventory</div>
+              <h2 class="section-title">All land listings</h2>
+            </div>
+            <div class="flex-wrap-gap">
+              <button type="button" class="btn btn-primary btn-sm" id="admin-go-add-listing-btn">+ Add / Edit Land Listing</button>
+              <button type="button" class="btn btn-outline btn-sm" id="admin-reset-data-btn">Reset Demo Data</button>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Location &amp; Type</th>
+                <th>Price &amp; Lot Area</th>
+                <th>Verification Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-overview-listings-tbody">
+              <!-- Populated dynamically via js/app.js?v=7 -->
             </tbody>
           </table>
         </div>
@@ -216,7 +245,7 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=6 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=7 for Admin role only -->
           </div>
         </div>
 
@@ -281,13 +310,20 @@
         </div>
       </div>
 
-      <!-- PANEL 4: LUCKY SEVEN LAND VERIFIER PORTAL (Restricted to Lucky Seven & Admin) -->
+      <!-- PANEL 4: LUCKY SEVEN LAND VERIFIER PORTAL (Branded Royal Navy & Gold Interface) -->
       <div id="panel-agency" class="tab-panel hidden">
-        <div class="workspace-eyebrow">Partner Verification Agency &middot; Panabo City</div>
-        <h1 class="workspace-title">Lucky Seven Land Verifier Portal</h1>
-        <p class="workspace-subtitle">
-          Verify Transfer Certificate of Title (TCT) and Real Property Tax documents, advance buyer transfer milestones, and coordinate site inspections.
-        </p>
+        <!-- Official Lucky Seven Partner Header Banner with Logo -->
+        <div class="lucky-partner-banner">
+          <img src="assets/lucky-seven-logo.jpg" alt="Lucky Seven Property Management Solutions, Inc." class="lucky-banner-logo" />
+          <div class="lucky-banner-body">
+            <div class="lucky-banner-eyebrow">Official Title &amp; Transfer Verification Partner &middot; Panabo City</div>
+            <h1 class="lucky-banner-title">Lucky Seven Property Management Solutions, Inc.</h1>
+            <p class="lucky-banner-desc">
+              Authorized Land Verifier Desk for Transfer Certificate of Title (TCT) screening, Real Property Tax clearance, DAR/Zoning audit, and 5-stage buyer transfer milestones.
+            </p>
+          </div>
+          <span class="badge badge-lucky-gold">Verified Agency Partner</span>
+        </div>
 
         <div class="kpi-grid-4">
           <div class="kpi-box">
@@ -308,8 +344,10 @@
           </div>
         </div>
 
+        <div class="workspace-eyebrow">Active Title Verification &amp; Transfer Queue</div>
+        <h2 class="section-title mb-2">Buyer Reservations Awaiting Lucky Seven Sign-Off</h2>
         <div id="agency-queue-list">
-          <!-- Populated dynamically via js/app.js?v=6 -->
+          <!-- Populated dynamically via js/app.js?v=7 -->
         </div>
       </div>
 
@@ -321,13 +359,13 @@
           Review and schedule buyer site visit requests across Panabo City barangays.
         </p>
         <div id="inquiries-list">
-          <!-- Populated dynamically via js/app.js?v=6 -->
+          <!-- Populated dynamically via js/app.js?v=7 -->
         </div>
       </div>
     </main>
   </div>
 
-  <script src="js/data.js?v=6"></script>
-  <script src="js/app.js?v=6"></script>
+  <script src="js/data.js?v=7"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 </html>
