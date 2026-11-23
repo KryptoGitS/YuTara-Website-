@@ -1611,7 +1611,7 @@ function initRegisterPage() {
       document.getElementById("review-name").textContent = document.getElementById("reg-name").value;
       document.getElementById("review-email").textContent = document.getElementById("reg-email").value;
       document.getElementById("review-phone").textContent = document.getElementById("reg-phone").value;
-      document.getElementById("review-role").textContent = document.getElementById("reg-role").value;
+      document.getElementById("review-role").textContent = "User (Buyer & Landowner)";
       document.getElementById("review-id-type").textContent = document.getElementById("reg-id-type").value;
     }
   }
@@ -1660,7 +1660,8 @@ function initRegisterPage() {
 
     const name = document.getElementById("reg-name").value.trim();
     const email = document.getElementById("reg-email").value.trim();
-    const role = document.getElementById("reg-role").value;
+    // Public self-registration is strictly restricted to standard User accounts (never Admin)
+    const role = "User";
     const pass = document.getElementById("reg-password").value;
 
     const customList = getCustomAccounts();

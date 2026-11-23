@@ -6185,6 +6185,19 @@ body.anim-debug-off {
   box-shadow: 0 0 0 3px rgba(49, 91, 25, 0.13);
 }
 
+.reg-input-locked {
+  background-color: #F6F8F3;
+  border-color: #DDE3D7;
+  color: #3D4A39;
+  font-weight: 500;
+  cursor: default;
+}
+
+.reg-input-locked:focus {
+  border-color: #DDE3D7;
+  box-shadow: none;
+}
+
 .reg-select {
   appearance: none;
   -webkit-appearance: none;

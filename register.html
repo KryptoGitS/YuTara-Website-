@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=24" />
+  <link rel="stylesheet" href="css/styles.css?v=25" />
 </head>
 <body class="register-page-body">
 
@@ -109,11 +109,16 @@
 
             <div class="reg-grid-2">
               <div class="reg-form-group">
-                <label class="reg-label" for="reg-role">Account Role</label>
-                <select id="reg-role" class="reg-select">
-                  <option value="User">User (Buyer &amp; Landowner)</option>
-                  <option value="Admin">Admin (YuTara Platform Administrator)</option>
-                </select>
+                <label class="reg-label" for="reg-role-display">Account Role</label>
+                <input
+                  type="text"
+                  id="reg-role-display"
+                  class="reg-input reg-input-locked"
+                  value="User (Buyer &amp; Landowner)"
+                  readonly
+                  aria-readonly="true"
+                />
+                <input type="hidden" id="reg-role" value="User" />
               </div>
               <div class="reg-form-group">
                 <label class="reg-label" for="reg-password">Create Password</label>
@@ -249,7 +254,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=24"></script>
-  <script src="js/app.js?v=24"></script>
+  <script src="js/data.js?v=25"></script>
+  <script src="js/app.js?v=25"></script>
 </body>
 </html>
