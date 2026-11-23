@@ -2028,9 +2028,9 @@ function initTrackerPage() {
   };
 
   const LS_DOC_META = {
-    tct: { shortTitle: "Clean Title (TCT / OCT)", icon: LS_ICONS.fileText, category: "Land Title Registry" },
-    taxDec: { shortTitle: "Tax Declaration & Clearance", icon: LS_ICONS.receipt, category: "Panabo City Assessor" },
-    ownerId: { shortTitle: "Owner ID & Deed / Authority", icon: LS_ICONS.idCard, category: "Owner Identity Proof" }
+    tct: { shortTitle: "TCT / OCT", icon: LS_ICONS.fileText, category: "Land Title Registry" },
+    taxDec: { shortTitle: "Tax Clearance", icon: LS_ICONS.receipt, category: "Panabo City Assessor" },
+    ownerId: { shortTitle: "Owner ID", icon: LS_ICONS.idCard, category: "Owner Identity Proof" }
   };
 
   const lsSearchInput = document.getElementById("ls-search-input");
@@ -2131,39 +2131,15 @@ function initTrackerPage() {
       : doc.legitimate
       ? "badge-valid"
       : "badge-pending";
-    const badgeLabel = !doc.submitted ? "Missing" : doc.legitimate ? "Legitimate" : "Pending";
-    const checkText = !doc.submitted
-      ? "File not submitted"
-      : doc.legitimate
-      ? "Checked authentic"
-      : "Confirm authentic";
+    const badgeLabel = !doc.submitted ? "Missing" : doc.legitimate ? "Valid" : "Pending";
+    const shortRef = !doc.submitted ? "Not uploaded" : doc.refNo || "Submitted";
 
     return (
-      '<div class="ls-doc-panel ' +
+      '<div class="ls-doc-panel ls-doc-compact ' +
       stateClass +
       '">' +
       '  <div class="ls-doc-top">' +
-      '    <div class="ls-doc-title-wrap">' +
-      '      <span class="ls-doc-icon-badge">' +
-      meta.icon +
-      "</span>" +
-      '      <div class="ls-doc-short-title">' +
-      escapeHtml(meta.shortTitle) +
-      "</div>" +
-      "    </div>" +
-      '    <span class="ls-doc-badge ' +
-      badgeClass +
-      '">' +
-      badgeLabel +
-      "</span>" +
-      "  </div>" +
-      '  <div class="ls-doc-ref">' +
-      escapeHtml(doc.refNo || "No reference number") +
-      "</div>" +
-      '  <div class="ls-doc-bottom">' +
-      '    <label class="ls-doc-check-toggle" title="' +
-      escapeHtml(checkText) +
-      '">' +
+      '    <label class="ls-doc-check-toggle" title="Toggle authenticity check">' +
       '      <input type="checkbox" data-doc-prop-id="' +
       prop.id +
       '" data-doc-key="' +
@@ -2172,15 +2148,27 @@ function initTrackerPage() {
       (doc.submitted && doc.legitimate ? "checked " : "") +
       (!doc.submitted ? "disabled " : "") +
       "/>" +
-      "      <span>" +
-      escapeHtml(checkText) +
+      '      <span class="ls-doc-short-title">' +
+      escapeHtml(meta.shortTitle) +
       "</span>" +
       "    </label>" +
+      '    <span class="ls-doc-badge ' +
+      badgeClass +
+      '">' +
+      badgeLabel +
+      "</span>" +
+      "  </div>" +
+      '  <div class="ls-doc-bottom">' +
+      '    <span class="ls-doc-ref" title="' +
+      escapeHtml(shortRef) +
+      '">' +
+      escapeHtml(shortRef) +
+      "</span>" +
       '    <button type="button" class="ls-doc-inspect-link" data-open-doc-prop-id="' +
       prop.id +
       '" data-open-doc-key="' +
       docKey +
-      '">Inspect</button>' +
+      '" title="Inspect document">View</button>' +
       "  </div>" +
       "</div>"
     );
@@ -2189,6 +2177,13 @@ function initTrackerPage() {
   function buildLuckyPropertyCardHTML(prop) {
     const docs = ensurePropertyDocuments(prop);
     const state = getPropertyVerificationState(prop);
+    const shortStatusLabel =
+      state.key === "Pending Review"
+        ? "Ready"
+        : state.key === "Incomplete Documents"
+        ? "Pending"
+        : state.label;
+
     const docPanelsHtml = ["tct", "taxDec", "ownerId"]
       .map(function (key) {
         return buildLuckyDocumentPanelHTML(prop, key, docs[key]);
@@ -2200,19 +2195,17 @@ function initTrackerPage() {
         prop.id +
         '">' +
         LS_ICONS.shieldOff +
-        " <span>Revoke Verification</span></button>"
+        " <span>Revoke</span></button>"
       : '<button type="button" class="btn btn-ls-verify btn-sm" data-verify-prop-id="' +
         prop.id +
         '" ' +
         (!state.allDocsLegit ? "disabled" : "") +
         ' title="' +
-        (state.allDocsLegit
-          ? "Approve and verify this property"
-          : "Blocked: All 3 legitimate documents are required") +
+        (state.allDocsLegit ? "Verify this land property" : "Missing required documents") +
         '">' +
         LS_ICONS.shieldCheck +
         " <span>" +
-        (state.allDocsLegit ? "Verify Land Property" : "Blocked (Missing Docs)") +
+        (state.allDocsLegit ? "Verify" : "Blocked") +
         "</span></button>";
 
     return (
@@ -2227,63 +2220,51 @@ function initTrackerPage() {
       "      <div>" +
       '        <h3 class="ls-prop-title">#' +
       prop.id +
-      " &mdash; " +
+      " " +
       escapeHtml(prop.title) +
       "</h3>" +
       '        <div class="ls-prop-meta-row">' +
       '          <span class="ls-meta-chip">' +
       LS_ICONS.mapPin +
-      " Brgy. " +
+      " " +
       escapeHtml(prop.barangay) +
-      ", Panabo City</span>" +
+      "</span>" +
       '          <span class="ls-meta-chip">' +
       LS_ICONS.user +
-      " Owner: <strong>" +
-      escapeHtml(prop.seller || "Panabo Landowner") +
-      "</strong></span>" +
+      " " +
+      escapeHtml(prop.seller || "Owner") +
+      "</span>" +
       '          <span class="ls-meta-chip">' +
-      escapeHtml(prop.type) +
-      " &bull; " +
-      Number(prop.area || 0).toLocaleString() +
-      " sqm</span>" +
+      escapeHtml(formatPropertyPrice(prop)) +
+      "</span>" +
       "        </div>" +
       "      </div>" +
       "    </div>" +
       '    <div class="ls-prop-badges">' +
-      '      <span class="ls-listing-pill">Open &bull; ' +
-      escapeHtml(formatPropertyPrice(prop)) +
-      "</span>" +
       '      <span class="ls-status-pill ' +
       state.pillClass +
       '">' +
       state.pillIcon +
       " " +
-      escapeHtml(state.label) +
+      escapeHtml(shortStatusLabel) +
       "</span>" +
       "    </div>" +
       "  </div>" +
       '  <div class="ls-doc-grid">' +
       docPanelsHtml +
       "  </div>" +
-      '  <div class="ls-summary-bar ' +
-      state.summaryClass +
-      '">' +
-      state.pillIcon +
-      " <span>" +
-      escapeHtml(state.summaryText) +
-      "</span></div>" +
       '  <div class="ls-card-footer">' +
       '    <div class="ls-action-group">' +
       '      <button type="button" class="btn btn-ls-navy btn-sm" data-open-doc-prop-id="' +
       prop.id +
       '" data-open-doc-key="tct">' +
       LS_ICONS.eye +
-      " <span>View Documents</span></button>" +
+      " <span>Docs</span></button>" +
       '      <a href="property.html?id=' +
       prop.id +
       '" class="btn btn-ls-outline btn-sm">' +
       LS_ICONS.externalLink +
-      " <span>Inspect Lot</span></a>" +
+      " <span>Lot</span></a>" +
       "    </div>" +
       '    <div class="ls-action-group">' +
       primaryAdminBtn +
@@ -2669,8 +2650,7 @@ function initTrackerPage() {
     });
 
     if (lsResultsSummary) {
-      lsResultsSummary.textContent =
-        "Showing " + filtered.length + " of " + properties.length + " land properties";
+      lsResultsSummary.textContent = filtered.length + " / " + properties.length;
     }
 
     if (filtered.length === 0) {
@@ -2882,64 +2862,35 @@ function initTrackerPage() {
         const blockedByDocs = nextStageIsVerification && !docsValid;
         const isDone = tx.stageIndex >= MILESTONE_STEPS.length - 1;
         const percent = Math.round(((tx.stageIndex + 1) / MILESTONE_STEPS.length) * 100);
-        const stepsHtml = MILESTONE_STEPS.map(function (label, stepIdx) {
-          const done = stepIdx <= tx.stageIndex;
-          return (
-            '<li class="milestone-item ' + (done ? "completed" : "") + '">' +
-            "<span>" + (done ? "✓" : stepIdx + 1) + "</span> " +
-            escapeHtml(label) +
-            "</li>"
-          );
-        }).join("");
-
-        const docsHtml = (tx.documents || [])
-          .map(function (doc) {
-            return "<li><strong>" + escapeHtml(doc.name) + ":</strong> " + escapeHtml(doc.status) + "</li>";
-          })
-          .join("");
-
         const txPriceDisplay = tx.priceLabel || formatPeso(tx.salePrice);
 
         return (
-          '<div class="card mb-2 anim-fade-up" data-anim="ytFadeInUp">' +
-          '  <div class="tx-card-header">' +
+          '<article class="ls-prop-card anim-fade-up" data-anim="ytFadeInUp">' +
+          '  <div class="ls-prop-header">' +
           "    <div>" +
-          "      <h3>" + escapeHtml(tx.id) + " &mdash; " + escapeHtml(tx.propertyTitle) + "</h3>" +
-          '      <p class="text-no-margin">' +
-          escapeHtml(tx.location) +
-          " &bull; Buyer: <strong>" +
-          escapeHtml(tx.buyerName) +
-          "</strong> &bull; Seller: " +
-          escapeHtml(tx.sellerName) +
-          "</p>" +
+          '      <h3 class="ls-prop-title">' + escapeHtml(tx.id) + " &bull; " + escapeHtml(tx.propertyTitle) + "</h3>" +
+          '      <div class="ls-prop-meta-row">' +
+          '        <span class="ls-meta-chip">' + LS_ICONS.mapPin + " " + escapeHtml(tx.location) + "</span>" +
+          '        <span class="ls-meta-chip">' + LS_ICONS.user + " " + escapeHtml(tx.buyerName) + "</span>" +
+          '        <span class="ls-meta-chip">' + escapeHtml(txPriceDisplay) + "</span>" +
+          "      </div>" +
           "    </div>" +
-          '    <div class="flex-wrap-gap">' +
-          '      <span class="badge badge-lucky-navy">' + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</span>" +
-          '      <span class="badge badge-lucky-gold">' + escapeHtml(txPriceDisplay) + "</span>" +
-          "    </div>" +
+          '    <span class="ls-status-pill ' + (isDone ? "status-verified" : "status-pending") + '">' +
+          escapeHtml(MILESTONE_STEPS[tx.stageIndex]) +
+          " (" + (tx.stageIndex + 1) + "/" + MILESTONE_STEPS.length + ")" +
+          "    </span>" +
           "  </div>" +
-          '  <div class="progress-header"><span>Lucky Seven Verification Milestone: ' + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</span><span>" + percent + "%</span></div>" +
-          '  <div class="progress-track"><div class="progress-fill" data-agency-progress-width="' + percent + '"></div></div>' +
-          '  <ul class="milestone-list">' + stepsHtml + "</ul>" +
-          '  <div class="mt-2 mb-2 doc-vault-box"><strong>TCT &amp; Tax Declaration Verification Vault:</strong><ul class="doc-vault-list">' + docsHtml + "</ul></div>" +
-          '  <div class="agency-card-row">' +
-          '    <span class="text-muted">' +
-          (docsValid
-            ? "Legitimate Property Documents Confirmed by Lucky Seven"
-            : "Blocked: Verify all 3 legitimate land documents above before final Lucky Seven sign-off") +
-          "</span>" +
-          '    <div class="flex-wrap-gap">' +
-          '      <button type="button" class="btn btn-primary btn-sm" data-advance-idx="' + idx + '" ' + (isDone || blockedByDocs ? "disabled" : "") + ">" +
-          (isDone
-            ? "All Milestones Verified ✓"
-            : blockedByDocs
-            ? "Blocked (Needs Legitimate Docs)"
-            : "Verify &amp; Advance Milestone &rarr;") +
+          '  <div class="progress-track mt-2 mb-2"><div class="progress-fill" data-agency-progress-width="' + percent + '"></div></div>' +
+          '  <div class="ls-card-footer">' +
+          '    <span class="ls-results-count">' + percent + "% complete</span>" +
+          '    <div class="ls-action-group">' +
+          '      <button type="button" class="btn btn-ls-navy btn-sm" data-advance-idx="' + idx + '" ' + (isDone || blockedByDocs ? "disabled" : "") + ">" +
+          (isDone ? "Done ✓" : blockedByDocs ? "Blocked" : "Advance &rarr;") +
           "      </button>" +
-          '      <button type="button" class="btn btn-outline btn-sm" data-reset-tx-idx="' + idx + '">Reset Stage</button>' +
+          '      <button type="button" class="btn btn-ls-outline btn-sm" data-reset-tx-idx="' + idx + '">Reset</button>' +
           "    </div>" +
           "  </div>" +
-          "</div>"
+          "</article>"
         );
       })
       .join("");

@@ -3581,14 +3581,27 @@ h1, h2, h3, h4 {
 .ls-doc-panel {
   border: 1px solid var(--ls-border);
   border-radius: 10px;
-  padding: 13px 14px;
+  padding: 10px 12px;
   background-color: #F8FAFC;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   transition: border-color var(--anim-duration-fast) var(--anim-ease),
     background-color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.ls-doc-panel.ls-doc-compact .ls-doc-ref {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 78%;
+}
+
+.ls-doc-panel.ls-doc-compact .ls-doc-bottom {
+  border-top: none;
+  padding-top: 0;
 }
 
 .ls-doc-panel.doc-state-valid {
