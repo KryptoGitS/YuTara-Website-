@@ -16,16 +16,49 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. STORAGE KEYS & HELPER UTILITIES
+   1. STORAGE KEYS, DIAGNOSTIC REPORTER & HELPER UTILITIES
    -------------------------------------------------------------------------- */
 const STORAGE_KEYS = {
   properties: "yutara_v3_properties",
   saved: "yutara_v3_saved",
   transactions: "yutara_v3_transactions",
+  inquiries: "yutara_v3_inquiries",
   session: "yutara_v3_session"
 };
 
 let toastTimer = null;
+
+function reportDiagnostic(layer, component, operation, err) {
+  console.warn(
+    "[YuTara Diagnostic] Layer=" +
+      layer +
+      " | Component=" +
+      component +
+      " | Operation=" +
+      operation +
+      " | Reason=" +
+      (err && err.message ? err.message : String(err))
+  );
+}
+
+function lockFormSubmission(form) {
+  if (!form) return false;
+  if (form.getAttribute("data-submitting") === "true") {
+    return true;
+  }
+  form.setAttribute("data-submitting", "true");
+  const submitBtn = form.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+  }
+  setTimeout(function () {
+    form.removeAttribute("data-submitting");
+    if (submitBtn) {
+      submitBtn.disabled = false;
+    }
+  }, 600);
+  return false;
+}
 
 function showToast(message) {
   let toast = document.getElementById("yutara-toast");
@@ -81,14 +114,19 @@ function getProperties() {
   if (!raw) return DEFAULT_PROPERTIES.slice();
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PROPERTIES.slice();
+    return Array.isArray(parsed) ? parsed : DEFAULT_PROPERTIES.slice();
   } catch (err) {
+    reportDiagnostic("DataStore", "Properties", "getProperties", err);
     return DEFAULT_PROPERTIES.slice();
   }
 }
 
 function saveProperties(list) {
-  localStorage.setItem(STORAGE_KEYS.properties, JSON.stringify(list));
+  try {
+    localStorage.setItem(STORAGE_KEYS.properties, JSON.stringify(list));
+  } catch (err) {
+    reportDiagnostic("DataStore", "Properties", "saveProperties", err);
+  }
 }
 
 function getSavedIds() {
@@ -96,6 +134,7 @@ function getSavedIds() {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.saved) || "[]");
     return Array.isArray(parsed) ? parsed : [];
   } catch (err) {
+    reportDiagnostic("DataStore", "SavedListings", "getSavedIds", err);
     return [];
   }
 }
@@ -111,7 +150,11 @@ function toggleSavedProperty(propertyId) {
     saved.push(id);
   }
 
-  localStorage.setItem(STORAGE_KEYS.saved, JSON.stringify(saved));
+  try {
+    localStorage.setItem(STORAGE_KEYS.saved, JSON.stringify(saved));
+  } catch (err) {
+    reportDiagnostic("DataStore", "SavedListings", "toggleSavedProperty", err);
+  }
   return saved.includes(id);
 }
 
@@ -122,24 +165,55 @@ function getTransactions() {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : DEFAULT_TRANSACTIONS.slice();
   } catch (err) {
+    reportDiagnostic("DataStore", "Transactions", "getTransactions", err);
     return DEFAULT_TRANSACTIONS.slice();
   }
 }
 
 function saveTransactions(list) {
-  localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(list));
+  try {
+    localStorage.setItem(STORAGE_KEYS.transactions, JSON.stringify(list));
+  } catch (err) {
+    reportDiagnostic("DataStore", "Transactions", "saveTransactions", err);
+  }
+}
+
+function getInquiries() {
+  const fallback = typeof DEFAULT_INQUIRIES !== "undefined" ? DEFAULT_INQUIRIES.slice() : [];
+  const raw = localStorage.getItem(STORAGE_KEYS.inquiries);
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch (err) {
+    reportDiagnostic("DataStore", "Inquiries", "getInquiries", err);
+    return fallback;
+  }
+}
+
+function saveInquiries(list) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.inquiries, JSON.stringify(list));
+  } catch (err) {
+    reportDiagnostic("DataStore", "Inquiries", "saveInquiries", err);
+  }
 }
 
 function getSession() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEYS.session) || "null");
   } catch (err) {
+    reportDiagnostic("DataStore", "AuthSession", "getSession", err);
     return null;
   }
 }
 
 function setSession(userObj) {
-  localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(userObj));
+  try {
+    localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(userObj));
+  } catch (err) {
+    reportDiagnostic("DataStore", "AuthSession", "setSession", err);
+  }
 }
 
 function logoutUser() {
@@ -151,6 +225,7 @@ function resetDemoData() {
   localStorage.removeItem(STORAGE_KEYS.properties);
   localStorage.removeItem(STORAGE_KEYS.saved);
   localStorage.removeItem(STORAGE_KEYS.transactions);
+  localStorage.removeItem(STORAGE_KEYS.inquiries);
   localStorage.removeItem(STORAGE_KEYS.session);
   window.location.reload();
 }
@@ -811,19 +886,43 @@ function initPropertyDetailPage() {
 
   modalForm.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (lockFormSubmission(modalForm)) return;
+
     const sender = document.getElementById("modal-name").value.trim();
     const phone = document.getElementById("modal-phone").value.trim();
+    const notesEl = document.getElementById("modal-notes");
+    const notes = notesEl ? notesEl.value.trim() : "";
+
     if (!sender || !phone) {
       modalStatus.className = "alert alert-error";
       modalStatus.textContent = "Please enter both your name and mobile number.";
       modalStatus.classList.remove("hidden");
       return;
     }
+
+    const inquiries = getInquiries();
+    const newInq = {
+      id: "INQ-" + Math.floor(1000 + Math.random() * 9000),
+      type: modalTitle.textContent.indexOf("Site Visit") >= 0 ? "Request Site Visit" : "Seller Inquiry",
+      propertyTitle: prop.title + " (Brgy. " + prop.barangay + ")",
+      senderName: sender,
+      contactInfo: phone,
+      message: notes || "Requested site inspection and title document review.",
+      status: "Open",
+      createdAt: new Date().toISOString().slice(0, 10)
+    };
+    inquiries.unshift(newInq);
+    saveInquiries(inquiries);
+
     modalStatus.className = "alert alert-success";
-    modalStatus.textContent =
-      "Demo request recorded for " + sender + ". An affiliated agency coordinator will follow up in the live version.";
+    modalStatus.innerHTML =
+      "<strong>Inquiry Recorded (" +
+      escapeHtml(newInq.id) +
+      ")!</strong> Saved for " +
+      escapeHtml(sender) +
+      '. <a href="tracker.html?tab=panel-inquiries" class="inline-action-link">View in Dashboard Inquiries &rarr;</a>';
     modalStatus.classList.remove("hidden");
-    showToast("Inquiry recorded for " + sender);
+    showToast("Inquiry " + newInq.id + " recorded for " + sender);
   });
 }
 
@@ -864,6 +963,8 @@ function initReservationPage() {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (lockFormSubmission(form)) return;
+
     const feedback = document.getElementById("res-feedback");
     const buyerName = buyerInput.value.trim();
     const buyerPhone = document.getElementById("res-buyer-phone").value.trim();
@@ -921,6 +1022,8 @@ function initLoginPage() {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (lockFormSubmission(form)) return;
+
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
     const role = document.getElementById("login-role").value;
@@ -1022,6 +1125,8 @@ function initRegisterPage() {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (lockFormSubmission(form)) return;
+
     const name = document.getElementById("reg-name").value.trim();
     const email = document.getElementById("reg-email").value.trim();
     const role = document.getElementById("reg-role").value;
@@ -1048,9 +1153,13 @@ function initContactPage() {
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (lockFormSubmission(form)) return;
+
     const feedback = document.getElementById("contact-feedback");
     const name = document.getElementById("contact-name").value.trim();
     const email = document.getElementById("contact-email").value.trim();
+    const topicEl = document.getElementById("contact-topic");
+    const topic = topicEl ? topicEl.value : "General Inquiry";
     const message = document.getElementById("contact-message").value.trim();
 
     if (!name || !email.includes("@") || message.length < 10) {
@@ -1060,17 +1169,35 @@ function initContactPage() {
       return;
     }
 
+    const inquiries = getInquiries();
+    const newInq = {
+      id: "INQ-" + Math.floor(1000 + Math.random() * 9000),
+      type: topic,
+      propertyTitle: "Panabo City Marketplace Inquiry",
+      senderName: name,
+      contactInfo: email,
+      message: message,
+      status: "Open",
+      createdAt: new Date().toISOString().slice(0, 10)
+    };
+    inquiries.unshift(newInq);
+    saveInquiries(inquiries);
+
     feedback.className = "alert alert-success";
-    feedback.textContent =
-      "Thank you, " + name + "! Your inquiry has been recorded for demo testing (Official Email: YutaraPanabo@gmail.com).";
+    feedback.innerHTML =
+      "Thank you, <strong>" +
+      escapeHtml(name) +
+      "</strong>! Your inquiry (" +
+      escapeHtml(newInq.id) +
+      ') has been saved. <a href="tracker.html?tab=panel-inquiries" class="inline-action-link">View in Dashboard Inquiries &rarr;</a>';
     feedback.classList.remove("hidden");
     form.reset();
-    showToast("Inquiry sent");
+    showToast("Inquiry " + newInq.id + " sent");
   });
 }
 
 /* --------------------------------------------------------------------------
-   11. MVP WORKFLOW HUB (tracker.html — Buyer Tracker, Seller Intake, Agency)
+   11. MVP WORKFLOW HUB (tracker.html — Buyer Tracker, Property CRUD, Agency, Inquiries)
    -------------------------------------------------------------------------- */
 function initTrackerPage() {
   const tabContainer = document.getElementById("workflow-tabs");
@@ -1092,11 +1219,230 @@ function initTrackerPage() {
     });
   });
 
+  const initialTab = getQueryParam("tab");
+  if (initialTab && document.getElementById(initialTab)) {
+    activateTab(initialTab);
+  }
+
   const brgySelect = document.getElementById("seller-barangay");
   if (brgySelect) {
     brgySelect.innerHTML = PANABO_BARANGAYS.map(function (b) {
       return '<option value="' + escapeHtml(b) + '">' + escapeHtml(b) + "</option>";
     }).join("");
+  }
+
+  const sellerForm = document.getElementById("seller-intake-form");
+  const editIdInput = document.getElementById("seller-edit-id");
+  const formHeading = document.getElementById("seller-form-heading");
+  const submitBtn = document.getElementById("seller-submit-btn");
+  const cancelEditBtn = document.getElementById("seller-cancel-edit-btn");
+
+  function exitEditMode() {
+    if (sellerForm) sellerForm.reset();
+    if (editIdInput) editIdInput.value = "";
+    if (formHeading) formHeading.textContent = "Submit a New Panabo City Land Listing";
+    if (submitBtn) submitBtn.innerHTML = "Publish Listing to Marketplace &rarr;";
+    if (cancelEditBtn) cancelEditBtn.classList.add("hidden");
+  }
+
+  if (cancelEditBtn) {
+    cancelEditBtn.addEventListener("click", function () {
+      exitEditMode();
+      showToast("Cancelled property edit");
+    });
+  }
+
+  function renderManagedProperties() {
+    const container = document.getElementById("managed-properties-list");
+    const countBadge = document.getElementById("managed-prop-count");
+    if (!container) return;
+
+    const properties = getProperties();
+    if (countBadge) {
+      countBadge.textContent = properties.length + " Listings";
+    }
+
+    if (properties.length === 0) {
+      container.innerHTML =
+        '<div class="card-soft text-center">' +
+        "  <h3>No property listings in storage</h3>" +
+        '  <p class="mb-2">Use the form above to add a new Panabo City listing or click Reset Demo Data in the footer.</p>' +
+        "</div>";
+      return;
+    }
+
+    container.innerHTML = properties
+      .map(function (prop) {
+        return (
+          '<div class="card-soft mb-2">' +
+          '  <div class="agency-card-row">' +
+          "    <div>" +
+          "      <h3>#" +
+          prop.id +
+          " &mdash; " +
+          escapeHtml(prop.title) +
+          "</h3>" +
+          '      <p class="text-no-margin">Brgy. ' +
+          escapeHtml(prop.barangay) +
+          " &bull; " +
+          escapeHtml(prop.type) +
+          " &bull; " +
+          Number(prop.area).toLocaleString() +
+          " sqm &bull; <strong>" +
+          escapeHtml(formatPropertyPrice(prop)) +
+          "</strong></p>" +
+          "    </div>" +
+          '    <div class="flex-wrap-gap">' +
+          '      <a href="property.html?id=' +
+          prop.id +
+          '" class="btn btn-outline btn-sm">View</a>' +
+          '      <button type="button" class="btn btn-outline btn-sm" data-edit-prop-id="' +
+          prop.id +
+          '">Edit</button>' +
+          '      <button type="button" class="btn btn-secondary btn-sm" data-delete-prop-id="' +
+          prop.id +
+          '">Delete</button>' +
+          "    </div>" +
+          "  </div>" +
+          "</div>"
+        );
+      })
+      .join("");
+
+    container.querySelectorAll("[data-edit-prop-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const targetId = Number(btn.getAttribute("data-edit-prop-id"));
+        const prop = getProperties().find(function (p) {
+          return p.id === targetId;
+        });
+        if (!prop) return;
+
+        if (editIdInput) editIdInput.value = String(prop.id);
+        document.getElementById("seller-title").value = prop.title;
+        document.getElementById("seller-type").value = prop.type;
+        document.getElementById("seller-barangay").value = prop.barangay;
+        document.getElementById("seller-price").value = prop.price || 0;
+        document.getElementById("seller-area").value = prop.area;
+        document.getElementById("seller-road").value = prop.roadAccess;
+        document.getElementById("seller-desc").value = prop.description;
+
+        if (formHeading) {
+          formHeading.textContent = "Edit Property Listing #" + prop.id + " (" + prop.barangay + ")";
+        }
+        if (submitBtn) {
+          submitBtn.innerHTML = "Save Property Changes &checkmark;";
+        }
+        if (cancelEditBtn) {
+          cancelEditBtn.classList.remove("hidden");
+        }
+        sellerForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        showToast("Loaded listing #" + prop.id + " for editing");
+      });
+    });
+
+    container.querySelectorAll("[data-delete-prop-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const targetId = Number(btn.getAttribute("data-delete-prop-id"));
+        const list = getProperties().filter(function (p) {
+          return p.id !== targetId;
+        });
+        saveProperties(list);
+        renderManagedProperties();
+        showToast("Deleted property listing #" + targetId);
+      });
+    });
+  }
+
+  function renderInquiries() {
+    const container = document.getElementById("inquiries-list");
+    const countPill = document.getElementById("inquiry-count-pill");
+    if (!container) return;
+
+    const inquiries = getInquiries();
+    if (countPill) {
+      countPill.textContent = "(" + inquiries.length + ")";
+    }
+
+    if (inquiries.length === 0) {
+      container.innerHTML =
+        '<div class="card text-center">' +
+        "  <h3>No active inquiries</h3>" +
+        "  <p>Submit a Request Site Visit on any Property Details page or use the Contact Us form to test live inquiry tracking.</p>" +
+        "</div>";
+      return;
+    }
+
+    container.innerHTML = inquiries
+      .map(function (inq, idx) {
+        const badgeClass =
+          inq.status === "Resolved"
+            ? "badge-green"
+            : inq.status === "Scheduled"
+            ? "badge-promoted"
+            : "badge-brown-soft";
+        return (
+          '<div class="card mb-2">' +
+          '  <div class="tx-card-header">' +
+          "    <div>" +
+          "      <h3>" +
+          escapeHtml(inq.id) +
+          " &mdash; " +
+          escapeHtml(inq.type) +
+          "</h3>" +
+          '      <p class="text-no-margin"><strong>' +
+          escapeHtml(inq.propertyTitle) +
+          "</strong> &bull; From: " +
+          escapeHtml(inq.senderName) +
+          " (" +
+          escapeHtml(inq.contactInfo) +
+          ")</p>" +
+          "    </div>" +
+          '    <span class="badge ' +
+          badgeClass +
+          '">' +
+          escapeHtml(inq.status) +
+          "</span>" +
+          "  </div>" +
+          '  <p class="mt-1 mb-2">' +
+          escapeHtml(inq.message) +
+          "</p>" +
+          '  <div class="flex-wrap-gap">' +
+          '    <button type="button" class="btn btn-primary btn-sm" data-cycle-inq-idx="' +
+          idx +
+          '">Advance Inquiry Status</button>' +
+          '    <button type="button" class="btn btn-outline btn-sm" data-delete-inq-idx="' +
+          idx +
+          '">Delete Inquiry</button>' +
+          "  </div>" +
+          "</div>"
+        );
+      })
+      .join("");
+
+    container.querySelectorAll("[data-cycle-inq-idx]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const idx = Number(btn.getAttribute("data-cycle-inq-idx"));
+        const list = getInquiries();
+        if (!list[idx]) return;
+        const current = list[idx].status;
+        list[idx].status =
+          current === "Open" ? "Scheduled" : current === "Scheduled" ? "Resolved" : "Open";
+        saveInquiries(list);
+        renderInquiries();
+        showToast("Inquiry " + list[idx].id + " marked as " + list[idx].status);
+      });
+    });
+
+    container.querySelectorAll("[data-delete-inq-idx]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const idx = Number(btn.getAttribute("data-delete-inq-idx"));
+        const list = getInquiries();
+        const removed = list.splice(idx, 1);
+        saveInquiries(list);
+        renderInquiries();
+        showToast("Deleted inquiry " + (removed[0] ? removed[0].id : ""));
+      });
+    });
   }
 
   function renderWorkflows() {
@@ -1116,6 +1462,21 @@ function initTrackerPage() {
     document.getElementById("stat-pending").textContent = pendingCount;
     document.getElementById("stat-completed").textContent = completedCount;
     document.getElementById("stat-escrow").textContent = formatPeso(totalEscrow);
+
+    if (transactions.length === 0) {
+      buyerList.innerHTML =
+        '<div class="card text-center">' +
+        "  <h3>No active reservations</h3>" +
+        '  <p class="mb-2">Open any Panabo City property listing and click Reserve Property (MVP) to start a tracked transaction.</p>' +
+        '  <a href="marketplace.html" class="btn btn-primary btn-sm">Explore Marketplace &rarr;</a>' +
+        "</div>";
+      agencyList.innerHTML =
+        '<div class="card text-center">' +
+        "  <h3>Agency verification queue is empty</h3>" +
+        "  <p>New buyer reservations will appear here for milestone verification.</p>" +
+        "</div>";
+      return;
+    }
 
     buyerList.innerHTML = transactions
       .map(function (tx) {
@@ -1167,9 +1528,12 @@ function initTrackerPage() {
           "      <h3>" + escapeHtml(tx.id) + " — " + escapeHtml(tx.propertyTitle) + "</h3>" +
           "      <p>Buyer: " + escapeHtml(tx.buyerName) + " &bull; Current Stage: <strong>" + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</strong></p>" +
           "    </div>" +
-          '    <button type="button" class="btn btn-primary btn-sm" data-advance-idx="' + idx + '" ' + (isDone ? "disabled" : "") + ">" +
+          '    <div class="flex-wrap-gap">' +
+          '      <button type="button" class="btn btn-primary btn-sm" data-advance-idx="' + idx + '" ' + (isDone ? "disabled" : "") + ">" +
           (isDone ? "Completed ✓" : "Advance to Next Milestone &rarr;") +
-          "    </button>" +
+          "      </button>" +
+          '      <button type="button" class="btn btn-outline btn-sm" data-reset-tx-idx="' + idx + '">Reset Stage</button>' +
+          "    </div>" +
           "  </div>" +
           "</div>"
         );
@@ -1188,31 +1552,76 @@ function initTrackerPage() {
         }
       });
     });
+
+    agencyList.querySelectorAll("[data-reset-tx-idx]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const index = Number(btn.getAttribute("data-reset-tx-idx"));
+        const list = getTransactions();
+        if (list[index]) {
+          list[index].stageIndex = 0;
+          saveTransactions(list);
+          renderWorkflows();
+          showToast("Reset transaction " + list[index].id + " to Stage 1");
+        }
+      });
+    });
   }
 
-  const sellerForm = document.getElementById("seller-intake-form");
   if (sellerForm) {
     sellerForm.addEventListener("submit", function (event) {
       event.preventDefault();
+      if (lockFormSubmission(sellerForm)) return;
+
       const feedback = document.getElementById("seller-feedback");
+      const editingId = editIdInput && editIdInput.value ? Number(editIdInput.value) : 0;
       const title = document.getElementById("seller-title").value.trim();
       const type = document.getElementById("seller-type").value;
       const barangay = document.getElementById("seller-barangay").value;
       const price = Number(document.getElementById("seller-price").value);
       const area = Number(document.getElementById("seller-area").value);
-      const roadAccess = document.getElementById("seller-road").value;
+      const roadAccess = document.getElementById("seller-road").value.trim();
       const description = document.getElementById("seller-desc").value.trim();
 
-      if (!title || price <= 0 || area <= 0) {
+      if (!title || isNaN(price) || price < 0 || area <= 0) {
         feedback.className = "alert alert-error";
-        feedback.textContent = "Please provide a property title, positive price, and positive lot area.";
+        feedback.textContent = "Please provide a property title, valid price (0 or higher), and positive lot area.";
         feedback.classList.remove("hidden");
         return;
       }
 
       const list = getProperties();
-      const nextId = list.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
       const session = getSession();
+
+      if (editingId > 0) {
+        const targetIndex = list.findIndex(function (p) {
+          return p.id === editingId;
+        });
+        if (targetIndex >= 0) {
+          list[targetIndex].title = title;
+          list[targetIndex].type = type;
+          list[targetIndex].barangay = barangay;
+          list[targetIndex].price = price;
+          list[targetIndex].priceLabel = price > 0 ? formatPeso(price) : "Negotiable (For Sale)";
+          list[targetIndex].area = area;
+          list[targetIndex].roadAccess = roadAccess;
+          list[targetIndex].description = description || list[targetIndex].description;
+          saveProperties(list);
+          exitEditMode();
+          renderManagedProperties();
+          feedback.className = "alert alert-success";
+          feedback.innerHTML =
+            "<strong>Updated Property Listing #" +
+            editingId +
+            '!</strong> <a href="property.html?id=' +
+            editingId +
+            '" class="inline-action-link">View Updated Property &rarr;</a>';
+          feedback.classList.remove("hidden");
+          showToast("Updated property listing #" + editingId);
+          return;
+        }
+      }
+
+      const nextId = list.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
 
       list.unshift({
         id: nextId,
@@ -1222,7 +1631,7 @@ function initTrackerPage() {
         city: "Panabo City",
         province: "Davao del Norte",
         price: price,
-        priceLabel: formatPeso(price),
+        priceLabel: price > 0 ? formatPeso(price) : "Negotiable (For Sale)",
         priceNote: "Newly submitted demo listing",
         area: area,
         roadAccess: roadAccess,
@@ -1243,7 +1652,8 @@ function initTrackerPage() {
       });
 
       saveProperties(list);
-      sellerForm.reset();
+      exitEditMode();
+      renderManagedProperties();
 
       feedback.className = "alert alert-success";
       feedback.innerHTML =
@@ -1255,6 +1665,8 @@ function initTrackerPage() {
   }
 
   renderWorkflows();
+  renderManagedProperties();
+  renderInquiries();
 }
 
 /* --------------------------------------------------------------------------

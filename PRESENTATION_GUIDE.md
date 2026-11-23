@@ -1,43 +1,41 @@
 # YuTara — Panabo City Digital Land Marketplace
-## 5-Minute Presentation & 3-Minute Live Debugging Guide (Team Cri-Ters)
+## Full Presentation Checklist & 3-Minute Live Debugging Guide (Team Cri-Ters)
 
 ---
 
-## 1. How to Launch the Website (Zero `ERR_CONNECTION_REFUSED`)
-
-You have **three offline ways** to open and present the website:
+## 1. How to Launch the Application
 
 1. **1-Click Local Server (`http://localhost:8080`)**:
    - Double-click **`START_SERVER.bat`** inside `F:\Yutara website for Debugging\`.
-   - It automatically starts a local HTTP server on port `8080` and opens `http://localhost:8080/index.html`.
+   - It launches a local HTTP server on port `8080` and opens `http://localhost:8080/index.html`.
 2. **VS Code Run & Debug (`F5`)**:
-   - Open `F:\Yutara website for Debugging` in VS Code and press **`F5`** (configured in `.vscode/launch.json`).
-3. **Direct Offline File Mode**:
-   - Double-click **`index.html`** directly in Windows File Explorer (`file:///F:/Yutara%20website%20for%20Debugging/index.html`). All images, CSS, and JavaScript work 100% offline with zero external CDNs.
+   - Open `F:\Yutara website for Debugging` in VS Code and press **`F5`** (configured via `.vscode/launch.json`).
+3. **Offline Direct Mode**:
+   - Open **`index.html`** directly in any browser (`file:///F:/Yutara%20website%20for%20Debugging/index.html`). All assets, SVG icons, CSS, and JavaScript run 100% offline with zero external dependencies.
 
 ---
 
-## 2. Project Folder & File Structure (Modular & Easy to Debug)
+## 2. Project Architecture & Folder Structure
 
 ```text
 F:\Yutara website for Debugging\
-├── START_SERVER.bat          # 1-click launcher for http://localhost:8080
-├── PRESENTATION_GUIDE.md     # Architecture & 3-minute live debugging cheat sheet
-├── index.html                # Homepage (Hero, Search, Featured Lots, Location Cards, 5-Step Process, Services, FAQ Accordion)
-├── marketplace.html          # Marketplace Directory (Desktop Sidebar Filters, Mobile Filter Toggle, Sort, Pagination)
-├── property.html             # Property Details (Photo Lightbox Zoom, Copy GPS Coordinates, Site Visit Modal, Related Lots)
+├── START_SERVER.bat          # 1-click local HTTP server launcher (http://localhost:8080)
+├── PRESENTATION_GUIDE.md     # 10-point live demo script & 3-minute debugging cheat sheet
+├── index.html                # Visual-first Homepage (Hero, Icon Search, Featured Lots, Location Cards, 4 Feature Cards, 5 Connected Steps, FAQ)
+├── marketplace.html          # Marketplace Directory (Desktop Sidebar Filters, Mobile Filter Drawer, Sort, Pagination)
+├── property.html             # Property Details (Photo Lightbox Zoom, Copy GPS Coordinates, Persisted Site Visit Modal, Related Lots)
 ├── reservation.html          # Simulated MVP Property Reservation Checkout
-├── tracker.html              # MVP Workflows Hub (Buyer 5-Stage Milestone Tracker, Seller Intake Form, Agency Queue)
+├── tracker.html              # MVP Workflows & Dashboard Hub (1. Buyer Tracker, 2. Property CRUD, 3. Agency Queue, 4. Inquiries Log)
 ├── services.html             # Platform Services & MVP Scope Transparency
 ├── about.html                # Problem, Solution & Team Cri-Ters (Sam Tapar, John Aj I. Castro, Jian T. Castillon)
-├── contact.html              # Panabo City Contact Channels, Official Facebook Link & Inquiry Form
+├── contact.html              # Panabo City Contact Channels, Official Facebook Link & Persisted Inquiry Form
 ├── login.html                # Split-Screen Login with Password Show/Hide Toggle & 1-Click Demo Roles
-├── register.html             # 4-Step Identity Verification Onboarding Flow with Password Show/Hide Toggle
+├── register.html             # 4-Step Identity Verification Onboarding Wizard with Password Show/Hide Toggle
 ├── css/
-│   └── styles.css            # Single stylesheet organized into 15 numbered sections (Official Logo Palette ONLY, zero !important)
+│   └── styles.css            # Centralized stylesheet (15 numbered sections, Official Logo Palette ONLY, zero !important)
 ├── js/
-│   ├── data.js               # All Panabo City barangays, property listings (Panabo Lot 1 & Lot 2 at top), and milestones
-│   └── app.js                # Clean vanilla JS organized into 12 numbered sections (Search, Filter, Pagination, Modals, CRUD)
+│   ├── data.js               # Seed Data Store: PANABO_BARANGAYS, DEFAULT_PROPERTIES (Lot 1 & Lot 2 at top), MILESTONE_STEPS, DEFAULT_TRANSACTIONS, DEFAULT_INQUIRIES
+│   └── app.js                # Modular Vanilla JS (12 numbered sections: Diagnostics, Search/Filter/Pagination, Auth, Full CRUD, Milestone & Inquiry Management)
 └── assets/
     ├── yutara-logo.png       # Official YuTara Brand Logo
     ├── panabo-lot-1.jpg      # Real photo: Brgy. Gredu (229 sqm Commercial/Residential Lot with Existing House)
@@ -48,34 +46,40 @@ F:\Yutara website for Debugging\
 
 ---
 
-## 3. Where to Modify & Debug Common Instructor Challenges (3-Minute Cheat Sheet)
+## 3. 10-Point Live Demonstration Checklist (5-Minute Presentation)
 
-| Instructor Debugging Task | Exact File & Section | What to Edit |
-| :--- | :--- | :--- |
-| **1. Change Brand Colors or Typography** | `css/styles.css` — **Section 1 (`:root` lines 16–50)** | Edit `--forest-green: #315B19;`, `--olive-green: #71851B;`, `--earth-brown: #8B4A20;`, `--dark-brown: #593318;`, `--white: #FFFFFF;`, or `--soft-off-white: #FAFAF6;`. Every button, badge, header, and footer updates automatically. |
-| **2. Edit Property Listings (Price, Area, Highlights, Barangay)** | `js/data.js` — **`DEFAULT_PROPERTIES` (lines 31–214)** | Edit **Lot 1 (`id: 1`, Brgy. Gredu)** or **Lot 2 (`id: 2`, Brgy. New Pandan)** at the very top of `js/data.js`, then click **Reset Demo Data** in the website footer to reload from `data.js`. |
-| **3. Modify Property Card Layout or Category Badges** | `js/app.js` — **Section 3 (`createPropertyCardHTML`, lines 210–255)** | Edit the reusable property card template used across the Homepage, Marketplace, and Related Properties sections. |
-| **4. Debug Marketplace Filtering, Sorting, or Pagination** | `js/app.js` — **Section 5 (`initMarketplacePage`, lines 335–545)** | Change `const ITEMS_PER_PAGE = 4;` (line 377) to adjust how many properties appear per page, or inspect `filterProperties()` (line 451) for keyword, barangay, category, price, and sort logic. |
-| **5. Debug Hero Spotlight Switcher or Homepage Search** | `js/app.js` — **Section 4 (`initHomePage`, lines 273–330)** | `renderSpotlight(propId)` switches the hero featured card between Brgy. New Pandan (`id: 2`) and Brgy. Gredu (`id: 1`). |
-| **6. Debug FAQ Accordion or Password Show/Hide Toggle** | `js/app.js` — **Section 2 (`initFaqAccordion` & `initPasswordToggles`, lines 180–205)** | Controls the `.faq-item.open` accordion state on `index.html` and the `Show`/`Hide` password toggle on `login.html` and `register.html`. |
-| **7. Debug Login, 4-Step Registration, or Demo Sessions** | `js/app.js` — **Sections 8 & 9 (`initLoginPage` & `initRegisterPage`, lines 700–830)** | Controls validation rules, 1-click demo role buttons (`Buyer`, `Seller`, `Agency`), and the 4-step registration wizard. |
-| **8. Debug 5-Stage Milestone Tracker or Seller Intake Form** | `js/app.js` — **Section 11 (`initTrackerPage`, lines 860–1035)** | `MILESTONE_STEPS` is defined in `js/data.js` (line 216). Seller form submissions save directly to `localStorage` and appear in `marketplace.html`. |
+1. **Opening the Homepage (`index.html`)**
+   - Highlight the two-column Hero (*"Your Land. Your Opportunity. YuTara!"*), light sage green primary CTA (`#DCECCB`), light earth brown secondary CTA (`#E8C7A5`), compact icon trust indicators, and the interactive **Featured Property Card switcher** (`Brgy. New Pandan ₱1.6M` ↔ `Brgy. Gredu 229 sqm`).
+2. **Navigating the Website**
+   - Use the sticky white navigation bar to move between `Home`, `Marketplace`, `MVP Workflows`, `Services`, `About Us`, and `Contact Us`.
+3. **Searching for Properties (`index.html` → `marketplace.html`)**
+   - Type `Agriya` or `Gredu` in the homepage search bar (or click a **Popular Areas** chip) to jump straight to filtered results on `marketplace.html`.
+4. **Applying Property Filters, Sorting & Pagination (`marketplace.html`)**
+   - Filter by **Panabo City Barangay** (`Brgy. Gredu`, `Brgy. New Pandan`), **Property Type** (`Commercial`, `Residential`), and **Min/Max Price**, change **Sort By** (`Price: Low to High` or `Largest Lot Area`), and click **Page 1 → Page 2 → Load All (6)**.
+5. **Viewing Property Information & Submitting a Site Visit (`property.html`)**
+   - Click a property card, click the photo to open the **Lightbox Zoom**, click **Copy Coordinates**, and submit the **Request Site Visit** modal (which saves a live `INQ-XXXX` record to the dashboard).
+6. **Demonstrating Authentication (`login.html` & `register.html`)**
+   - Show the **Password Show/Hide toggle**, click a **1-Click Demo Login** (`Demo Buyer`, `Demo Seller`, `Demo Agency`), or step through the **4-Step Identity Verification Registration Wizard**.
+7. **Demonstrating User, Seller & Admin/Agency Dashboard Functions (`tracker.html`)**
+   - **Tab 1 (Buyer Dashboard & Tracker):** Inspect the 5-stage milestone progress bar and Document Vault.
+   - **Tab 2 (Property Management CRUD):** Create a new property listing, click **Edit** on an existing listing to update its price/title, or click **Delete** to remove a listing.
+   - **Tab 3 (Admin & Agency Verification Desk):** Click **Advance to Next Milestone** (or **Reset Stage**) and watch the progress bar and summary stats update immediately.
+   - **Tab 4 (Inquiries & Site Visits Log):** View persisted site visit requests and contact inquiries, click **Advance Inquiry Status** (`Open` → `Scheduled` → `Resolved`), or delete an inquiry.
+8. **Showing the Project Structure**
+   - Open `css/styles.css`, `js/data.js`, and `js/app.js` in VS Code to show the numbered section headers.
+9. **Explaining the Technical Architecture**
+   - Pure HTML5 + CSS3 Custom Variables + Modular Vanilla ES6 JavaScript backed by a browser `localStorage` data layer (`yutara_v3_properties`, `yutara_v3_saved`, `yutara_v3_transactions`, `yutara_v3_inquiries`, `yutara_v3_session`) with automatic seed fallback from `js/data.js` and structured diagnostic reporting (`reportDiagnostic()`).
+10. **Demonstrating a Safe 3-Minute Live Debugging Scenario**
+    - Use the table below to modify colors, property data, pagination size, or validation rules in under 30 seconds.
 
 ---
 
-## 4. Recommended 5-Minute Presentation Flow
+## 4. 3-Minute Live Debugging Cheat Sheet
 
-1. **Minute 0:00–1:00 — Problem & Brand Identity (`index.html`)**
-   - Show the sticky navigation bar, two-column Hero section (*"Your Land. Your Opportunity. Your YuTara."*), and interactive **Featured Property Card switcher** toggling between **Brgy. New Pandan (₱1.6M Markdown, 200 sqm near Agriya)** and **Brgy. Gredu (229 sqm Commercial/Residential lot with existing house)**.
-   - Scroll through **Explore Properties by Location**, **Why Choose YuTara?**, **How YuTara Works (5-Step Process)**, **Our Services**, and click an item in the **FAQ Accordion**.
-2. **Minute 1:00–2:15 — Marketplace Discovery, Sidebar Filters & Pagination (`marketplace.html`)**
-   - Use the **Left Filter Sidebar** (or **Quick Barangay Chips**) to filter by `Brgy. Gredu` or `Brgy. New Pandan`, sort by `Price: Low to High` or `Largest Lot Area`, and demonstrate the **Pagination controls (`Page 1`, `Page 2`, `Load All`)**.
-3. **Minute 2:15–3:15 — Property Details & Verification Safeguards (`property.html`)**
-   - Open **Brgy. Gredu** or **Brgy. New Pandan**, click the photo to open the **Lightbox Zoom**, click **Copy Coordinates**, and submit a **Request Site Visit** modal inquiry.
-4. **Minute 3:15–4:15 — End-to-End MVP Workflows (`reservation.html` & `tracker.html`)**
-   - Click **Reserve Property (MVP)** to create a simulated reservation (`TX-XXXX`), then open **MVP Workflows Hub** to show:
-     - **Tab 1:** Buyer 5-stage progress bar & document vault.
-     - **Tab 2:** Seller Property Intake Form (add a new Panabo listing live).
-     - **Tab 3:** Partner Agency Queue (click **Advance to Next Milestone** and watch the progress percentage update live).
-5. **Minute 4:15–5:00 — Authentication & Team Cri-Ters (`login.html`, `register.html`, `about.html`)**
-   - Show the **Password Show/Hide toggle** and **1-Click Demo Login** on `login.html`, the **4-Step Verification Wizard** on `register.html`, and the **Team Cri-Ters** founder cards on `about.html`.
+| Evaluator Debugging Challenge | File & Section | Exact Lines / Variable to Edit |
+| :--- | :--- | :--- |
+| **Change Brand Colors or Button Theme** | `css/styles.css` — **Section 1 (`:root`) & Section 6 (`.hero-actions`)** | Edit `--forest-green: #315B19;`, `--earth-brown: #8B4A20;` (lines 26–31) or hero buttons `#DCECCB` / `#E8C7A5` (lines 585–625). |
+| **Modify Default Panabo Lot 1 or Lot 2 Data** | `js/data.js` — **`DEFAULT_PROPERTIES`** | Edit Lot 1 (`id: 1`, Brgy. Gredu, line 32) or Lot 2 (`id: 2`, Brgy. New Pandan, line 66), then click **Reset Demo Data** in the footer. |
+| **Change Cards Per Page in Marketplace Pagination** | `js/app.js` — **Section 5 (`initMarketplacePage`)** | Change `const ITEMS_PER_PAGE = 4;` to `2` or `3` or `6`. |
+| **Modify Property Card Icon Pills or Layout** | `js/app.js` — **Section 3 (`createPropertyCardHTML`)** | Edit `SVG_ICONS` or `createPropertyCardHTML(prop)` (lines 290–355). |
+| **Inspect Structured Error & Diagnostic Logs** | `js/app.js` — **Section 1 (`reportDiagnostic`)** | Open Chrome DevTools Console (`F12`) to view `[YuTara Diagnostic] Layer=... | Component=... | Operation=...` logs whenever storage or validation errors occur. |

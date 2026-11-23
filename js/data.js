@@ -240,3 +240,26 @@ const DEFAULT_TRANSACTIONS = [
     ]
   }
 ];
+
+const DEFAULT_INQUIRIES = [
+  {
+    id: "INQ-2001",
+    type: "Request Site Visit",
+    propertyTitle: "Commercial & Residential Lot with Existing House (Brgy. Gredu)",
+    senderName: "Juan Dela Cruz",
+    contactInfo: "0917-555-0192",
+    message: "Requesting an accompanied weekend inspection of the 229 sqm commercial frontage near the school.",
+    status: "Scheduled",
+    createdAt: "2026-11-22"
+  },
+  {
+    id: "INQ-2002",
+    type: "Buyer Property Inquiry",
+    propertyTitle: "Fenced 2-Room House & Lot Near Agriya (Brgy. New Pandan)",
+    senderName: "Maria Clara",
+    contactInfo: "maria.clara@example.com",
+    message: "Please confirm if the clean TCT and updated Real Property Tax clearance are ready for agency review.",
+    status: "Open",
+    createdAt: "2026-11-23"
+  }
+];
