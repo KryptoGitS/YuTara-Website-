@@ -3,121 +3,233 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Role Dashboard — YuTara Land Marketplace</title>
+  <title>YuTara | Workspace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=5" />
+  <link rel="stylesheet" href="css/styles.css?v=6" />
 </head>
 <body>
 
-  <!-- Sticky Navigation Bar -->
-  <header class="site-header">
-    <div class="container navbar" id="main-navbar">
-      <a href="index.html" class="brand" aria-label="YuTara Home">
-        <img src="assets/yutara-logo.png" alt="YuTara Logo" />
-      </a>
+  <div class="workspace-shell">
+    <!-- Left White Sidebar Navigation (Matches yutarasandbox.vercel.app) -->
+    <aside class="workspace-sidebar">
+      <div>
+        <div class="sidebar-brand-box">
+          <a href="index.html">
+            <div class="sidebar-brand-name">YuTara</div>
+            <div class="sidebar-brand-sub" id="sidebar-brand-sub">Yuta ba? YuTara!</div>
+          </a>
+        </div>
 
-      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776; Menu</button>
-
-      <nav class="nav-links" aria-label="Primary Navigation">
-        <a href="index.html">Home</a>
-        <a href="marketplace.html">Marketplace</a>
-        <a href="tracker.html" class="active" id="nav-dashboard-link">Dashboard</a>
-        <a href="services.html">Services</a>
-        <a href="about.html">About Us</a>
-        <a href="contact.html">Contact Us</a>
-      </nav>
-
-      <div class="nav-actions" id="nav-actions">
-        <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
-        <a href="register.html" class="btn btn-register btn-sm">Register</a>
+        <div class="sidebar-group-title" id="sidebar-group-title">Navigation</div>
+        <ul class="sidebar-nav-list" id="workflow-tabs">
+          <li>
+            <a href="index.html" class="sidebar-nav-btn">Home</a>
+          </li>
+          <li>
+            <a href="marketplace.html" class="sidebar-nav-btn">Marketplace</a>
+          </li>
+          <!-- User Links -->
+          <li id="nav-item-user-props">
+            <button type="button" class="sidebar-nav-btn active" data-tab="panel-buyer" id="tab-btn-buyer">
+              <span>My Properties</span>
+            </button>
+          </li>
+          <li id="nav-item-user-sell">
+            <button type="button" class="sidebar-nav-btn" data-tab="panel-seller" id="tab-btn-seller">
+              <span>Sell Land</span>
+            </button>
+          </li>
+          <!-- Admin Links (Hidden for User & Lucky Seven) -->
+          <li id="nav-item-admin-accounts" class="hidden">
+            <button type="button" class="sidebar-nav-btn" data-tab="panel-accounts" id="tab-btn-accounts">
+              <span>User &amp; Admin Accounts</span>
+            </button>
+          </li>
+          <!-- Lucky Seven Verifier Links (Hidden for User) -->
+          <li id="nav-item-verifier-desk" class="hidden">
+            <button type="button" class="sidebar-nav-btn" data-tab="panel-agency" id="tab-btn-agency">
+              <span>Lucky Seven Verification</span>
+            </button>
+          </li>
+          <li id="nav-item-inquiries" class="hidden">
+            <button type="button" class="sidebar-nav-btn" data-tab="panel-inquiries" id="tab-btn-inquiries">
+              <span>Site Visits &amp; Inquiries</span>
+              <span id="inquiry-count-pill">(2)</span>
+            </button>
+          </li>
+        </ul>
       </div>
-    </div>
-  </header>
 
-  <main class="section">
-    <div class="container">
-      <div class="section-header-row">
-        <div>
-          <span class="section-tag" id="dashboard-role-tag">Role-Based Access Control (RBAC)</span>
-          <h1 class="section-title" id="dashboard-heading">User Dashboard &amp; Transaction Tracker</h1>
-          <p class="section-subtitle" id="dashboard-subtitle">Track your Panabo City property reservations, submit a lot for screening, and view your site visit requests.</p>
+      <!-- Bottom User Profile & Logout -->
+      <div class="sidebar-footer-box">
+        <div class="sidebar-profile-card">
+          <div class="sidebar-avatar" id="sidebar-avatar">JD</div>
+          <div>
+            <div class="sidebar-profile-name" id="active-account-display">Juan Dela Cruz</div>
+            <div class="sidebar-profile-email" id="sidebar-profile-email">user@yutara.ph</div>
+          </div>
         </div>
-        <div class="flex-wrap-gap">
-          <a href="marketplace.html" class="btn btn-outline btn-sm">Browse Marketplace &rarr;</a>
-        </div>
+        <button type="button" class="sidebar-logout-btn" id="sidebar-logout-btn">Log out</button>
       </div>
+    </aside>
 
-      <!-- Active Account & Role Permission Banner (No Unauthorized Role Bypass Buttons) -->
-      <div class="card-soft mb-3 flex-between-wrap" id="account-switcher-bar">
-        <div>
-          <span class="section-tag" id="active-role-badge">Current Session</span>
-          <div id="active-account-display" class="text-green">Not Signed In</div>
-          <p class="text-muted text-no-margin" id="active-role-permissions">
-            Permissions: Standard User view only. Admin CRUD and Lucky Seven Land Verifier settings are restricted.
-          </p>
-        </div>
-        <div class="flex-wrap-gap">
-          <a href="login.html" class="btn btn-outline btn-sm" id="switch-account-link">Sign In with Another Account &rarr;</a>
-        </div>
-      </div>
-
-      <!-- RBAC Access Denied Alert (Shown if a User attempts to access a restricted tab via URL) -->
+    <!-- Main Right Workspace Content -->
+    <main class="workspace-main">
       <div id="rbac-alert" class="alert alert-error hidden"></div>
 
-      <!-- Summary Metrics Bar -->
-      <div class="grid grid-4 mb-3">
-        <div class="stat-card">
-          <div class="stat-number" id="stat-active">1</div>
-          <div class="stat-label">Active Reservations</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="stat-pending">1</div>
-          <div class="stat-label">In Lucky Seven Verification</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="stat-completed">0</div>
-          <div class="stat-label">Completed Transfers</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="stat-escrow">₱25,000</div>
-          <div class="stat-label">Simulated Escrow Hold</div>
-        </div>
-      </div>
-
-      <!-- Role-Filtered Workflow Tabs (JS hides tabs the current role is not authorized to access) -->
-      <div class="tabs" id="workflow-tabs">
-        <button type="button" class="tab-btn active" data-tab="panel-buyer" data-allowed-roles="User,Buyer,Seller,Admin,Lucky Seven Land Verifier,Agency,Guest">
-          My Transaction Tracker
-        </button>
-        <button type="button" class="tab-btn" data-tab="panel-seller" data-allowed-roles="User,Seller,Admin" id="tab-btn-seller">
-          Submit Property for Listing
-        </button>
-        <button type="button" class="tab-btn hidden" data-tab="panel-agency" data-allowed-roles="Lucky Seven Land Verifier,Agency,Admin" id="tab-btn-agency">
-          Lucky Seven Land Verifier Desk
-        </button>
-        <button type="button" class="tab-btn" data-tab="panel-inquiries" data-allowed-roles="User,Buyer,Seller,Lucky Seven Land Verifier,Agency,Admin,Guest" id="tab-btn-inquiries">
-          Inquiries &amp; Site Visits <span id="inquiry-count-pill">(2)</span>
-        </button>
-      </div>
-
-      <!-- Tab 1: Buyer Milestone Tracker -->
+      <!-- PANEL 1: USER WORKSPACE ("My Properties" — Matches yutarasandbox.vercel.app/dashboard) -->
       <div id="panel-buyer" class="tab-panel">
-        <div id="buyer-tracker-list">
-          <!-- Populated dynamically via js/app.js -->
+        <div class="workspace-eyebrow" id="dashboard-role-tag">My Properties</div>
+        <h1 class="workspace-title" id="dashboard-heading">Welcome back, Juan Dela Cruz!</h1>
+        <p class="workspace-subtitle" id="dashboard-subtitle">
+          Everything about your land in one place: what you reserved, what you are selling, and what you have sold.
+        </p>
+
+        <div class="kpi-grid-3">
+          <div class="kpi-box">
+            <span class="kpi-label">Saved Properties</span>
+            <strong class="kpi-value" id="user-stat-saved">0</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Land on Sale</span>
+            <strong class="kpi-value" id="user-stat-onsale">2</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Account Role</span>
+            <strong class="kpi-value-role" id="user-stat-role">USER</strong>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="workspace-eyebrow">Seller Workspace</div>
+          <h2 class="section-title mb-2">Land on sale</h2>
+          <div class="grid grid-2" id="user-land-grid">
+            <!-- Populated dynamically with clean Panabo property cards via js/app.js?v=6 -->
+          </div>
+        </div>
+
+        <div>
+          <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
+          <h2 class="section-title mb-2">My Active Reservations</h2>
+          <div id="buyer-tracker-list">
+            <!-- Populated dynamically via js/app.js?v=6 -->
+          </div>
         </div>
       </div>
 
-      <!-- Tab 2: Property Submission (User) & Full Property Management CRUD (Admin Only) -->
+      <!-- PANEL 2: ADMIN ACCOUNTS PORTAL (Matches yutarasandbox.vercel.app/admin) -->
+      <div id="panel-accounts" class="tab-panel hidden">
+        <div class="workspace-eyebrow">Admin Workspace &middot; Owner &amp; Account Support</div>
+        <h1 class="workspace-title">Admin Portal</h1>
+
+        <div class="kpi-grid-4 mt-2">
+          <div class="kpi-box">
+            <span class="kpi-label">Total Listings</span>
+            <strong class="kpi-value" id="admin-stat-total">6</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Open for Offers</span>
+            <strong class="kpi-value" id="admin-stat-open">6</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Created Accounts</span>
+            <strong class="kpi-value" id="admin-stat-accounts">3</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Pending Approvals</span>
+            <strong class="kpi-value" id="admin-stat-pending">0</strong>
+          </div>
+        </div>
+
+        <!-- Direct Account Provisioning Box -->
+        <div class="provisioning-card">
+          <div class="workspace-eyebrow">Direct Account Provisioning</div>
+          <h2 class="section-title">Create Admin, User, or Lucky Seven Account</h2>
+          <p class="text-muted">Add a new account directly from the Admin dashboard. Accounts created here are immediately active for login.</p>
+
+          <form id="admin-provision-form" class="provision-form-grid">
+            <div>
+              <label class="form-label" for="prov-role">Account Role</label>
+              <select id="prov-role" class="form-select">
+                <option value="User">User Account (USER)</option>
+                <option value="Admin">Admin Account (ADMIN)</option>
+                <option value="Lucky Seven Land Verifier">Lucky Seven Land Verifier</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="prov-name">Full Name</label>
+              <input type="text" id="prov-name" class="form-control" placeholder="e.g. Ana Reyes" required />
+            </div>
+            <div>
+              <label class="form-label" for="prov-email">Email</label>
+              <input type="email" id="prov-email" class="form-control" placeholder="ana@yutara.ph" required />
+            </div>
+            <div>
+              <label class="form-label" for="prov-pass">Password</label>
+              <input type="password" id="prov-pass" class="form-control" placeholder="Min. 4 chars" required />
+            </div>
+            <div>
+              <button type="submit" class="btn btn-primary btn-full">+ Create Account</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Manage & Approve Accounts Table -->
+        <div class="data-table-card">
+          <div class="flex-between-wrap">
+            <div>
+              <div class="workspace-eyebrow">User &amp; Admin Accounts</div>
+              <h2 class="section-title">Manage &amp; approve accounts</h2>
+            </div>
+            <p class="text-muted">Built-in accounts for Admin, User, and Lucky Seven Land Verifier plus custom accounts.</p>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-accounts-tbody">
+              <!-- Populated dynamically via js/app.js?v=6 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANEL 3: LAND LISTINGS & SELL LAND (User Submit Form + Admin CRUD Table) -->
       <div id="panel-seller" class="tab-panel hidden">
-        <div class="card mb-3">
+        <!-- Admin-Only Managed Property Directory Table (Hidden from Users) -->
+        <div class="data-table-card hidden" id="admin-crud-card">
           <div class="flex-between-wrap mb-2">
             <div>
-              <span class="section-tag" id="seller-form-tag">Landowner Property Submission</span>
+              <div class="workspace-eyebrow">Owner Support</div>
+              <h2 class="section-title">All land listings</h2>
+            </div>
+            <div class="flex-wrap-gap">
+              <span class="badge badge-green" id="managed-prop-count">6 Listings</span>
+              <button type="button" class="btn btn-secondary btn-sm" id="reset-demo-btn">Reset Demo Data</button>
+            </div>
+          </div>
+          <div id="managed-properties-list">
+            <!-- Populated dynamically via js/app.js?v=6 for Admin role only -->
+          </div>
+        </div>
+
+        <!-- Submit / Edit Land Listing Form -->
+        <div class="card">
+          <div class="flex-between-wrap mb-2">
+            <div>
+              <div class="workspace-eyebrow" id="seller-form-tag">Sell Land</div>
               <h2 class="section-title" id="seller-form-heading">Submit a New Panabo City Land Listing</h2>
             </div>
             <button type="button" class="btn btn-outline btn-sm hidden" id="seller-cancel-edit-btn">Cancel Edit</button>
           </div>
-          <p class="mb-3" id="seller-form-subtitle">Submit your Panabo City land parcel details below for pre-listing document screening.</p>
+          <p class="mb-3 text-muted" id="seller-form-subtitle">Enter the Panabo City parcel details below to publish your listing.</p>
 
           <div id="seller-feedback" class="alert hidden"></div>
 
@@ -167,102 +279,55 @@
             <button type="submit" class="btn btn-primary" id="seller-submit-btn">Publish Listing to Marketplace &rarr;</button>
           </form>
         </div>
-
-        <!-- Admin-Only Managed Property Directory (Read, Update, Delete — Hidden from regular Users) -->
-        <div class="card hidden" id="admin-crud-card">
-          <div class="flex-between-wrap mb-2">
-            <div>
-              <span class="section-tag">Admin-Only Inventory Control</span>
-              <h3 class="section-title">Manage All Property Listings (Edit &amp; Delete)</h3>
-            </div>
-            <span class="badge badge-green" id="managed-prop-count">6 Listings</span>
-          </div>
-          <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js for Admin role only -->
-          </div>
-        </div>
       </div>
 
-      <!-- Tab 3: Lucky Seven Land Verifier Milestone Verification Queue (Restricted to Lucky Seven & Admin) -->
+      <!-- PANEL 4: LUCKY SEVEN LAND VERIFIER PORTAL (Restricted to Lucky Seven & Admin) -->
       <div id="panel-agency" class="tab-panel hidden">
-        <div class="alert alert-warning mb-2">
-          <strong>Lucky Seven Land Verifier Restricted Queue:</strong> Authorized only for <strong>Lucky Seven Land Verifier</strong> and <strong>YuTara Admin</strong>. Click <em>Advance to Next Milestone</em> to verify Transfer Certificate of Title (TCT) &amp; Tax Declaration milestones.
+        <div class="workspace-eyebrow">Partner Verification Agency &middot; Panabo City</div>
+        <h1 class="workspace-title">Lucky Seven Land Verifier Portal</h1>
+        <p class="workspace-subtitle">
+          Verify Transfer Certificate of Title (TCT) and Real Property Tax documents, advance buyer transfer milestones, and coordinate site inspections.
+        </p>
+
+        <div class="kpi-grid-4">
+          <div class="kpi-box">
+            <span class="kpi-label">Active Transfers</span>
+            <strong class="kpi-value" id="stat-active">1</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">In Verification</span>
+            <strong class="kpi-value" id="stat-pending">1</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Completed</span>
+            <strong class="kpi-value" id="stat-completed">0</strong>
+          </div>
+          <div class="kpi-box">
+            <span class="kpi-label">Escrow Hold</span>
+            <strong class="kpi-value" id="stat-escrow">₱25,000</strong>
+          </div>
         </div>
+
         <div id="agency-queue-list">
-          <!-- Populated dynamically via js/app.js -->
+          <!-- Populated dynamically via js/app.js?v=6 -->
         </div>
       </div>
 
-      <!-- Tab 4: Inquiries & Site Visits Log -->
+      <!-- PANEL 5: SITE VISITS & INQUIRIES -->
       <div id="panel-inquiries" class="tab-panel hidden">
-        <div class="alert alert-success mb-2" id="inquiries-role-banner">
-          <strong>Site Visit &amp; Inquiry Tracker:</strong> View your submitted site visit requests and property inquiries below.
-        </div>
+        <div class="workspace-eyebrow">Inspection &amp; Client Requests</div>
+        <h1 class="workspace-title">Site Visits &amp; Inquiries</h1>
+        <p class="workspace-subtitle" id="inquiries-role-banner">
+          Review and schedule buyer site visit requests across Panabo City barangays.
+        </p>
         <div id="inquiries-list">
-          <!-- Populated dynamically via js/app.js -->
+          <!-- Populated dynamically via js/app.js?v=6 -->
         </div>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
-  <!-- Standardized 4-Column Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <img src="assets/yutara-logo.png" alt="YuTara Logo" class="footer-logo" />
-          <p>
-            YuTara is a localized digital land marketplace connecting buyers, landowners, and partner real estate agencies across Panabo City and the Davao Region.
-          </p>
-        </div>
-
-        <div>
-          <div class="footer-title">Quick Navigation</div>
-          <ul class="footer-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="marketplace.html">Marketplace</a></li>
-            <li><a href="tracker.html">MVP Workflows</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <div class="footer-title">Marketplace Categories</div>
-          <ul class="footer-links">
-            <li><a href="marketplace.html?type=Residential">Residential Lots</a></li>
-            <li><a href="marketplace.html?type=Commercial">Commercial Lots</a></li>
-            <li><a href="marketplace.html?type=Agricultural">Agricultural &amp; Farm Lots</a></li>
-            <li><a href="marketplace.html?type=Industrial">Industrial Parcels</a></li>
-            <li><a href="marketplace.html?location=Gredu">Brgy. Gredu Listings</a></li>
-            <li><a href="marketplace.html?location=New%20Pandan">Brgy. New Pandan Listings</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <div class="footer-title">Contact &amp; Official Channels</div>
-          <ul class="footer-links">
-            <li>Panabo City, Davao del Norte, Philippines</li>
-            <li>Email: <a href="mailto:YutaraPanabo@gmail.com">YutaraPanabo@gmail.com</a></li>
-            <li>
-              <a href="https://www.facebook.com/people/YuTara/61596442262970/" target="_blank" rel="noopener noreferrer">
-                Official YuTara Facebook Page &nearr;
-              </a>
-            </li>
-            <li>Team Cri-Ters &bull; Academic Startup Prototype</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <span>&copy; 2026 YuTara Land Marketplace System (Team Cri-Ters). All rights reserved.</span>
-        <button type="button" class="btn btn-outline btn-sm" id="reset-demo-btn">Reset Demo Data</button>
-      </div>
-    </div>
-  </footer>
-
-  <script src="js/data.js?v=5"></script>
-  <script src="js/app.js?v=5"></script>
+  <script src="js/data.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
 </body>
 </html>

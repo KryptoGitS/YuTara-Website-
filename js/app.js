@@ -23,6 +23,7 @@ const STORAGE_KEYS = {
   saved: "yutara_v3_saved",
   transactions: "yutara_v3_transactions",
   inquiries: "yutara_v3_inquiries",
+  accounts: "yutara_v3_accounts",
   session: "yutara_v3_session"
 };
 
@@ -199,6 +200,34 @@ function saveInquiries(list) {
   }
 }
 
+function getCustomAccounts() {
+  const raw = localStorage.getItem(STORAGE_KEYS.accounts);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    reportDiagnostic("DataStore", "Accounts", "getCustomAccounts", err);
+    return [];
+  }
+}
+
+function saveCustomAccounts(list) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(list));
+  } catch (err) {
+    reportDiagnostic("DataStore", "Accounts", "saveCustomAccounts", err);
+  }
+}
+
+function getInitials(name) {
+  const parts = String(name || "YU").trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return String(name || "YU").slice(0, 2).toUpperCase();
+}
+
 function getSession() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEYS.session) || "null");
@@ -230,6 +259,7 @@ function resetDemoData() {
   localStorage.removeItem(STORAGE_KEYS.saved);
   localStorage.removeItem(STORAGE_KEYS.transactions);
   localStorage.removeItem(STORAGE_KEYS.inquiries);
+  localStorage.removeItem(STORAGE_KEYS.accounts);
   localStorage.removeItem(STORAGE_KEYS.session);
   window.location.reload();
 }
@@ -249,18 +279,27 @@ function initNavbar() {
   const navActions = document.getElementById("nav-actions");
   const session = getSession();
   if (navActions && session) {
+    const workspaceLabel =
+      session.role === "Admin"
+        ? "Admin Workspace"
+        : session.role === "Lucky Seven Land Verifier"
+        ? "Lucky Seven Portal"
+        : "My Properties";
     navActions.innerHTML =
-      '<span class="user-pill">' +
-      escapeHtml(session.name) +
-      " (" +
-      escapeHtml(session.role) +
-      ")</span>" +
+      '<a href="tracker.html" class="btn btn-primary btn-sm">' +
+      escapeHtml(workspaceLabel) +
+      "</a>" +
       '<button type="button" class="btn btn-outline btn-sm" id="logout-btn">Log Out</button>';
 
     const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
       logoutBtn.addEventListener("click", logoutUser);
     }
+  }
+
+  const sidebarLogoutBtn = document.getElementById("sidebar-logout-btn");
+  if (sidebarLogoutBtn) {
+    sidebarLogoutBtn.addEventListener("click", logoutUser);
   }
 
   const resetBtn = document.getElementById("reset-demo-btn");
@@ -1019,7 +1058,7 @@ function initReservationPage() {
    8. LOGIN PAGE (login.html) — Admin, User & Lucky Seven Land Verifier
    -------------------------------------------------------------------------- */
 function getDefaultTabForRole(role) {
-  if (role === "Admin") return "panel-seller";
+  if (role === "Admin") return "panel-accounts";
   if (role === "Lucky Seven Land Verifier" || role === "Agency") return "panel-agency";
   return "panel-buyer";
 }
@@ -1036,7 +1075,8 @@ function initLoginPage() {
 
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
-    const selectedRole = document.getElementById("login-role").value;
+    const roleEl = document.getElementById("login-role");
+    const selectedRole = roleEl ? roleEl.value : "User";
 
     if (!email || password.length < 4) {
       statusBox.className = "alert alert-error";
@@ -1066,7 +1106,27 @@ function initLoginPage() {
         email: matchedAccount.email,
         role: matchedAccount.role
       });
-      window.location.href = "tracker.html?tab=" + encodeURIComponent(matchedAccount.defaultTab);
+      window.location.href = "tracker.html?tab=" + encodeURIComponent(getDefaultTabForRole(matchedAccount.role));
+      return;
+    }
+
+    const customMatch = getCustomAccounts().find(function (acc) {
+      return acc.email.toLowerCase() === email.toLowerCase();
+    });
+
+    if (customMatch) {
+      if (password !== customMatch.password) {
+        statusBox.className = "alert alert-error";
+        statusBox.textContent = "Incorrect password for " + customMatch.name + ".";
+        statusBox.classList.remove("hidden");
+        return;
+      }
+      setSession({
+        name: customMatch.name,
+        email: customMatch.email,
+        role: customMatch.role
+      });
+      window.location.href = "tracker.html?tab=" + encodeURIComponent(getDefaultTabForRole(customMatch.role));
       return;
     }
 
@@ -1173,15 +1233,27 @@ function initRegisterPage() {
     const name = document.getElementById("reg-name").value.trim();
     const email = document.getElementById("reg-email").value.trim();
     const role = document.getElementById("reg-role").value;
+    const pass = document.getElementById("reg-password").value;
+
+    const customList = getCustomAccounts();
+    customList.unshift({
+      id: "ACC-" + Date.now(),
+      name: name,
+      email: email,
+      password: pass,
+      role: role,
+      status: "APPROVED"
+    });
+    saveCustomAccounts(customList);
 
     setSession({ name: name, email: email, role: role });
     feedback.className = "alert alert-success";
     feedback.innerHTML =
-      "<strong>Registration Submitted (Simulated MVP Review)!</strong> You are signed in as " +
+      "<strong>Registration Submitted!</strong> You are signed in as " +
       escapeHtml(name) +
-      '. <a href="tracker.html" class="inline-action-link">Go to MVP Workflows &rarr;</a>';
+      '. <a href="tracker.html" class="inline-action-link">Open Workspace &rarr;</a>';
     feedback.classList.remove("hidden");
-    showToast("Account submitted for demo review");
+    showToast("Account created and signed in");
   });
 
   renderStep();
@@ -1232,7 +1304,7 @@ function initContactPage() {
       escapeHtml(name) +
       "</strong>! Your inquiry (" +
       escapeHtml(newInq.id) +
-      ') has been saved. <a href="tracker.html?tab=panel-inquiries" class="inline-action-link">View in Dashboard Inquiries &rarr;</a>';
+      ") has been saved.";
     feedback.classList.remove("hidden");
     form.reset();
     showToast("Inquiry " + newInq.id + " sent");
@@ -1240,14 +1312,16 @@ function initContactPage() {
 }
 
 /* --------------------------------------------------------------------------
-   11. MVP WORKFLOW HUB (tracker.html — Strict Role-Based Access Control)
+   11. SANDBOX WORKSPACE HUB (tracker.html — Left Sidebar + Strict RBAC)
    -------------------------------------------------------------------------- */
 function initTrackerPage() {
   const tabContainer = document.getElementById("workflow-tabs");
   if (!tabContainer) return;
 
   const session = getSession();
-  const currentRole = session && session.role ? session.role : "Guest";
+  const currentRole = session && session.role ? session.role : "User";
+  const currentName = session && session.name ? session.name : "Juan Dela Cruz";
+  const currentEmail = session && session.email ? session.email : "user@yutara.ph";
   const isAdmin = currentRole === "Admin";
   const isVerifier = currentRole === "Lucky Seven Land Verifier" || currentRole === "Agency";
 
@@ -1257,91 +1331,66 @@ function initTrackerPage() {
   function isTabAllowedForRole(targetId) {
     if (isAdmin) return true;
     if (isVerifier) {
-      return targetId === "panel-agency" || targetId === "panel-inquiries" || targetId === "panel-buyer";
+      return targetId === "panel-agency" || targetId === "panel-inquiries";
     }
-    // Standard User / Buyer / Seller / Guest: cannot access Lucky Seven Land Verifier Desk (panel-agency)
-    return targetId === "panel-buyer" || targetId === "panel-seller" || targetId === "panel-inquiries";
+    // Standard User: can ONLY access My Properties (panel-buyer) and Sell Land (panel-seller)
+    return targetId === "panel-buyer" || targetId === "panel-seller";
   }
 
   function applyRolePermissionsToUI() {
-    const roleTag = document.getElementById("dashboard-role-tag");
-    const heading = document.getElementById("dashboard-heading");
-    const subtitle = document.getElementById("dashboard-subtitle");
+    const brandSub = document.getElementById("sidebar-brand-sub");
+    const groupTitle = document.getElementById("sidebar-group-title");
+    const avatarEl = document.getElementById("sidebar-avatar");
     const displayEl = document.getElementById("active-account-display");
-    const permsEl = document.getElementById("active-role-permissions");
+    const emailEl = document.getElementById("sidebar-profile-email");
+
+    const navUserProps = document.getElementById("nav-item-user-props");
+    const navUserSell = document.getElementById("nav-item-user-sell");
+    const navAdminAccounts = document.getElementById("nav-item-admin-accounts");
+    const navVerifierDesk = document.getElementById("nav-item-verifier-desk");
+    const navInquiries = document.getElementById("nav-item-inquiries");
+
+    const heading = document.getElementById("dashboard-heading");
     const adminCrudCard = document.getElementById("admin-crud-card");
     const tabBtnSeller = document.getElementById("tab-btn-seller");
     const tabBtnAgency = document.getElementById("tab-btn-agency");
-    const sellerFormTag = document.getElementById("seller-form-tag");
-    const sellerFormSubtitle = document.getElementById("seller-form-subtitle");
-    const inqBanner = document.getElementById("inquiries-role-banner");
 
-    if (displayEl) {
-      if (!session) {
-        displayEl.textContent = "Guest Session (Not Signed In)";
-      } else {
-        displayEl.textContent =
-          "Signed in as: " + session.name + " (" + session.email + ") • Role: " + session.role;
-      }
-    }
+    if (avatarEl) avatarEl.textContent = getInitials(currentName);
+    if (displayEl) displayEl.textContent = currentName;
+    if (emailEl) emailEl.textContent = currentEmail;
 
     if (isAdmin) {
-      if (roleTag) roleTag.textContent = "Administrator Console (Full System Access)";
-      if (heading) heading.textContent = "YuTara Admin Console — Property & System Management";
-      if (subtitle) {
-        subtitle.textContent =
-          "Full CRUD control over all Panabo City property listings, inquiry management, and milestone verification oversight.";
-      }
-      if (permsEl) {
-        permsEl.textContent =
-          "Permissions: Full Admin CRUD (Create, Edit, Delete Properties), Inquiry Management, and Verification Oversight.";
-      }
+      if (brandSub) brandSub.textContent = "Admin Workspace";
+      if (groupTitle) groupTitle.textContent = "Administration";
+      if (navUserProps) navUserProps.classList.add("hidden");
+      if (navAdminAccounts) navAdminAccounts.classList.remove("hidden");
+      if (navUserSell) navUserSell.classList.remove("hidden");
+      if (tabBtnSeller) tabBtnSeller.innerHTML = "<span>Land Listings</span>";
+      if (navVerifierDesk) navVerifierDesk.classList.remove("hidden");
+      if (navInquiries) navInquiries.classList.remove("hidden");
       if (adminCrudCard) adminCrudCard.classList.remove("hidden");
-      if (tabBtnSeller) {
-        tabBtnSeller.classList.remove("hidden");
-        tabBtnSeller.textContent = "Admin Property Management (CRUD)";
-      }
-      if (tabBtnAgency) tabBtnAgency.classList.remove("hidden");
-      if (sellerFormTag) sellerFormTag.textContent = "Admin Property CRUD";
-      if (sellerFormSubtitle) {
-        sellerFormSubtitle.textContent =
-          "Create a new Panabo City property listing or click Edit on any existing listing below to modify it in real time.";
-      }
     } else if (isVerifier) {
-      if (roleTag) roleTag.textContent = "Partner Verification Agency Console";
-      if (heading) heading.textContent = "Lucky Seven Land Verifier — Title & Milestone Console";
-      if (subtitle) {
-        subtitle.textContent =
-          "Review Transfer Certificate of Title (TCT) & Tax Declaration submissions, advance 5-stage buyer milestones, and coordinate site visits.";
-      }
-      if (permsEl) {
-        permsEl.textContent =
-          "Permissions: Lucky Seven Land Verifier Desk (Advance/Reset Milestones) & Site Visit Coordination. Admin Property Delete is restricted.";
-      }
+      if (brandSub) brandSub.textContent = "Lucky Seven Verifier";
+      if (groupTitle) groupTitle.textContent = "Verification";
+      if (navUserProps) navUserProps.classList.add("hidden");
+      if (navUserSell) navUserSell.classList.add("hidden");
+      if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
+      if (navVerifierDesk) navVerifierDesk.classList.remove("hidden");
+      if (navInquiries) navInquiries.classList.remove("hidden");
       if (adminCrudCard) adminCrudCard.classList.add("hidden");
       if (tabBtnSeller) tabBtnSeller.classList.add("hidden");
       if (tabBtnAgency) tabBtnAgency.classList.remove("hidden");
-      if (inqBanner) {
-        inqBanner.innerHTML =
-          "<strong>Lucky Seven Land Verifier Inquiry Desk:</strong> Coordinate site visits and advance inquiry status (<em>Open &rarr; Scheduled &rarr; Resolved</em>).";
-      }
     } else {
-      // Standard User (Buyer / Seller) or Guest
-      if (roleTag) roleTag.textContent = "User Account Dashboard";
-      if (heading) heading.textContent = "User Dashboard & Property Transaction Tracker";
-      if (subtitle) {
-        subtitle.textContent =
-          "Track your 5-stage property reservation milestones, submit a land parcel for pre-listing screening, and view your inquiries.";
-      }
-      if (permsEl) {
-        permsEl.textContent =
-          "Permissions: Standard User access. Admin Property Inventory (Edit/Delete) and Lucky Seven Land Verifier settings are restricted.";
-      }
+      // Standard User (Matches yutarasandbox.vercel.app/dashboard)
+      if (brandSub) brandSub.textContent = "Yuta ba? YuTara!";
+      if (groupTitle) groupTitle.textContent = "Navigation";
+      if (heading) heading.textContent = "Welcome back, " + currentName + "!";
+      if (navUserProps) navUserProps.classList.remove("hidden");
+      if (navUserSell) navUserSell.classList.remove("hidden");
+      if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
+      if (navVerifierDesk) navVerifierDesk.classList.add("hidden");
+      if (navInquiries) navInquiries.classList.add("hidden");
       if (adminCrudCard) adminCrudCard.classList.add("hidden");
-      if (tabBtnSeller) {
-        tabBtnSeller.classList.remove("hidden");
-        tabBtnSeller.textContent = "Submit Property for Listing";
-      }
       if (tabBtnAgency) tabBtnAgency.classList.add("hidden");
     }
   }
@@ -1352,7 +1401,7 @@ function initTrackerPage() {
         rbacAlert.textContent =
           "Access Restricted: Your current role (" +
           currentRole +
-          ") is not authorized to access Admin or Lucky Seven Land Verifier settings.";
+          ") cannot access Admin or Lucky Seven Land Verifier settings.";
         rbacAlert.classList.remove("hidden");
       }
       targetId = getDefaultTabForRole(currentRole);
@@ -1840,6 +1889,8 @@ function initTrackerPage() {
       saveProperties(list);
       exitEditMode();
       renderManagedProperties();
+      renderUserWorkspace();
+      renderAdminAccountsPortal();
 
       feedback.className = "alert alert-success";
       feedback.innerHTML =
@@ -1850,6 +1901,144 @@ function initTrackerPage() {
     });
   }
 
+  function renderUserWorkspace() {
+    const savedEl = document.getElementById("user-stat-saved");
+    const onSaleEl = document.getElementById("user-stat-onsale");
+    const roleEl = document.getElementById("user-stat-role");
+    const landGrid = document.getElementById("user-land-grid");
+
+    const props = getProperties();
+    const myProps = props.slice(0, 2);
+
+    if (savedEl) savedEl.textContent = getSavedIds().length;
+    if (onSaleEl) onSaleEl.textContent = myProps.length;
+    if (roleEl) roleEl.textContent = currentRole.toUpperCase();
+
+    if (landGrid) {
+      landGrid.innerHTML = myProps.map(createPropertyCardHTML).join("");
+      bindSaveButtons(landGrid, function () {
+        if (savedEl) savedEl.textContent = getSavedIds().length;
+      });
+    }
+  }
+
+  function renderAdminAccountsPortal() {
+    const tbody = document.getElementById("admin-accounts-tbody");
+    if (!tbody || !isAdmin) return;
+
+    const props = getProperties();
+    const builtIn = typeof DEMO_ACCOUNTS !== "undefined" ? DEMO_ACCOUNTS : [];
+    const custom = getCustomAccounts();
+    const allAccounts = builtIn.map(function (b) {
+      return {
+        name: b.name,
+        email: b.email,
+        role: b.role,
+        status: "APPROVED",
+        builtIn: true
+      };
+    }).concat(custom);
+
+    const totalEl = document.getElementById("admin-stat-total");
+    const openEl = document.getElementById("admin-stat-open");
+    const accEl = document.getElementById("admin-stat-accounts");
+    const pendEl = document.getElementById("admin-stat-pending");
+
+    if (totalEl) totalEl.textContent = props.length;
+    if (openEl) openEl.textContent = props.length;
+    if (accEl) accEl.textContent = allAccounts.length;
+    if (pendEl) {
+      pendEl.textContent = allAccounts.filter(function (a) {
+        return a.status === "PENDING";
+      }).length;
+    }
+
+    tbody.innerHTML = allAccounts
+      .map(function (acc, idx) {
+        const customIdx = idx - builtIn.length;
+        const roleBadgeClass =
+          acc.role === "Admin"
+            ? "badge-brown-soft"
+            : acc.role === "Lucky Seven Land Verifier"
+            ? "badge-promoted"
+            : "badge-green";
+        const actionHtml = acc.builtIn
+          ? '<span class="text-muted">Built-in Demo</span>'
+          : '<button type="button" class="btn btn-outline btn-sm" data-remove-acc-idx="' +
+            customIdx +
+            '">Remove</button>';
+
+        return (
+          "<tr>" +
+          "  <td><strong>" +
+          escapeHtml(acc.name) +
+          "</strong></td>" +
+          "  <td>" +
+          escapeHtml(acc.email) +
+          "</td>" +
+          '  <td><span class="badge ' +
+          roleBadgeClass +
+          '">' +
+          escapeHtml(acc.role) +
+          "</span></td>" +
+          '  <td><span class="badge badge-green">' +
+          escapeHtml(acc.status || "APPROVED") +
+          "</span></td>" +
+          "  <td>" +
+          actionHtml +
+          "</td>" +
+          "</tr>"
+        );
+      })
+      .join("");
+
+    tbody.querySelectorAll("[data-remove-acc-idx]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const cIdx = Number(btn.getAttribute("data-remove-acc-idx"));
+        const list = getCustomAccounts();
+        const removed = list.splice(cIdx, 1);
+        saveCustomAccounts(list);
+        renderAdminAccountsPortal();
+        showToast("Removed account " + (removed[0] ? removed[0].email : ""));
+      });
+    });
+  }
+
+  const provForm = document.getElementById("admin-provision-form");
+  if (provForm) {
+    provForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!isAdmin || lockFormSubmission(provForm)) return;
+
+      const role = document.getElementById("prov-role").value;
+      const name = document.getElementById("prov-name").value.trim();
+      const email = document.getElementById("prov-email").value.trim();
+      const password = document.getElementById("prov-pass").value.trim();
+
+      if (!name || !email || password.length < 4) {
+        showToast("Enter name, email, and at least 4-char password");
+        return;
+      }
+
+      const customList = getCustomAccounts();
+      customList.unshift({
+        id: "ACC-" + Date.now(),
+        name: name,
+        email: email,
+        password: password,
+        role: role,
+        status: "APPROVED",
+        builtIn: false
+      });
+      saveCustomAccounts(customList);
+      provForm.reset();
+      renderAdminAccountsPortal();
+      showToast("Created " + role + " account for " + name);
+    });
+  }
+
+  renderUserWorkspace();
+  renderAdminAccountsPortal();
   renderWorkflows();
   renderManagedProperties();
   renderInquiries();
