@@ -572,6 +572,62 @@ h1, h2, h3, h4 {
   margin-bottom: 24px;
 }
 
+.hero-actions .btn,
+.hero-buttons .btn {
+  min-height: 46px;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.14s ease;
+}
+
+/* Primary Hero CTA: Explore Marketplace (Light Sage Green #DCECCB / Forest Green #315B19) */
+.hero-actions .btn-primary,
+.hero-buttons .btn-primary {
+  background-color: #DCECCB;
+  color: #315B19;
+  border-color: #C7DFB0;
+  box-shadow: 0 4px 14px rgba(15, 30, 8, 0.22);
+}
+
+.hero-actions .btn-primary:hover,
+.hero-buttons .btn-primary:hover {
+  background-color: #C8E0B0;
+  color: #234311;
+  border-color: #B4D396;
+  box-shadow: 0 6px 18px rgba(15, 30, 8, 0.28);
+  transform: translateY(-1px);
+}
+
+.hero-actions .btn-primary:active,
+.hero-buttons .btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Secondary Hero CTA: How YuTara Works (Light Earth Brown #E8C7A5 / Dark Brown #593318) */
+.hero-actions .btn-secondary,
+.hero-buttons .btn-secondary {
+  background-color: #E8C7A5;
+  color: #593318;
+  border-color: #DAB38B;
+  box-shadow: 0 4px 14px rgba(35, 18, 6, 0.18);
+}
+
+.hero-actions .btn-secondary:hover,
+.hero-buttons .btn-secondary:hover {
+  background-color: #DDB58C;
+  color: #42240F;
+  border-color: #CCA074;
+  box-shadow: 0 6px 18px rgba(35, 18, 6, 0.25);
+  transform: translateY(-1px);
+}
+
+.hero-actions .btn-secondary:active,
+.hero-buttons .btn-secondary:active {
+  transform: translateY(1px);
+}
+
 .hero-trust-row {
   display: flex;
   flex-wrap: wrap;
