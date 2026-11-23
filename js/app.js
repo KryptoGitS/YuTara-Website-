@@ -499,6 +499,102 @@ function requestLogoutConfirmation() {
   }
 }
 
+function getSafeNextPath(candidate) {
+  if (!candidate || typeof candidate !== "string") return "";
+  const trimmed = candidate.trim();
+  if (/^[a-zA-Z0-9_-]+\.html([?#][a-zA-Z0-9_=&%./#-]*)?$/.test(trimmed)) {
+    return trimmed;
+  }
+  return "";
+}
+
+function getCurrentRelativeUrl() {
+  const path = (window.location.pathname || "").split("/").pop() || "index.html";
+  return path + (window.location.search || "") + (window.location.hash || "");
+}
+
+function buildLoginUrl(nextUrl) {
+  const safeNext = getSafeNextPath(nextUrl || getCurrentRelativeUrl());
+  if (safeNext && safeNext.indexOf("login.html") !== 0 && safeNext.indexOf("register.html") !== 0) {
+    return "login.html?next=" + encodeURIComponent(safeNext);
+  }
+  return "login.html";
+}
+
+function openLoginRequiredModal(actionDescription, nextUrl) {
+  const actionText = actionDescription || "continue with this action";
+  const loginHref = buildLoginUrl(nextUrl);
+
+  let modal = document.getElementById("yutara-login-required-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "yutara-login-required-modal";
+    modal.className = "logout-modal-overlay hidden";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "auth-guard-title");
+    modal.setAttribute("data-anim", "ytOverlayFade");
+    modal.innerHTML =
+      '<div class="logout-modal-box auth-guard-box" data-anim="ytModalPop">' +
+      '  <div class="auth-guard-icon" aria-hidden="true">' +
+      '    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>' +
+      '      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>' +
+      "    </svg>" +
+      "  </div>" +
+      '  <h2 class="logout-modal-title" id="auth-guard-title">Log In Required</h2>' +
+      '  <p class="logout-modal-message" id="auth-guard-message"></p>' +
+      '  <p class="logout-modal-account">Sign in to your YuTara account or register a free User account to continue.</p>' +
+      '  <div class="auth-guard-actions">' +
+      '    <a href="login.html" class="btn btn-primary" id="auth-guard-login-btn">Log In Now &rarr;</a>' +
+      '    <a href="register.html" class="btn btn-outline" id="auth-guard-register-btn">Create Account</a>' +
+      "  </div>" +
+      '  <button type="button" class="auth-guard-dismiss" id="auth-guard-dismiss-btn">Cancel</button>' +
+      "</div>";
+    document.body.appendChild(modal);
+
+    function closeGuardModal() {
+      modal.classList.add("hidden");
+    }
+
+    const dismissBtn = document.getElementById("auth-guard-dismiss-btn");
+    if (dismissBtn) {
+      dismissBtn.addEventListener("click", closeGuardModal);
+    }
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) {
+        closeGuardModal();
+      }
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeGuardModal();
+      }
+    });
+  }
+
+  const msgEl = document.getElementById("auth-guard-message");
+  if (msgEl) {
+    msgEl.textContent = "You must log in first to " + actionText + ".";
+  }
+  const loginBtn = document.getElementById("auth-guard-login-btn");
+  if (loginBtn) {
+    loginBtn.setAttribute("href", loginHref);
+  }
+
+  modal.classList.remove("hidden");
+  showToast("Please log in first to " + actionText);
+  if (loginBtn) {
+    loginBtn.focus();
+  }
+}
+
+function requireLoginForAction(actionDescription, nextUrl) {
+  if (getSession()) return true;
+  openLoginRequiredModal(actionDescription, nextUrl);
+  return false;
+}
+
 function resetDemoData() {
   localStorage.removeItem(STORAGE_KEYS.properties);
   localStorage.removeItem(STORAGE_KEYS.saved);
@@ -587,6 +683,22 @@ function initNavbar() {
         logoutBtn.addEventListener("click", requestLogoutConfirmation);
       }
     }
+  } else {
+    // Guest user: remind them they must log in first before listing land or opening workspace/reservation actions
+    document.querySelectorAll('a[href^="tracker.html"], a[href^="reservation.html"]').forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        if (getSession()) return;
+        event.preventDefault();
+        const href = link.getAttribute("href") || "";
+        let actionLabel = "access your account listings and workspace";
+        if (href.indexOf("panel-seller") >= 0 || (link.textContent || "").toLowerCase().indexOf("add land") >= 0 || (link.textContent || "").toLowerCase().indexOf("seller intake") >= 0) {
+          actionLabel = "list land for sale";
+        } else if (href.indexOf("reservation.html") >= 0) {
+          actionLabel = "reserve this property";
+        }
+        openLoginRequiredModal(actionLabel, href);
+      });
+    });
   }
 
   const sidebarLogoutBtn = document.getElementById("sidebar-logout-btn");
@@ -658,7 +770,7 @@ function getCategoryBadgeClass(type) {
 }
 
 function createPropertyCardHTML(prop) {
-  const savedIds = getSavedIds();
+  const savedIds = getSession() ? getSavedIds() : [];
   const isSaved = savedIds.includes(prop.id);
   const promotedBadge = prop.promoted
     ? '<span class="badge badge-promoted">Featured</span>'
@@ -705,6 +817,7 @@ function bindSaveButtons(container, onToggleCallback) {
   const buttons = container.querySelectorAll("[data-save-id]");
   buttons.forEach(function (btn) {
     btn.addEventListener("click", function () {
+      if (!requireLoginForAction("save this property")) return;
       const id = btn.getAttribute("data-save-id");
       const nowSaved = toggleSavedProperty(id);
       btn.classList.toggle("saved", nowSaved);
@@ -1103,7 +1216,7 @@ function initPropertyDetailPage() {
     return item.id === idParam;
   }) || allProperties[0];
 
-  const isSaved = getSavedIds().includes(prop.id);
+  const isSaved = getSession() ? getSavedIds().includes(prop.id) : false;
 
   document.getElementById("detail-img").src = prop.image;
   document.getElementById("detail-img").alt = prop.title;
@@ -1183,6 +1296,7 @@ function initPropertyDetailPage() {
   }
   updateSaveButton(isSaved);
   saveBtn.addEventListener("click", function () {
+    if (!requireLoginForAction("save this listing")) return;
     const nowSaved = toggleSavedProperty(prop.id);
     updateSaveButton(nowSaved);
     showToast(nowSaved ? "Saved property to your list" : "Removed from saved properties");
@@ -1199,14 +1313,21 @@ function initPropertyDetailPage() {
     modalTitle.textContent = titleText + " — Brgy. " + prop.barangay;
     modalStatus.classList.add("hidden");
     modalForm.reset();
+    const activeSession = getSession();
+    const modalNameEl = document.getElementById("modal-name");
+    if (activeSession && activeSession.name && modalNameEl) {
+      modalNameEl.value = activeSession.name;
+    }
     modal.classList.remove("hidden");
   }
 
   document.getElementById("site-visit-btn").addEventListener("click", function () {
+    if (!requireLoginForAction("request a site visit")) return;
     openModal("Request Site Visit");
   });
 
   document.getElementById("contact-seller-btn").addEventListener("click", function () {
+    if (!requireLoginForAction("contact the seller")) return;
     openModal("Contact Seller (" + prop.seller + ")");
   });
 
@@ -1227,6 +1348,7 @@ function initPropertyDetailPage() {
 
   modalForm.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (!requireLoginForAction("submit an inquiry")) return;
     if (lockFormSubmission(modalForm)) return;
 
     const sender = document.getElementById("modal-name").value.trim();
@@ -1354,6 +1476,10 @@ function initPropertyDetailPage() {
       });
     } else {
       if (msgLoginPrompt) msgLoginPrompt.classList.remove("hidden");
+      const msgLoginLink = document.getElementById("msg-login-link");
+      if (msgLoginLink) {
+        msgLoginLink.setAttribute("href", buildLoginUrl("property.html?id=" + prop.id + "#msg-section"));
+      }
       if (msgForm) msgForm.classList.add("hidden");
     }
   }
@@ -1382,22 +1508,21 @@ function initReservationPage() {
   const session = getSession();
   const buyerInput = document.getElementById("res-buyer-name");
   const quickLoginBox = document.getElementById("res-login-notice");
+  const resLoginLink = document.getElementById("res-login-link");
 
   if (session) {
     buyerInput.value = session.name;
-    quickLoginBox.classList.add("hidden");
+    if (quickLoginBox) quickLoginBox.classList.add("hidden");
   } else {
-    const quickBtn = document.getElementById("quick-demo-signin");
-    if (quickBtn) {
-      quickBtn.addEventListener("click", function () {
-        setSession({ name: "Juan Dela Cruz", email: "user@yutara.ph", role: "User" });
-        window.location.reload();
-      });
+    if (quickLoginBox) quickLoginBox.classList.remove("hidden");
+    if (resLoginLink) {
+      resLoginLink.setAttribute("href", buildLoginUrl("reservation.html?id=" + prop.id));
     }
   }
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    if (!requireLoginForAction("reserve this property", "reservation.html?id=" + prop.id)) return;
     if (lockFormSubmission(form)) return;
 
     const feedback = document.getElementById("res-feedback");
@@ -1466,6 +1591,10 @@ function getDefaultTabForRole(role) {
 
 function getPostLoginDestination(role) {
   if (role === "Admin") return "tracker.html?tab=panel-accounts";
+  const nextParam = getSafeNextPath(getQueryParam("next"));
+  if (nextParam && nextParam.indexOf("panel-accounts") < 0) {
+    return nextParam;
+  }
   // Standard User goes straight to the Marketplace after logging in
   return "marketplace.html";
 }
@@ -1477,6 +1606,13 @@ function initLoginPage() {
   const statusBox = document.getElementById("login-status");
   const emailInput = document.getElementById("login-email");
   const rememberCheck = document.getElementById("login-remember");
+
+  const nextRedirect = getSafeNextPath(getQueryParam("next"));
+  if (nextRedirect && statusBox) {
+    statusBox.className = "alert alert-warning";
+    statusBox.textContent = "Please log in to your YuTara account to continue.";
+    statusBox.classList.remove("hidden");
+  }
 
   // Restore remembered email if previously checked
   try {
@@ -1750,9 +1886,47 @@ function initTrackerPage() {
   if (!tabContainer) return;
 
   const session = getSession();
-  const currentRole = session && session.role ? session.role : "User";
-  const currentName = session && session.name ? session.name : "Juan Dela Cruz";
-  const currentEmail = session && session.email ? session.email : "user@yutara.ph";
+  if (!session) {
+    const workspaceShell = document.getElementById("workspace-shell");
+    if (workspaceShell) {
+      workspaceShell.classList.add("hidden");
+    }
+    const requestedTab = getQueryParam("tab");
+    const isSellerIntent = requestedTab === "panel-seller";
+    const reasonText = isSellerIntent
+      ? "You must log in first before you can list land for sale on YuTara."
+      : "You must log in first to view your account listings, manage reservations, or add land for sale.";
+    const loginHref = buildLoginUrl(getCurrentRelativeUrl());
+
+    const gate = document.createElement("main");
+    gate.id = "tracker-auth-gate";
+    gate.className = "auth-page-gate";
+    gate.setAttribute("role", "main");
+    gate.innerHTML =
+      '<section class="auth-gate-card anim-fade-up" data-anim="ytFadeInUp" aria-labelledby="auth-gate-heading">' +
+      '  <img src="assets/yutara-logo.png" alt="YuTara" class="auth-gate-logo" />' +
+      '  <div class="auth-guard-icon" aria-hidden="true">' +
+      '    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>' +
+      '      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>' +
+      "    </svg>" +
+      "  </div>" +
+      '  <span class="reg-eyebrow">Account Required</span>' +
+      '  <h1 class="auth-gate-title" id="auth-gate-heading">Please Log In First</h1>' +
+      '  <p class="auth-gate-message">' + escapeHtml(reasonText) + "</p>" +
+      '  <div class="auth-guard-actions">' +
+      '    <a href="' + escapeHtml(loginHref) + '" class="btn btn-primary" id="gate-login-btn">Log In Now &rarr;</a>' +
+      '    <a href="register.html" class="btn btn-outline" id="gate-register-btn">Create User Account</a>' +
+      "  </div>" +
+      '  <a href="marketplace.html" class="auth-gate-back">&larr; Back to Panabo Marketplace</a>' +
+      "</section>";
+    document.body.appendChild(gate);
+    return;
+  }
+
+  const currentRole = session.role || "User";
+  const currentName = session.name || "YuTara User";
+  const currentEmail = session.email || "";
   const isAdmin = currentRole === "Admin";
   const isStandardUser = !isAdmin;
 

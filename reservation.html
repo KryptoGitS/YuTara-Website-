@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Simulated Property Reservation — YuTara Land Marketplace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=25" />
+  <link rel="stylesheet" href="css/styles.css?v=26" />
 </head>
 <body>
 
@@ -61,10 +61,15 @@
           </div>
         </div>
 
-        <!-- Optional 1-Click Demo Sign-In Notice -->
-        <div id="res-login-notice" class="card-soft mb-3 flex-between-wrap">
-          <span>Not signed in yet? Click to autofill with the Demo Buyer profile:</span>
-          <button type="button" class="btn btn-secondary btn-sm" id="quick-demo-signin">1-Click Demo Buyer Sign-In</button>
+        <!-- Login Required Reminder Banner -->
+        <div id="res-login-notice" class="alert alert-warning res-login-banner">
+          <div>
+            <strong>Log In Required:</strong> You must log in to your YuTara account before reserving this property.
+          </div>
+          <div class="res-login-actions">
+            <a href="login.html" class="btn btn-primary btn-sm" id="res-login-link">Log In Now &rarr;</a>
+            <a href="register.html" class="btn btn-outline btn-sm">Create Account</a>
+          </div>
         </div>
 
         <div id="res-feedback" class="alert hidden"></div>
@@ -129,7 +134,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=25"></script>
-  <script src="js/app.js?v=25"></script>
+  <script src="js/data.js?v=26"></script>
+  <script src="js/app.js?v=26"></script>
 </body>
 </html>
