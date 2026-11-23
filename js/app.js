@@ -923,7 +923,10 @@ function initMarketplacePage() {
       currentPage = 1;
     }
 
-    const allProperties = getProperties();
+    // Newly user-added lands must undergo Lucky Seven Verification before appearing publicly on Marketplace
+    const allProperties = getProperties().filter(function (prop) {
+      return !prop.submittedByUser || prop.verificationStatus === "Verified by Lucky Seven";
+    });
     const savedIds = getSavedIds();
     const keyword = locationInput.value.trim().toLowerCase();
     const selectedBarangay = barangaySelect ? barangaySelect.value.trim().toLowerCase() : "";
@@ -1681,6 +1684,10 @@ function initTrackerPage() {
       if (adminCrudCard) adminCrudCard.classList.remove("hidden");
       if (adminEditOnlyNotice) adminEditOnlyNotice.classList.remove("hidden");
       if (sellerDocsSection) sellerDocsSection.classList.add("hidden");
+      const lifecycleBar = document.getElementById("seller-lifecycle-bar");
+      const photoGroup = document.getElementById("seller-photo-group");
+      if (lifecycleBar) lifecycleBar.classList.add("hidden");
+      if (photoGroup) photoGroup.classList.add("hidden");
     } else if (isVerifier) {
       if (workspaceShell) workspaceShell.classList.add("theme-lucky-seven");
       if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "tracker.html?tab=panel-agency");
@@ -1726,6 +1733,12 @@ function initTrackerPage() {
       if (adminCrudCard) adminCrudCard.classList.add("hidden");
       if (adminEditOnlyNotice) adminEditOnlyNotice.classList.add("hidden");
       if (sellerDocsSection) sellerDocsSection.classList.remove("hidden");
+      if (tabBtnSellerLabel) tabBtnSellerLabel.textContent = "Add Land";
+      if (tabBtnSeller) tabBtnSeller.setAttribute("title", "Add Land for Lucky Seven Verification");
+      const lifecycleBarU = document.getElementById("seller-lifecycle-bar");
+      const photoGroupU = document.getElementById("seller-photo-group");
+      if (lifecycleBarU) lifecycleBarU.classList.remove("hidden");
+      if (photoGroupU) photoGroupU.classList.remove("hidden");
       if (tabBtnAgency) tabBtnAgency.classList.add("hidden");
     }
   }
@@ -1825,10 +1838,45 @@ function initTrackerPage() {
   const formSubtitle = document.getElementById("seller-form-subtitle");
   const submitBtn = document.getElementById("seller-submit-btn");
   const cancelEditBtn = document.getElementById("seller-cancel-edit-btn");
+  const sellerPhotoInput = document.getElementById("seller-photo-file");
+  const sellerPhotoPreview = document.getElementById("seller-photo-preview");
+  let pendingPhotoDataUrl = "";
+
+  if (sellerPhotoInput) {
+    sellerPhotoInput.addEventListener("change", function () {
+      const file = sellerPhotoInput.files && sellerPhotoInput.files[0];
+      if (!file) {
+        pendingPhotoDataUrl = "";
+        if (sellerPhotoPreview) sellerPhotoPreview.src = "assets/property-hero.png";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        const img = new Image();
+        img.onload = function () {
+          const maxW = 640;
+          const scale = img.width > maxW ? maxW / img.width : 1;
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            pendingPhotoDataUrl = canvas.toDataURL("image/jpeg", 0.78);
+            if (sellerPhotoPreview) sellerPhotoPreview.src = pendingPhotoDataUrl;
+          }
+        };
+        img.src = String(ev.target.result || "");
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   function exitEditMode() {
     if (sellerForm) sellerForm.reset();
     if (editIdInput) editIdInput.value = "";
+    pendingPhotoDataUrl = "";
+    if (sellerPhotoPreview) sellerPhotoPreview.src = "assets/property-hero.png";
     if (isAdmin) {
       if (formTag) formTag.textContent = "Admin Property Editor (Edit Only)";
       if (formHeading) formHeading.textContent = "Select a Property Above to Edit";
@@ -1841,14 +1889,14 @@ function initTrackerPage() {
         submitBtn.disabled = true;
       }
     } else {
-      if (formTag) formTag.textContent = "Submit Land Listing";
-      if (formHeading) formHeading.textContent = "Submit a New Panabo City Land Listing";
+      if (formTag) formTag.textContent = "Add Land for Verification";
+      if (formHeading) formHeading.textContent = "Add a New Panabo City Land";
       if (formSubtitle) {
         formSubtitle.textContent =
-          "Enter your Panabo City parcel details and supporting legal documents for Lucky Seven Land Verifier screening.";
+          "Submit your Panabo City parcel details and 3 required legal documents for Lucky Seven Land Verification.";
       }
       if (submitBtn) {
-        submitBtn.innerHTML = "Publish Listing to Marketplace &rarr;";
+        submitBtn.innerHTML = "Submit Land for Lucky Seven Verification &rarr;";
         submitBtn.disabled = false;
       }
     }
@@ -2205,7 +2253,7 @@ function initTrackerPage() {
       state.key === "Pending Review"
         ? "Ready"
         : state.key === "Incomplete Documents"
-        ? "Pending"
+        ? "Needs Review"
         : state.label;
 
     const docPanelsHtml = ["tct", "taxDec", "ownerId"]
@@ -2213,6 +2261,11 @@ function initTrackerPage() {
         return buildLuckyDocumentPanelHTML(prop, key, docs[key]);
       })
       .join("");
+
+    const firstPendingKey =
+      ["tct", "taxDec", "ownerId"].find(function (k) {
+        return docs[k].submitted && !docs[k].legitimate;
+      }) || "tct";
 
     let actionButtonsHtml = "";
     if (state.isVerified) {
@@ -2250,12 +2303,17 @@ function initTrackerPage() {
         LS_ICONS.externalLink +
         "</a>";
     } else {
+      const reviewBtnLabel = state.missingCount === 0 ? "Review Docs" : "View Docs";
       actionButtonsHtml =
         '<button type="button" class="btn btn-ls-navy ls-row-main-btn" data-open-doc-prop-id="' +
         prop.id +
-        '" data-open-doc-key="tct">' +
+        '" data-open-doc-key="' +
+        firstPendingKey +
+        '">' +
         LS_ICONS.eye +
-        " <span>View Docs</span></button>" +
+        " <span>" +
+        reviewBtnLabel +
+        "</span></button>" +
         '<a href="property.html?id=' +
         prop.id +
         '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
@@ -2263,7 +2321,11 @@ function initTrackerPage() {
         "</a>" +
         '<button type="button" class="btn btn-ls-verify ls-row-icon-btn" data-verify-prop-id="' +
         prop.id +
-        '" disabled title="Blocked: All 3 legitimate documents are required" aria-label="Verification Blocked">' +
+        '" disabled title="' +
+        (state.missingCount === 0
+          ? "Review and mark all 3 documents Legitimate first"
+          : "Blocked: All 3 legitimate documents are required") +
+        '" aria-label="Verification Locked">' +
         LS_ICONS.lock +
         "</button>";
     }
@@ -2416,6 +2478,10 @@ function initTrackerPage() {
         ? '<span class="ls-status-pill status-blocked">' + LS_ICONS.shieldAlert + " Missing</span>"
         : "";
 
+      const attachedRow = activeDoc.fileName
+        ? "      <tr><td>Attached File</td><td>" + escapeHtml(activeDoc.fileName) + "</td></tr>"
+        : "";
+
       previewEl.innerHTML =
         '<div class="ls-doc-preview-sheet' +
         (!activeDoc.submitted ? " preview-missing" : "") +
@@ -2434,6 +2500,7 @@ function initTrackerPage() {
         "      <tr><td>Reference No.</td><td>" +
         refValue +
         "</td></tr>" +
+        attachedRow +
         "      <tr><td>Registered Owner</td><td>" +
         escapeHtml(prop.seller || "Panabo Landowner") +
         "</td></tr>" +
@@ -2766,6 +2833,16 @@ function initTrackerPage() {
         target.verificationStatus = "Verified by Lucky Seven";
         target.badgeText = "Lucky Seven Verified";
         target.badgeStyle = "badge-green";
+        if (target.priceNote === "Submitted for Lucky Seven verification") {
+          target.priceNote = "Verified Panabo City parcel";
+        }
+        if (Array.isArray(target.cardTags)) {
+          target.cardTags = target.cardTags.map(function (t) {
+            return t === "Pending Verification" || t === "Needs Legal Docs"
+              ? "Lucky Seven Verified"
+              : t;
+          });
+        }
         saveProperties(list);
         renderLuckyPropertyVerificationDesk();
         renderWorkflows();
@@ -3046,14 +3123,25 @@ function initTrackerPage() {
         }
       }
 
-      // Standard User submitting their own account's new Panabo City land listing
+      // Standard User submitting their own account's new Panabo City land for Lucky Seven Verification
       const tctInput = document.getElementById("seller-doc-tct");
       const taxInput = document.getElementById("seller-doc-tax");
       const idInput = document.getElementById("seller-doc-id");
+      const tctFileInput = document.getElementById("seller-file-tct");
+      const taxFileInput = document.getElementById("seller-file-tax");
+      const idFileInput = document.getElementById("seller-file-id");
+
       const tctVal = tctInput ? tctInput.value.trim() : "";
       const taxVal = taxInput ? taxInput.value.trim() : "";
       const idVal = idInput ? idInput.value.trim() : "";
-      const hasAllSubmitted = Boolean(tctVal && taxVal && idVal);
+      const tctFile = tctFileInput && tctFileInput.files && tctFileInput.files[0] ? tctFileInput.files[0].name : "";
+      const taxFile = taxFileInput && taxFileInput.files && taxFileInput.files[0] ? taxFileInput.files[0].name : "";
+      const idFile = idFileInput && idFileInput.files && idFileInput.files[0] ? idFileInput.files[0].name : "";
+
+      const hasTct = Boolean(tctVal || tctFile);
+      const hasTax = Boolean(taxVal || taxFile);
+      const hasId = Boolean(idVal || idFile);
+      const hasAllSubmitted = hasTct && hasTax && hasId;
 
       const nextId = list.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
 
@@ -3066,47 +3154,52 @@ function initTrackerPage() {
         province: "Davao del Norte",
         price: price,
         priceLabel: price > 0 ? formatPeso(price) : "Negotiable (For Sale)",
-        priceNote: "Newly submitted owner listing",
+        priceNote: "Submitted for Lucky Seven verification",
         area: area,
         roadAccess: roadAccess,
-        badgeText: hasAllSubmitted ? "Docs Submitted (Pending Review)" : "Incomplete Documents",
+        badgeText: hasAllSubmitted ? "Under Lucky Seven Verification" : "Missing Legal Docs",
         badgeStyle: "badge-warning",
-        verificationStatus: hasAllSubmitted ? "Pending Lucky Seven Review" : "Incomplete Documents",
+        verificationStatus: hasAllSubmitted ? "Pending Lucky Seven Verification" : "Incomplete Documents",
+        submittedByUser: true,
+        submittedAt: new Date().toISOString().slice(0, 10),
         promoted: false,
         seller: currentName,
         ownerEmail: currentEmail,
         latitude: "7.3100",
         longitude: "125.6820",
-        image: "assets/property-hero.png",
+        image: pendingPhotoDataUrl || "assets/property-hero.png",
         documents: {
           tct: {
             label: "Clean Transfer Certificate of Title (TCT / OCT)",
-            refNo: tctVal || "Missing — TCT Copy Not Uploaded",
-            submitted: Boolean(tctVal),
-            legitimate: Boolean(tctVal)
+            refNo: tctVal || (tctFile ? "Uploaded: " + tctFile : "Missing — TCT Copy Not Uploaded"),
+            fileName: tctFile,
+            submitted: hasTct,
+            legitimate: false
           },
           taxDec: {
             label: "Updated Real Property Tax Declaration & Clearance",
-            refNo: taxVal || "Missing — Tax Declaration Not Uploaded",
-            submitted: Boolean(taxVal),
-            legitimate: Boolean(taxVal)
+            refNo: taxVal || (taxFile ? "Uploaded: " + taxFile : "Missing — Tax Declaration Not Uploaded"),
+            fileName: taxFile,
+            submitted: hasTax,
+            legitimate: false
           },
           ownerId: {
             label: "Verified Owner Government ID & Deed / Authority",
-            refNo: idVal || "Missing — Owner ID Not Uploaded",
-            submitted: Boolean(idVal),
-            legitimate: Boolean(idVal)
+            refNo: idVal || (idFile ? "Uploaded: " + idFile : "Missing — Owner ID Not Uploaded"),
+            fileName: idFile,
+            submitted: hasId,
+            legitimate: false
           }
         },
-        cardTags: [type + " Lot", hasAllSubmitted ? "Docs Submitted" : "Needs Legal Docs", "Panabo City"],
+        cardTags: [type + " Lot", hasAllSubmitted ? "Pending Verification" : "Needs Legal Docs", "Panabo City"],
         highlights: [
           Number(area).toLocaleString() + " SQM Lot Area",
           roadAccess,
           hasAllSubmitted
-            ? "Submitted with legal documents for Lucky Seven verification"
-            : "Pending legitimate documents before Lucky Seven can verify"
+            ? "Submitted with 3 legal documents — Undergoing Lucky Seven verification"
+            : "Missing required legal documents — Cannot be verified until complete"
         ],
-        description: description || "Submitted through the YuTara account listing form."
+        description: description || "Submitted through the YuTara landowner portal for Lucky Seven verification."
       });
 
       saveProperties(list);
@@ -3115,14 +3208,197 @@ function initTrackerPage() {
 
       feedback.className = "alert alert-success";
       feedback.innerHTML =
-        "<strong>Listing Added to Your Account &amp; Marketplace!</strong> " +
+        "<strong>Land Property #" +
+        nextId +
+        " Sent to Lucky Seven Verification!</strong> " +
         (hasAllSubmitted
-          ? "Sent to Lucky Seven Land Verifier with your legal document references. "
-          : "Note: Missing legal document references — Lucky Seven cannot verify until complete. ") +
-        '<a href="marketplace.html" class="inline-action-link">View in Marketplace &rarr;</a>';
+          ? "All 3 legal documents are queued for Lucky Seven Land Verifier review. Once verified, your land will automatically appear live in the Panabo City Marketplace. "
+          : "Notice: One or more legal documents are missing, so Lucky Seven will hold verification until you upload them under My Account Listings. ") +
+        '<button type="button" class="btn btn-outline btn-sm mt-1" id="go-track-my-listings-btn">Track Verification in My Account Listings &rarr;</button>';
       feedback.classList.remove("hidden");
-      showToast("Listing added to your account & Marketplace");
+      const trackBtn = document.getElementById("go-track-my-listings-btn");
+      if (trackBtn) {
+        trackBtn.addEventListener("click", function () {
+          activateTab("panel-buyer");
+        });
+      }
+      showToast("Land #" + nextId + " submitted for Lucky Seven Verification");
     });
+  }
+
+  /* User Missing/Update Legal Documents Modal Controller */
+  const userDocsModal = document.getElementById("user-docs-modal");
+  const userDocsCloseBtn = document.getElementById("user-docs-modal-close");
+  const userDocsCancelBtn = document.getElementById("user-docs-modal-cancel");
+  const userDocsForm = document.getElementById("user-docs-update-form");
+
+  function closeUserDocsModal() {
+    if (userDocsModal) userDocsModal.classList.add("hidden");
+  }
+
+  function openUserDocsModal(propId) {
+    if (!isStandardUser || !userDocsModal) return;
+    const prop = getProperties().find(function (p) {
+      return p.id === Number(propId);
+    });
+    if (!prop) return;
+    const docs = ensurePropertyDocuments(prop);
+    const idField = document.getElementById("user-docs-prop-id");
+    const subEl = document.getElementById("user-docs-modal-sub");
+    const tctEl = document.getElementById("user-modal-doc-tct");
+    const taxEl = document.getElementById("user-modal-doc-tax");
+    const ownerEl = document.getElementById("user-modal-doc-id");
+
+    if (idField) idField.value = String(prop.id);
+    if (subEl) {
+      subEl.textContent =
+        "Update legal document references for #" +
+        prop.id +
+        " — " +
+        prop.title +
+        " so Lucky Seven Land Verifier can authenticate it.";
+    }
+    if (tctEl) tctEl.value = docs.tct.submitted ? docs.tct.refNo : "";
+    if (taxEl) taxEl.value = docs.taxDec.submitted ? docs.taxDec.refNo : "";
+    if (ownerEl) ownerEl.value = docs.ownerId.submitted ? docs.ownerId.refNo : "";
+
+    userDocsModal.classList.remove("hidden");
+  }
+
+  if (userDocsCloseBtn) userDocsCloseBtn.addEventListener("click", closeUserDocsModal);
+  if (userDocsCancelBtn) userDocsCancelBtn.addEventListener("click", closeUserDocsModal);
+  if (userDocsModal) {
+    userDocsModal.addEventListener("click", function (event) {
+      if (event.target === userDocsModal) closeUserDocsModal();
+    });
+  }
+
+  if (userDocsForm) {
+    userDocsForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!isStandardUser) return;
+      const propId = Number(document.getElementById("user-docs-prop-id").value);
+      const tctVal = document.getElementById("user-modal-doc-tct").value.trim();
+      const taxVal = document.getElementById("user-modal-doc-tax").value.trim();
+      const ownerVal = document.getElementById("user-modal-doc-id").value.trim();
+
+      const list = getProperties();
+      const target = list.find(function (p) {
+        return p.id === propId;
+      });
+      if (!target) return;
+
+      target.documents = ensurePropertyDocuments(target);
+      function applyDocUpdate(docObj, newRef, missingText) {
+        if (newRef) {
+          const changed = !docObj.submitted || docObj.refNo !== newRef;
+          docObj.refNo = newRef;
+          docObj.submitted = true;
+          if (changed) docObj.legitimate = false;
+        } else {
+          docObj.refNo = missingText;
+          docObj.submitted = false;
+          docObj.legitimate = false;
+        }
+      }
+
+      applyDocUpdate(target.documents.tct, tctVal, "Missing — TCT Copy Not Uploaded");
+      applyDocUpdate(target.documents.taxDec, taxVal, "Missing — Tax Declaration Not Uploaded");
+      applyDocUpdate(target.documents.ownerId, ownerVal, "Missing — Owner ID Not Uploaded");
+
+      const allSubmitted =
+        target.documents.tct.submitted &&
+        target.documents.taxDec.submitted &&
+        target.documents.ownerId.submitted;
+
+      if (target.verificationStatus !== "Verified by Lucky Seven" || !hasAllLegitimateDocs(target)) {
+        target.verificationStatus = allSubmitted
+          ? "Pending Lucky Seven Verification"
+          : "Incomplete Documents";
+        target.badgeText = allSubmitted ? "Under Lucky Seven Verification" : "Missing Legal Docs";
+        target.badgeStyle = "badge-warning";
+      }
+
+      saveProperties(list);
+      closeUserDocsModal();
+      renderUserWorkspace();
+      showToast("Updated documents for Property #" + propId + " — Sent to Lucky Seven");
+    });
+  }
+
+  function buildUserVerificationTrackerHTML(prop) {
+    const docs = ensurePropertyDocuments(prop);
+    const docList = [
+      { key: "TCT/OCT", doc: docs.tct },
+      { key: "Tax Clearance", doc: docs.taxDec },
+      { key: "Owner ID", doc: docs.ownerId }
+    ];
+    const legitCount = docList.filter(function (item) {
+      return item.doc.submitted && item.doc.legitimate;
+    }).length;
+    const missingCount = docList.filter(function (item) {
+      return !item.doc.submitted;
+    }).length;
+    const isVerified = prop.verificationStatus === "Verified by Lucky Seven" && legitCount === 3;
+
+    let pillClass = "state-pending";
+    let pillText = "Undergoing Lucky Seven Verification";
+    let progressText = legitCount + "/3 Docs Verified";
+
+    if (isVerified) {
+      pillClass = "state-verified";
+      pillText = "✓ Verified by Lucky Seven";
+      progressText = "Live on Marketplace";
+    } else if (missingCount > 0) {
+      pillClass = "state-missing";
+      pillText = "Missing " + missingCount + " Legal Doc" + (missingCount > 1 ? "s" : "");
+      progressText = "Held from Marketplace";
+    } else if (legitCount === 3) {
+      pillClass = "state-pending";
+      pillText = "Ready for Lucky Seven Approval";
+      progressText = "3/3 Docs Checked";
+    }
+
+    const chipsHtml = docList
+      .map(function (item) {
+        const cls = !item.doc.submitted
+          ? "doc-miss"
+          : item.doc.legitimate
+          ? "doc-ok"
+          : "doc-wait";
+        const mark = !item.doc.submitted ? "!" : item.doc.legitimate ? "✓" : "•";
+        return '<span class="user-doc-mini ' + cls + '">' + mark + " " + item.key + "</span>";
+      })
+      .join("");
+
+    const actionHtml = !isVerified
+      ? '<button type="button" class="btn btn-outline btn-sm" data-user-update-docs-id="' +
+        prop.id +
+        '">' +
+        (missingCount > 0 ? "Upload Missing Docs" : "Update Docs") +
+        "</button>"
+      : "";
+
+    return (
+      '<div class="user-verify-tracker">' +
+      '  <div class="user-verify-top">' +
+      '    <span class="user-verify-pill ' +
+      pillClass +
+      '">' +
+      pillText +
+      "</span>" +
+      '    <span class="user-verify-progress">' +
+      progressText +
+      "</span>" +
+      "  </div>" +
+      '  <div class="user-verify-docs-row">' +
+      '    <div class="user-verify-doc-chips">' +
+      chipsHtml +
+      "</div>" +
+      actionHtml +
+      "  </div>" +
+      "</div>"
+    );
   }
 
   function renderUserWorkspace() {
@@ -3150,15 +3426,33 @@ function initTrackerPage() {
         landGrid.innerHTML =
           '<div class="card text-center">' +
           "  <h3>No account listings yet</h3>" +
-          '  <p class="mb-2">You have not published any land listings under ' +
+          '  <p class="mb-2">You have not submitted any land listings under ' +
           escapeHtml(currentEmail) +
-          ' yet. Browse the Panabo City Marketplace or submit your own parcel.</p>' +
-          '  <a href="marketplace.html" class="btn btn-primary btn-sm">Browse Marketplace &rarr;</a>' +
+          ' yet. Add a Panabo City land parcel to start Lucky Seven verification.</p>' +
+          '  <button type="button" class="btn btn-primary btn-sm" id="user-empty-add-land-btn">+ Add Land for Verification</button>' +
           "</div>";
+        const emptyAddBtn = document.getElementById("user-empty-add-land-btn");
+        if (emptyAddBtn) {
+          emptyAddBtn.addEventListener("click", function () {
+            exitEditMode();
+            activateTab("panel-seller");
+          });
+        }
       } else {
-        landGrid.innerHTML = myProps.map(createPropertyCardHTML).join("");
+        landGrid.innerHTML = myProps
+          .map(function (prop) {
+            const baseCard = createPropertyCardHTML(prop);
+            const trackerStrip = buildUserVerificationTrackerHTML(prop);
+            return baseCard.replace("</article>", trackerStrip + "</article>");
+          })
+          .join("");
         bindSaveButtons(landGrid, function () {
           if (savedEl) savedEl.textContent = getSavedIds().length;
+        });
+        landGrid.querySelectorAll("[data-user-update-docs-id]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            openUserDocsModal(btn.getAttribute("data-user-update-docs-id"));
+          });
         });
       }
     }

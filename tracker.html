@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=19" />
+  <link rel="stylesheet" href="css/styles.css?v=20" />
 </head>
 <body>
 
@@ -180,11 +180,11 @@
             </div>
             <div class="flex-wrap-gap">
               <a href="marketplace.html" class="btn btn-outline btn-sm">Explore Marketplace &rarr;</a>
-              <button type="button" class="btn btn-primary btn-sm" id="user-go-submit-btn">+ Submit New Listing</button>
+              <button type="button" class="btn btn-primary btn-sm" id="user-go-submit-btn">+ Add Land for Verification</button>
             </div>
           </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=19 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=20 -->
           </div>
         </div>
 
@@ -192,7 +192,7 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=19 -->
+            <!-- Populated dynamically via js/app.js?v=20 -->
           </div>
         </div>
       </div>
@@ -278,7 +278,7 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=19 -->
+              <!-- Populated dynamically via js/app.js?v=20 -->
             </tbody>
           </table>
         </div>
@@ -306,7 +306,7 @@
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=19 -->
+              <!-- Populated dynamically via js/app.js?v=20 -->
             </tbody>
           </table>
         </div>
@@ -326,7 +326,7 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=19 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=20 for Admin role only -->
           </div>
         </div>
 
@@ -348,6 +348,16 @@
               </div>
             </div>
             <button type="button" class="btn btn-outline btn-sm hidden" id="seller-cancel-edit-btn">Cancel Edit</button>
+          </div>
+
+          <div id="seller-lifecycle-bar" class="seller-lifecycle-bar" aria-label="Verification Process">
+            <div class="lifecycle-step active"><span class="lifecycle-dot">1</span><span>Add Land Details</span></div>
+            <span class="lifecycle-arrow" aria-hidden="true">&rarr;</span>
+            <div class="lifecycle-step active"><span class="lifecycle-dot">2</span><span>Attach 3 Legal Docs</span></div>
+            <span class="lifecycle-arrow" aria-hidden="true">&rarr;</span>
+            <div class="lifecycle-step"><span class="lifecycle-dot">3</span><span>Lucky Seven Verification</span></div>
+            <span class="lifecycle-arrow" aria-hidden="true">&rarr;</span>
+            <div class="lifecycle-step"><span class="lifecycle-dot">4</span><span>Live on Marketplace</span></div>
           </div>
 
           <div id="admin-edit-only-notice" class="alert alert-warning hidden">
@@ -397,9 +407,18 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="seller-road">Road Access &amp; Utilities</label>
-                <input type="text" id="seller-road" class="form-control" value="Accessible from Paved Barangay Road with Davao Light &amp; Water" required />
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="seller-road">Road Access &amp; Utilities</label>
+                  <input type="text" id="seller-road" class="form-control" value="Accessible from Paved Barangay Road with Davao Light &amp; Water" required />
+                </div>
+                <div class="form-group" id="seller-photo-group">
+                  <label class="form-label" for="seller-photo-file">Land Photo <span class="label-hint">(Optional JPG/PNG)</span></label>
+                  <div class="seller-photo-row">
+                    <img src="assets/property-hero.png" alt="Land photo preview" class="seller-photo-thumb" id="seller-photo-preview" />
+                    <input type="file" id="seller-photo-file" class="form-control seller-file-input" accept="image/*" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -416,20 +435,23 @@
                 <span class="seller-docs-req-pill">Required for Lucky Seven Verification</span>
               </div>
               <p class="seller-docs-hint">
-                Enter all 3 legitimate document references below. Listings missing any document will be marked Blocked until complete.
+                Submitted lands go directly to <strong>Lucky Seven Land Verifier</strong>. Enter all 3 document references (and optional scanned files) so Lucky Seven can authenticate and publish your listing.
               </p>
               <div class="grid grid-3">
                 <div class="form-group">
                   <label class="form-label" for="seller-doc-tct">Clean TCT / OCT Number</label>
                   <input type="text" id="seller-doc-tct" class="form-control" placeholder="e.g., TCT No. 142-2026001234" />
+                  <input type="file" id="seller-file-tct" class="seller-doc-file-input" accept=".pdf,.jpg,.jpeg,.png" aria-label="Attach TCT or OCT copy" />
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="seller-doc-tax">Updated Tax Declaration No.</label>
                   <input type="text" id="seller-doc-tax" class="form-control" placeholder="e.g., TD-2026-PANABO-0412" />
+                  <input type="file" id="seller-file-tax" class="seller-doc-file-input" accept=".pdf,.jpg,.jpeg,.png" aria-label="Attach Tax Clearance copy" />
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="seller-doc-id">Owner Valid ID / Deed Ref.</label>
                   <input type="text" id="seller-doc-id" class="form-control" placeholder="e.g., Gov ID &amp; Deed Matched" />
+                  <input type="file" id="seller-file-id" class="seller-doc-file-input" accept=".pdf,.jpg,.jpeg,.png" aria-label="Attach Owner Valid ID copy" />
                 </div>
               </div>
             </div>
@@ -443,8 +465,8 @@
             </div>
 
             <div class="seller-form-footer">
-              <span class="seller-footer-note">Listings appear under My Account Listings and the live Marketplace.</span>
-              <button type="submit" class="btn btn-primary" id="seller-submit-btn">Publish Listing to Marketplace &rarr;</button>
+              <span class="seller-footer-note" id="seller-footer-note">New lands undergo Lucky Seven verification before going live on the Marketplace.</span>
+              <button type="submit" class="btn btn-primary" id="seller-submit-btn">Submit Land for Lucky Seven Verification &rarr;</button>
             </div>
           </form>
         </div>
@@ -617,14 +639,14 @@
           </div>
 
           <div id="lucky-property-verification-list" class="mb-4">
-            <!-- Populated dynamically with sleek 3-zone horizontal property cards via js/app.js?v=19 -->
+            <!-- Populated dynamically with sleek 3-zone horizontal property cards via js/app.js?v=20 -->
           </div>
 
           <div class="ls-results-bar">
             <h2 class="ls-section-heading">Active Reservations</h2>
           </div>
           <div id="agency-queue-list">
-            <!-- Populated dynamically via js/app.js?v=19 -->
+            <!-- Populated dynamically via js/app.js?v=20 -->
           </div>
         </div>
       </div>
@@ -702,7 +724,42 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=19"></script>
-  <script src="js/app.js?v=19"></script>
+  <!-- User Missing/Update Legal Documents Modal (Resubmits Straight to Lucky Seven) -->
+  <div id="user-docs-modal" class="ls-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="user-docs-modal-title" data-anim="ytOverlayFade">
+    <div class="user-docs-modal-box" data-anim="ytModalPop">
+      <div class="ls-modal-header">
+        <div>
+          <span class="workspace-eyebrow">Lucky Seven Document Submission</span>
+          <h2 class="section-title" id="user-docs-modal-title">Submit Required Legal Documents</h2>
+        </div>
+        <button type="button" class="ls-modal-close-btn" id="user-docs-modal-close" aria-label="Close">&times;</button>
+      </div>
+      <p class="text-muted mb-3" id="user-docs-modal-sub">
+        Provide your missing document references below to send this property for Lucky Seven Land Verification.
+      </p>
+      <form id="user-docs-update-form">
+        <input type="hidden" id="user-docs-prop-id" value="" />
+        <div class="form-group">
+          <label class="form-label" for="user-modal-doc-tct">Clean TCT / OCT Number</label>
+          <input type="text" id="user-modal-doc-tct" class="form-control" placeholder="e.g., TCT No. 142-2026001234" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="user-modal-doc-tax">Updated Tax Declaration No.</label>
+          <input type="text" id="user-modal-doc-tax" class="form-control" placeholder="e.g., TD-2026-PANABO-0412" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="user-modal-doc-id">Owner Valid ID / Deed Ref.</label>
+          <input type="text" id="user-modal-doc-id" class="form-control" placeholder="e.g., Gov ID &amp; Deed Matched" />
+        </div>
+        <div class="logout-modal-actions mt-3">
+          <button type="button" class="btn btn-outline" id="user-docs-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Send to Lucky Seven &rarr;</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/data.js?v=20"></script>
+  <script src="js/app.js?v=20"></script>
 </body>
 </html>
