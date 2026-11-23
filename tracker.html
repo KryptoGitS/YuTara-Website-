@@ -38,12 +38,55 @@
     <div class="container">
       <div class="section-header-row">
         <div>
-          <span class="section-tag">Buyer &bull; Seller &bull; Partner Agency &amp; Admin Console</span>
+          <span class="section-tag">User &bull; Admin &bull; Lucky Seven Land Verifier Console</span>
           <h1 class="section-title">YuTara MVP Workflows &amp; Dashboard Hub</h1>
-          <p class="section-subtitle">Manage property listings (full CRUD), track 5-stage buyer milestones, advance agency verification steps, and review site visit inquiries.</p>
+          <p class="section-subtitle">Manage property listings (full CRUD), track 5-stage buyer milestones, run Lucky Seven Land Verifier title checks, and review site visit inquiries.</p>
         </div>
         <div class="flex-wrap-gap">
           <a href="marketplace.html" class="btn btn-outline btn-sm">Browse Marketplace &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Active Account & 1-Click Account Switcher Banner -->
+      <div class="card-soft mb-3 flex-between-wrap" id="account-switcher-bar">
+        <div>
+          <span class="section-tag">Active Dashboard Account</span>
+          <div id="active-account-display" class="text-green">Not Signed In (Viewing Public Demo Mode)</div>
+        </div>
+        <div class="flex-wrap-gap">
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            data-switch-account="user"
+            data-demo-role="User"
+            data-demo-name="Juan Dela Cruz"
+            data-demo-email="user@yutara.ph"
+            data-demo-tab="panel-buyer"
+          >
+            Switch to User
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            data-switch-account="admin"
+            data-demo-role="Admin"
+            data-demo-name="YuTara System Admin"
+            data-demo-email="admin@yutara.ph"
+            data-demo-tab="panel-seller"
+          >
+            Switch to Admin
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            data-switch-account="verifier"
+            data-demo-role="Lucky Seven Land Verifier"
+            data-demo-name="Lucky Seven Land Verifier"
+            data-demo-email="luckyseven@yutara.ph"
+            data-demo-tab="panel-agency"
+          >
+            Switch to Lucky Seven Land Verifier
+          </button>
         </div>
       </div>
 
@@ -55,7 +98,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-number" id="stat-pending">1</div>
-          <div class="stat-label">In Agency Verification</div>
+          <div class="stat-label">In Lucky Seven Verification</div>
         </div>
         <div class="stat-card">
           <div class="stat-number" id="stat-completed">0</div>
@@ -69,9 +112,9 @@
 
       <!-- Role Workflow Switcher Tabs -->
       <div class="tabs" id="workflow-tabs">
-        <button type="button" class="tab-btn active" data-tab="panel-buyer">1. Buyer Dashboard &amp; Tracker</button>
-        <button type="button" class="tab-btn" data-tab="panel-seller">2. Property Management (CRUD)</button>
-        <button type="button" class="tab-btn" data-tab="panel-agency">3. Admin &amp; Agency Verification Desk</button>
+        <button type="button" class="tab-btn active" data-tab="panel-buyer">1. User Dashboard &amp; Tracker</button>
+        <button type="button" class="tab-btn" data-tab="panel-seller">2. Admin Property Management (CRUD)</button>
+        <button type="button" class="tab-btn" data-tab="panel-agency">3. Lucky Seven Land Verifier Desk</button>
         <button type="button" class="tab-btn" data-tab="panel-inquiries">4. Inquiries &amp; Site Visits <span id="inquiry-count-pill">(2)</span></button>
       </div>
 
@@ -158,10 +201,10 @@
         </div>
       </div>
 
-      <!-- Tab 3: Agency Milestone Verification Queue -->
+      <!-- Tab 3: Lucky Seven Land Verifier Milestone Verification Queue -->
       <div id="panel-agency" class="tab-panel hidden">
         <div class="alert alert-warning mb-2">
-          <strong>Admin &amp; Partner Agency Queue:</strong> Click <em>Advance to Next Milestone</em> on any active reservation to update the buyer's 5-stage progress tracker in real time.
+          <strong>Lucky Seven Land Verifier Queue:</strong> Click <em>Advance to Next Milestone</em> on any active reservation to verify Transfer Certificate of Title (TCT) &amp; Tax Declaration milestones and update the buyer's 5-stage progress tracker in real time.
         </div>
         <div id="agency-queue-list">
           <!-- Populated dynamically via js/app.js -->

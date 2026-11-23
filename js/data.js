@@ -213,11 +213,41 @@ const DEFAULT_PROPERTIES = [
   }
 ];
 
+const DEMO_ACCOUNTS = [
+  {
+    key: "admin",
+    name: "YuTara System Admin",
+    email: "admin@yutara.ph",
+    password: "admin123",
+    role: "Admin",
+    title: "Platform Administrator (Full Property & System CRUD)",
+    defaultTab: "panel-seller"
+  },
+  {
+    key: "user",
+    name: "Juan Dela Cruz",
+    email: "user@yutara.ph",
+    password: "user123",
+    role: "User",
+    title: "Verified Panabo Buyer & Landowner",
+    defaultTab: "panel-buyer"
+  },
+  {
+    key: "verifier",
+    name: "Lucky Seven Land Verifier",
+    email: "luckyseven@yutara.ph",
+    password: "lucky777",
+    role: "Lucky Seven Land Verifier",
+    title: "Official Partner Land Verification Agency",
+    defaultTab: "panel-agency"
+  }
+];
+
 const MILESTONE_STEPS = [
   "Booking requested",
   "Documents requested",
   "Documents submitted",
-  "Verified by YuTara",
+  "Verified by Lucky Seven Land Verifier",
   "Transaction complete"
 ];
 
@@ -227,14 +257,15 @@ const DEFAULT_TRANSACTIONS = [
     propertyId: 2,
     propertyTitle: "Fenced 2-Room House & Lot Near Agriya",
     location: "Brgy. New Pandan, Panabo City",
-    buyerName: "Demo Buyer",
+    buyerName: "Juan Dela Cruz (User)",
     sellerName: "Verified Panabo Owner",
+    verifierAgency: "Lucky Seven Land Verifier",
     salePrice: 1600000,
     priceLabel: "₱1,600,000",
     reservationFee: 25000,
     stageIndex: 1,
     documents: [
-      { name: "Clean Transfer Certificate of Title (TCT Copy)", status: "Under Review" },
+      { name: "Clean Transfer Certificate of Title (TCT Copy)", status: "Under Review by Lucky Seven Land Verifier" },
       { name: "Updated Real Property Tax Clearance", status: "Submitted" },
       { name: "Davao Light & Water Utility Verification", status: "Checked" }
     ]

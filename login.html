@@ -42,12 +42,12 @@
           <span class="hero-eyebrow">YuTara Account Portal</span>
           <h1>Welcome Back to YuTara</h1>
           <p>
-            Sign in to manage saved Panabo City land listings, track property reservations, submit seller intake documents, or coordinate agency verification milestones.
+            Sign in as a <strong>User</strong> (Buyer/Landowner), <strong>YuTara Admin</strong>, or <strong>Lucky Seven Land Verifier</strong> to manage Panabo City property listings, track reservations, and verify title milestones.
           </p>
         </div>
 
         <div>
-          <span class="badge badge-solid-green">Panabo City &bull; Davao Region</span>
+          <span class="badge badge-solid-green">Panabo City &bull; Lucky Seven Land Verifier Partner</span>
         </div>
       </div>
 
@@ -55,20 +55,20 @@
       <div class="card">
         <span class="section-tag">Role-Based Access</span>
         <h2 class="section-title mb-2">Sign In to Your Account</h2>
-        <p class="mb-3">Enter your credentials below or use a 1-click demo role for fast live presentation testing.</p>
+        <p class="mb-3">Enter your account credentials below or click one of the ready-to-use accounts for instant live presentation login.</p>
 
         <div id="login-status" class="alert hidden"></div>
 
         <form id="login-form">
           <div class="form-group">
             <label class="form-label" for="login-email">Email Address</label>
-            <input type="email" id="login-email" class="form-control" placeholder="you@example.com" required />
+            <input type="email" id="login-email" class="form-control" placeholder="e.g., admin@yutara.ph or luckyseven@yutara.ph" required />
           </div>
 
           <div class="form-group">
             <label class="form-label" for="login-password">Password</label>
             <div class="password-wrapper">
-              <input type="password" id="login-password" class="form-control" placeholder="Enter at least 4 characters" required />
+              <input type="password" id="login-password" class="form-control" placeholder="Enter password" required />
               <button type="button" class="password-toggle-btn" data-toggle-password="login-password" aria-label="Show password">Show</button>
             </div>
           </div>
@@ -76,27 +76,53 @@
           <div class="form-group">
             <label class="form-label" for="login-role">Select Account Role</label>
             <select id="login-role" class="form-select">
-              <option value="Buyer">Land Buyer</option>
-              <option value="Seller">Property Seller / Landowner</option>
-              <option value="Agency">Partner Real Estate Agency</option>
+              <option value="User">User (Buyer &amp; Landowner)</option>
+              <option value="Admin">Admin (YuTara Platform Administrator)</option>
+              <option value="Lucky Seven Land Verifier">Lucky Seven Land Verifier (Verification Partner)</option>
             </select>
           </div>
 
           <button type="submit" class="btn btn-primary btn-full">Sign In</button>
         </form>
 
-        <!-- 1-Click Presentation Demo Logins -->
+        <!-- Official Pre-Configured Accounts (Admin, User, Lucky Seven Land Verifier) -->
         <div class="mt-3 card-soft">
-          <div class="form-label mb-2">1-Click Demo Login (For Live Presentation &amp; Debugging):</div>
+          <div class="form-label mb-2">Official Pre-Configured Accounts (1-Click Sign-In):</div>
+          <ul class="list-indented mb-2">
+            <li><strong>Admin:</strong> <code>admin@yutara.ph</code> / <code>admin123</code></li>
+            <li><strong>User:</strong> <code>user@yutara.ph</code> / <code>user123</code></li>
+            <li><strong>Lucky Seven Land Verifier:</strong> <code>luckyseven@yutara.ph</code> / <code>lucky777</code></li>
+          </ul>
           <div class="grid grid-3">
-            <button type="button" class="btn btn-outline btn-sm" data-demo-role="Buyer" data-demo-name="Juan Dela Cruz">
-              Demo Buyer
+            <button
+              type="button"
+              class="btn btn-outline btn-sm"
+              data-demo-role="Admin"
+              data-demo-name="YuTara System Admin"
+              data-demo-email="admin@yutara.ph"
+              data-demo-tab="panel-seller"
+            >
+              Admin Account
             </button>
-            <button type="button" class="btn btn-outline btn-sm" data-demo-role="Seller" data-demo-name="Maya Santos">
-              Demo Seller
+            <button
+              type="button"
+              class="btn btn-outline btn-sm"
+              data-demo-role="User"
+              data-demo-name="Juan Dela Cruz"
+              data-demo-email="user@yutara.ph"
+              data-demo-tab="panel-buyer"
+            >
+              User Account
             </button>
-            <button type="button" class="btn btn-secondary btn-sm" data-demo-role="Agency" data-demo-name="Panabo Realty Partner">
-              Demo Agency
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-demo-role="Lucky Seven Land Verifier"
+              data-demo-name="Lucky Seven Land Verifier"
+              data-demo-email="luckyseven@yutara.ph"
+              data-demo-tab="panel-agency"
+            >
+              Lucky Seven Verifier
             </button>
           </div>
         </div>

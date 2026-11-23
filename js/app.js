@@ -1012,8 +1012,14 @@ function initReservationPage() {
 }
 
 /* --------------------------------------------------------------------------
-   8. LOGIN PAGE (login.html)
+   8. LOGIN PAGE (login.html) — Admin, User & Lucky Seven Land Verifier
    -------------------------------------------------------------------------- */
+function getDefaultTabForRole(role) {
+  if (role === "Admin") return "panel-seller";
+  if (role === "Lucky Seven Land Verifier" || role === "Agency") return "panel-agency";
+  return "panel-buyer";
+}
+
 function initLoginPage() {
   const form = document.getElementById("login-form");
   if (!form) return;
@@ -1026,7 +1032,7 @@ function initLoginPage() {
 
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
-    const role = document.getElementById("login-role").value;
+    const selectedRole = document.getElementById("login-role").value;
 
     if (!email || password.length < 4) {
       statusBox.className = "alert alert-error";
@@ -1035,17 +1041,50 @@ function initLoginPage() {
       return;
     }
 
-    const displayName = email.split("@")[0];
-    setSession({ name: displayName, email: email, role: role });
-    window.location.href = "tracker.html";
+    const demoAccounts = typeof DEMO_ACCOUNTS !== "undefined" ? DEMO_ACCOUNTS : [];
+    const matchedAccount = demoAccounts.find(function (acc) {
+      return acc.email.toLowerCase() === email.toLowerCase();
+    });
+
+    if (matchedAccount) {
+      if (password !== matchedAccount.password) {
+        statusBox.className = "alert alert-error";
+        statusBox.textContent =
+          "Incorrect password for " +
+          matchedAccount.name +
+          ". Use password: " +
+          matchedAccount.password;
+        statusBox.classList.remove("hidden");
+        return;
+      }
+      setSession({
+        name: matchedAccount.name,
+        email: matchedAccount.email,
+        role: matchedAccount.role
+      });
+      window.location.href = "tracker.html?tab=" + encodeURIComponent(matchedAccount.defaultTab);
+      return;
+    }
+
+    const displayName =
+      selectedRole === "Lucky Seven Land Verifier"
+        ? "Lucky Seven Land Verifier"
+        : selectedRole === "Admin"
+        ? "YuTara System Admin"
+        : email.split("@")[0];
+    const targetTab = getDefaultTabForRole(selectedRole);
+    setSession({ name: displayName, email: email, role: selectedRole });
+    window.location.href = "tracker.html?tab=" + encodeURIComponent(targetTab);
   });
 
   document.querySelectorAll("[data-demo-role]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       const role = btn.getAttribute("data-demo-role");
       const name = btn.getAttribute("data-demo-name");
-      setSession({ name: name, email: role.toLowerCase() + "@yutara.demo", role: role });
-      window.location.href = "tracker.html";
+      const email = btn.getAttribute("data-demo-email") || role.toLowerCase().replace(/\s+/g, "") + "@yutara.ph";
+      const targetTab = btn.getAttribute("data-demo-tab") || getDefaultTabForRole(role);
+      setSession({ name: name, email: email, role: role });
+      window.location.href = "tracker.html?tab=" + encodeURIComponent(targetTab);
     });
   });
 }
@@ -1220,9 +1259,50 @@ function initTrackerPage() {
   });
 
   const initialTab = getQueryParam("tab");
+  const currentSession = getSession();
   if (initialTab && document.getElementById(initialTab)) {
     activateTab(initialTab);
+  } else if (currentSession && currentSession.role) {
+    const roleTab = getDefaultTabForRole(currentSession.role);
+    if (document.getElementById(roleTab)) {
+      activateTab(roleTab);
+    }
   }
+
+  function renderActiveAccountBanner() {
+    const displayEl = document.getElementById("active-account-display");
+    if (!displayEl) return;
+    const sess = getSession();
+    if (!sess) {
+      displayEl.textContent = "Not Signed In — Click an account button on the right to switch roles";
+    } else {
+      displayEl.textContent =
+        "Signed in as: " +
+        sess.name +
+        " (" +
+        sess.email +
+        ") • Role: " +
+        sess.role;
+    }
+  }
+
+  document.querySelectorAll("[data-switch-account]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const role = btn.getAttribute("data-demo-role");
+      const name = btn.getAttribute("data-demo-name");
+      const email = btn.getAttribute("data-demo-email");
+      const targetTab = btn.getAttribute("data-demo-tab") || getDefaultTabForRole(role);
+      setSession({ name: name, email: email, role: role });
+      initNavbar();
+      renderActiveAccountBanner();
+      if (targetTab && document.getElementById(targetTab)) {
+        activateTab(targetTab);
+      }
+      showToast("Switched active account to: " + name + " (" + role + ")");
+    });
+  });
+
+  renderActiveAccountBanner();
 
   const brgySelect = document.getElementById("seller-barangay");
   if (brgySelect) {
