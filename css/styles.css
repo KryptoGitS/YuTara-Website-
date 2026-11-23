@@ -6668,6 +6668,16 @@ body.anim-debug-off {
   }
 }
 
+.services-cards-grid .card {
+  display: flex;
+  flex-direction: column;
+}
+
+.services-card-cta {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
 /* Final Visibility Utility Override (ensures .btn.hidden, .alert.hidden, workspace, and step panels stay hidden) */
 .hidden,
 .btn.hidden,
