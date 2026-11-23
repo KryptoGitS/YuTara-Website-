@@ -536,18 +536,39 @@ function openLoginRequiredModal(actionDescription, nextUrl) {
     modal.setAttribute("data-anim", "ytOverlayFade");
     modal.innerHTML =
       '<div class="logout-modal-box auth-guard-box" data-anim="ytModalPop">' +
+      '  <button type="button" class="auth-guard-close" id="auth-guard-close-btn" aria-label="Close">' +
+      '    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '      <line x1="18" y1="6" x2="6" y2="18"></line>' +
+      '      <line x1="6" y1="6" x2="18" y2="18"></line>' +
+      "    </svg>" +
+      "  </button>" +
       '  <div class="auth-guard-icon" aria-hidden="true">' +
-      '    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-      '      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>' +
-      '      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>' +
+      '    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
+      '      <rect x="4" y="11" width="16" height="10" rx="2.5" ry="2.5"></rect>' +
+      '      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>' +
+      '      <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"></circle>' +
       "    </svg>" +
       "  </div>" +
-      '  <h2 class="logout-modal-title" id="auth-guard-title">Log In Required</h2>' +
-      '  <p class="logout-modal-message" id="auth-guard-message"></p>' +
-      '  <p class="logout-modal-account">Sign in to your YuTara account or register a free User account to continue.</p>' +
+      '  <h2 class="auth-guard-title" id="auth-guard-title">Log In Required</h2>' +
+      '  <p class="auth-guard-message" id="auth-guard-message"></p>' +
+      '  <p class="auth-guard-subtext">Sign in to your YuTara account or register a free account to continue.</p>' +
+      '  <div class="auth-guard-divider" aria-hidden="true"></div>' +
       '  <div class="auth-guard-actions">' +
-      '    <a href="login.html" class="btn btn-primary" id="auth-guard-login-btn">Log In Now &rarr;</a>' +
-      '    <a href="register.html" class="btn btn-outline" id="auth-guard-register-btn">Create Account</a>' +
+      '    <a href="login.html" class="btn btn-primary auth-guard-btn-login" id="auth-guard-login-btn">' +
+      '      <svg class="auth-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+      '        <circle cx="12" cy="8" r="4"></circle>' +
+      '        <path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"></path>' +
+      "      </svg>" +
+      "      <span>Log In Now &rarr;</span>" +
+      "    </a>" +
+      '    <a href="register.html" class="btn btn-outline auth-guard-btn-register" id="auth-guard-register-btn">' +
+      '      <svg class="auth-btn-icon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+      '        <circle cx="9.5" cy="8" r="3.8"></circle>' +
+      '        <path d="M2.5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"></path>' +
+      '        <path d="M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>' +
+      "      </svg>" +
+      "      <span>Create Account</span>" +
+      "    </a>" +
       "  </div>" +
       '  <button type="button" class="auth-guard-dismiss" id="auth-guard-dismiss-btn">Cancel</button>' +
       "</div>";
@@ -557,6 +578,10 @@ function openLoginRequiredModal(actionDescription, nextUrl) {
       modal.classList.add("hidden");
     }
 
+    const closeXBtn = document.getElementById("auth-guard-close-btn");
+    if (closeXBtn) {
+      closeXBtn.addEventListener("click", closeGuardModal);
+    }
     const dismissBtn = document.getElementById("auth-guard-dismiss-btn");
     if (dismissBtn) {
       dismissBtn.addEventListener("click", closeGuardModal);
@@ -583,7 +608,6 @@ function openLoginRequiredModal(actionDescription, nextUrl) {
   }
 
   modal.classList.remove("hidden");
-  showToast("Please log in first to " + actionText);
   if (loginBtn) {
     loginBtn.focus();
   }
@@ -1906,17 +1930,32 @@ function initTrackerPage() {
       '<section class="auth-gate-card anim-fade-up" data-anim="ytFadeInUp" aria-labelledby="auth-gate-heading">' +
       '  <img src="assets/yutara-logo.png" alt="YuTara" class="auth-gate-logo" />' +
       '  <div class="auth-guard-icon" aria-hidden="true">' +
-      '    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-      '      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>' +
-      '      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>' +
+      '    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
+      '      <rect x="4" y="11" width="16" height="10" rx="2.5" ry="2.5"></rect>' +
+      '      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>' +
+      '      <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"></circle>' +
       "    </svg>" +
       "  </div>" +
-      '  <span class="reg-eyebrow">Account Required</span>' +
-      '  <h1 class="auth-gate-title" id="auth-gate-heading">Please Log In First</h1>' +
-      '  <p class="auth-gate-message">' + escapeHtml(reasonText) + "</p>" +
+      '  <h1 class="auth-guard-title" id="auth-gate-heading">Please Log In First</h1>' +
+      '  <p class="auth-guard-message">' + escapeHtml(reasonText) + "</p>" +
+      '  <p class="auth-guard-subtext">Sign in to your YuTara account or register a free account to continue.</p>' +
+      '  <div class="auth-guard-divider" aria-hidden="true"></div>' +
       '  <div class="auth-guard-actions">' +
-      '    <a href="' + escapeHtml(loginHref) + '" class="btn btn-primary" id="gate-login-btn">Log In Now &rarr;</a>' +
-      '    <a href="register.html" class="btn btn-outline" id="gate-register-btn">Create User Account</a>' +
+      '    <a href="' + escapeHtml(loginHref) + '" class="btn btn-primary auth-guard-btn-login" id="gate-login-btn">' +
+      '      <svg class="auth-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+      '        <circle cx="12" cy="8" r="4"></circle>' +
+      '        <path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"></path>' +
+      "      </svg>" +
+      "      <span>Log In Now &rarr;</span>" +
+      "    </a>" +
+      '    <a href="register.html" class="btn btn-outline auth-guard-btn-register" id="gate-register-btn">' +
+      '      <svg class="auth-btn-icon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+      '        <circle cx="9.5" cy="8" r="3.8"></circle>' +
+      '        <path d="M2.5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"></path>' +
+      '        <path d="M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>' +
+      "      </svg>" +
+      "      <span>Create Account</span>" +
+      "    </a>" +
       "  </div>" +
       '  <a href="marketplace.html" class="auth-gate-back">&larr; Back to Panabo Marketplace</a>' +
       "</section>";

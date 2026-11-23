@@ -6465,50 +6465,142 @@ body.anim-debug-off {
 
 /* ===== Login Required Reminder Modal & Full-Page Auth Gate ===== */
 .auth-guard-box {
-  max-width: 440px;
-  padding: 30px 26px 24px;
+  position: relative;
+  max-width: 472px;
+  border-radius: 20px;
+  padding: 34px 32px 24px;
+  border: 1px solid rgba(28, 36, 24, 0.08);
+  box-shadow: 0 24px 56px rgba(18, 30, 16, 0.2), 0 4px 14px rgba(18, 30, 16, 0.08);
+}
+
+.auth-guard-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #6B7684;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--anim-duration-fast) var(--anim-ease),
+    color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.auth-guard-close:hover {
+  background-color: #F2F5EF;
+  color: #1C2418;
 }
 
 .auth-guard-icon {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  margin: 0 auto 14px;
-  background-color: var(--green-tint);
-  border: 1px solid var(--green-border);
-  color: var(--forest-green);
+  margin: 0 auto 16px;
+  background: linear-gradient(145deg, #DDF0D2 0%, #C6E3B7 100%);
+  color: #2A6318;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 14px rgba(49, 91, 25, 0.12);
+}
+
+.auth-guard-title {
+  font-family: "Plus Jakarta Sans", var(--font-display);
+  font-size: 1.62rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #1F4113;
+  margin-bottom: 10px;
+}
+
+.auth-guard-message {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2B3629;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+
+.auth-guard-subtext {
+  font-size: 0.9rem;
+  color: #5E6A5C;
+  line-height: 1.5;
+  max-width: 348px;
+  margin: 0 auto;
+}
+
+.auth-guard-divider {
+  height: 1px;
+  background-color: #ECEFE9;
+  margin: 20px 0 18px;
 }
 
 .auth-guard-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .auth-guard-actions .btn {
   width: 100%;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 11px;
+  font-size: 0.93rem;
+  font-weight: 700;
+  gap: 8px;
   justify-content: center;
+}
+
+.auth-guard-btn-login {
+  background-color: #2E5717;
+  border-color: #2E5717;
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(46, 87, 23, 0.22);
+}
+
+.auth-guard-btn-login:hover {
+  background-color: #234510;
+  border-color: #234510;
+}
+
+.auth-guard-btn-register {
+  background-color: var(--white);
+  border: 1.5px solid #3A6421;
+  color: #295015;
+}
+
+.auth-guard-btn-register:hover {
+  background-color: #F2F7EE;
+  border-color: #295015;
+  color: #1F4113;
+}
+
+.auth-btn-icon {
+  flex-shrink: 0;
 }
 
 .auth-guard-dismiss {
   background: none;
   border: none;
-  color: var(--text-muted);
-  font-size: 0.88rem;
+  color: #2E5619;
+  font-size: 0.91rem;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 16px;
   border-radius: 8px;
   transition: color var(--anim-duration-fast) var(--anim-ease),
     background-color var(--anim-duration-fast) var(--anim-ease);
 }
 
 .auth-guard-dismiss:hover {
-  color: var(--text-primary);
-  background-color: #F3F5F0;
+  color: #1F4113;
+  background-color: #F1F5ED;
 }
 
 .res-login-banner {
@@ -6538,42 +6630,27 @@ body.anim-debug-off {
 
 .auth-gate-card {
   width: 100%;
-  max-width: 470px;
+  max-width: 472px;
   background-color: var(--white);
   border: 1px solid rgba(28, 36, 24, 0.08);
   border-radius: 20px;
-  padding: 36px 32px 30px;
+  padding: 36px 32px 28px;
   text-align: center;
-  box-shadow: 0 12px 34px rgba(28, 36, 24, 0.06);
+  box-shadow: 0 14px 38px rgba(28, 36, 24, 0.08);
 }
 
 .auth-gate-logo {
   height: 44px;
   width: auto;
-  margin: 0 auto 20px;
-}
-
-.auth-gate-title {
-  font-family: "Plus Jakarta Sans", var(--font-display);
-  font-size: 1.65rem;
-  font-weight: 800;
-  color: #1C2418;
-  margin-bottom: 8px;
-}
-
-.auth-gate-message {
-  font-size: 0.96rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-  margin-bottom: 22px;
+  margin: 0 auto 18px;
 }
 
 .auth-gate-back {
   display: inline-block;
-  margin-top: 6px;
-  font-size: 0.88rem;
+  margin-top: 2px;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: var(--forest-green);
+  color: #2E5619;
 }
 
 .auth-gate-back:hover {
@@ -6581,12 +6658,13 @@ body.anim-debug-off {
 }
 
 @media (max-width: 540px) {
-  .auth-guard-actions {
-    grid-template-columns: 1fr;
+  .auth-guard-box,
+  .auth-gate-card {
+    padding: 30px 20px 22px;
   }
 
-  .auth-gate-card {
-    padding: 28px 20px 24px;
+  .auth-guard-actions {
+    grid-template-columns: 1fr;
   }
 }
 
