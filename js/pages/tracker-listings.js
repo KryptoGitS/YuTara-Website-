@@ -1,14 +1,20 @@
 /* ==========================================================================
    YuTara Workspace — Listings & Add Land Form (js/pages/tracker-listings.js)
-   Handles User "Add Land for Sale" submissions (with compressed photo upload)
-   and Admin Edit / Delete property inventory management.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. Photo Upload Compression   — Resizes uploaded land image to 640px JPEG
+   2. exitEditMode()             — Resets form state for User (Add) vs Admin (Edit)
+   3. loadPropertyIntoEditForm() — Populates existing listing into Admin editor
+   4. deletePropertyListingById()— Deletes listing (restores defaults if empty)
+   5. renderManagedProperties()  — Renders Admin property Edit/Delete inventory
+   6. sellerForm Submit          — Saves Admin edits OR publishes new User land
    ========================================================================== */
 
 function initTrackerListings(ctx) {
   const brgySelect = document.getElementById("seller-barangay");
   if (brgySelect) {
     brgySelect.innerHTML = PANABO_BARANGAYS.map(function (b) {
-      return '<option value="' + escapeHtml(b) + '">' + escapeHtml(b) + "</option>";
+      return `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`;
     }).join("");
   }
 
@@ -24,7 +30,7 @@ function initTrackerListings(ctx) {
   const DEFAULT_PREVIEW_IMG = "assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg";
   let pendingPhotoDataUrl = "";
 
-  // Compress uploaded photo via canvas so it fits comfortably in localStorage
+  // Step 1: Compress uploaded photo via HTML5 Canvas so it fits cleanly in localStorage
   if (sellerPhotoInput) {
     sellerPhotoInput.addEventListener("change", function () {
       const file = sellerPhotoInput.files && sellerPhotoInput.files[0];
@@ -55,6 +61,7 @@ function initTrackerListings(ctx) {
     });
   }
 
+  // Step 2: Reset form into default mode based on signed-in role
   function exitEditMode() {
     if (sellerForm) sellerForm.reset();
     if (editIdInput) editIdInput.value = "";
@@ -87,6 +94,7 @@ function initTrackerListings(ctx) {
     if (cancelEditBtn) cancelEditBtn.classList.add("hidden");
   }
 
+  // Step 3: Populate Admin Edit Form when clicking Edit on a listing
   function loadPropertyIntoEditForm(targetId) {
     if (!ctx.isAdmin) return;
     const prop = getProperties().find(function (p) {
@@ -106,7 +114,7 @@ function initTrackerListings(ctx) {
 
     if (formTag) formTag.textContent = "Admin Property Editor";
     if (formHeading) {
-      formHeading.textContent = "Edit Property Listing #" + prop.id + " (" + prop.barangay + ")";
+      formHeading.textContent = `Edit Property Listing #${prop.id} (${prop.barangay})`;
     }
     if (submitBtn) {
       submitBtn.innerHTML = "Save Property Changes &checkmark;";
@@ -118,9 +126,10 @@ function initTrackerListings(ctx) {
     if (sellerForm) {
       sellerForm.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-    showToast("Loaded listing #" + prop.id + " for editing");
+    showToast(`Loaded listing #${prop.id} for editing`);
   }
 
+  // Step 4: Admin Delete Property Handler
   function deletePropertyListingById(targetId) {
     if (!ctx.isAdmin) return;
     const remaining = getProperties().filter(function (p) {
@@ -131,7 +140,7 @@ function initTrackerListings(ctx) {
       showToast("Restored default Panabo listings so Marketplace is never empty");
     } else {
       saveProperties(remaining);
-      showToast("Deleted property listing #" + targetId);
+      showToast(`Deleted property listing #${targetId}`);
     }
     if (editIdInput && Number(editIdInput.value) === Number(targetId)) {
       exitEditMode();
@@ -139,12 +148,12 @@ function initTrackerListings(ctx) {
     ctx.refreshAll();
   }
 
+  // Step 5: Render Admin Property Inventory List
   function renderManagedProperties() {
     const container = document.getElementById("managed-properties-list");
     const countBadge = document.getElementById("managed-prop-count");
     if (!container) return;
 
-    // Strict RBAC guard: Only Admin can view or use Property Edit/Delete Inventory
     if (!ctx.isAdmin) {
       container.innerHTML = "";
       return;
@@ -152,51 +161,32 @@ function initTrackerListings(ctx) {
 
     const properties = getProperties();
     if (countBadge) {
-      countBadge.textContent = properties.length + " Listings";
+      countBadge.textContent = `${properties.length} Listings`;
     }
 
     container.innerHTML = properties
       .map(function (prop) {
-        return (
-          '<div class="card-soft mb-2 anim-fade-up" data-anim="ytFadeInUp">' +
-          '  <div class="agency-card-row">' +
-          '    <div class="table-prop-cell">' +
-          '      <img src="' +
-          escapeHtml(prop.image) +
-          '" alt="' +
-          escapeHtml(prop.title) +
-          '" class="table-prop-thumb" onerror="this.src=\'' + DEFAULT_PREVIEW_IMG + '\'" />' +
-          "      <div>" +
-          "        <h3>#" +
-          prop.id +
-          " &mdash; " +
-          escapeHtml(prop.title) +
-          "</h3>" +
-          '        <p class="text-no-margin">Brgy. ' +
-          escapeHtml(prop.barangay) +
-          " &bull; " +
-          escapeHtml(prop.type) +
-          " &bull; " +
-          Number(prop.area).toLocaleString() +
-          " sqm &bull; <strong>" +
-          escapeHtml(formatPropertyPrice(prop)) +
-          "</strong></p>" +
-          "      </div>" +
-          "    </div>" +
-          '    <div class="flex-wrap-gap">' +
-          '      <a href="property.html?id=' +
-          prop.id +
-          '" class="btn btn-outline btn-sm">View</a>' +
-          '      <button type="button" class="btn btn-outline btn-sm" data-edit-prop-id="' +
-          prop.id +
-          '">Edit</button>' +
-          '      <button type="button" class="btn btn-danger-outline btn-sm" data-delete-prop-id="' +
-          prop.id +
-          '">Delete</button>' +
-          "    </div>" +
-          "  </div>" +
-          "</div>"
-        );
+        return `
+          <div class="card-soft mb-2 anim-fade-up" data-anim="ytFadeInUp">
+            <div class="agency-card-row">
+              <div class="table-prop-cell">
+                <img src="${escapeHtml(prop.image)}" alt="${escapeHtml(prop.title)}" class="table-prop-thumb" onerror="this.src='${DEFAULT_PREVIEW_IMG}'" />
+                <div>
+                  <h3>#${prop.id} &mdash; ${escapeHtml(prop.title)}</h3>
+                  <p class="text-no-margin">
+                    Brgy. ${escapeHtml(prop.barangay)} &bull; ${escapeHtml(prop.type)} &bull; ${Number(prop.area).toLocaleString()} sqm &bull;
+                    <strong>${escapeHtml(formatPropertyPrice(prop))}</strong>
+                  </p>
+                </div>
+              </div>
+              <div class="flex-wrap-gap">
+                <a href="property.html?id=${prop.id}" class="btn btn-outline btn-sm">View</a>
+                <button type="button" class="btn btn-outline btn-sm" data-edit-prop-id="${prop.id}">Edit</button>
+                <button type="button" class="btn btn-danger-outline btn-sm" data-delete-prop-id="${prop.id}">Delete</button>
+              </div>
+            </div>
+          </div>
+        `;
       })
       .join("");
 
@@ -229,6 +219,7 @@ function initTrackerListings(ctx) {
     });
   }
 
+  // Step 6: Handle Form Submission (Admin Edit OR Standard User New Listing)
   if (sellerForm) {
     sellerForm.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -237,11 +228,10 @@ function initTrackerListings(ctx) {
       const feedback = document.getElementById("seller-feedback");
       const editingId = editIdInput && editIdInput.value ? Number(editIdInput.value) : 0;
 
-      // Strict RBAC guard: Admin can ONLY edit existing properties, never publish new seller listings
+      // RBAC guard: Admin can ONLY edit existing properties, never publish new seller listings
       if (ctx.isAdmin && editingId <= 0) {
         feedback.className = "alert alert-error";
-        feedback.textContent =
-          "Admin Restriction: Click Edit on an existing property listing above to modify it.";
+        feedback.textContent = "Admin Restriction: Click Edit on an existing property listing above to modify it.";
         feedback.classList.remove("hidden");
         return;
       }
@@ -263,6 +253,7 @@ function initTrackerListings(ctx) {
 
       const list = getProperties();
 
+      // Path A: Admin updating an existing listing
       if (ctx.isAdmin && editingId > 0) {
         const targetIndex = list.findIndex(function (p) {
           return p.id === editingId;
@@ -279,21 +270,23 @@ function initTrackerListings(ctx) {
           saveProperties(list);
           exitEditMode();
           ctx.refreshAll();
+
           feedback.className = "alert alert-success";
-          feedback.innerHTML =
-            "<strong>Updated Property Listing #" +
-            editingId +
-            '!</strong> <a href="property.html?id=' +
-            editingId +
-            '" class="inline-action-link">View Updated Property &rarr;</a>';
+          feedback.innerHTML = `
+            <strong>Updated Property Listing #${editingId}!</strong>
+            <a href="property.html?id=${editingId}" class="inline-action-link">View Updated Property &rarr;</a>
+          `;
           feedback.classList.remove("hidden");
-          showToast("Updated property listing #" + editingId);
+          showToast(`Updated property listing #${editingId}`);
           return;
         }
       }
 
-      // Standard User publishing a new Panabo City land listing straight to Marketplace
-      const nextId = list.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
+      // Path B: Standard User publishing a new Panabo City land listing straight to Marketplace
+      const nextId =
+        list.reduce(function (max, item) {
+          return Math.max(max, item.id);
+        }, 0) + 1;
 
       list.unshift({
         id: nextId,
@@ -318,9 +311,9 @@ function initTrackerListings(ctx) {
         latitude: "7.3100",
         longitude: "125.6820",
         image: pendingPhotoDataUrl || DEFAULT_PREVIEW_IMG,
-        cardTags: [type + " Lot", "Direct Owner", "Panabo City"],
+        cardTags: [`${type} Lot`, "Direct Owner", "Panabo City"],
         highlights: [
-          Number(area).toLocaleString() + " SQM Lot Area",
+          `${Number(area).toLocaleString()} SQM Lot Area`,
           roadAccess,
           "Direct buyer-seller communication & reservation available"
         ],
@@ -332,13 +325,12 @@ function initTrackerListings(ctx) {
       ctx.refreshAll();
 
       feedback.className = "alert alert-success";
-      feedback.innerHTML =
-        "<strong>Land Property #" +
-        nextId +
-        " Published to Marketplace!</strong> Your listing is now live in Panabo City. " +
-        '<a href="marketplace.html" class="inline-action-link">View on Marketplace &rarr;</a>';
+      feedback.innerHTML = `
+        <strong>Land Property #${nextId} Published to Marketplace!</strong> Your listing is now live in Panabo City.
+        <a href="marketplace.html" class="inline-action-link">View on Marketplace &rarr;</a>
+      `;
       feedback.classList.remove("hidden");
-      showToast("Land #" + nextId + " is now live on Marketplace");
+      showToast(`Land #${nextId} is now live on Marketplace`);
     });
   }
 

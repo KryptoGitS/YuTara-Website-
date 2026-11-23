@@ -1,6 +1,8 @@
 /* ==========================================================================
    YuTara Page — Contact Us (js/pages/contact.js -> contact.html)
-   Records general Panabo City inquiries into the local demo store.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. initContactPage() — Validates #contact-form and stores inquiry in localStorage
    ========================================================================== */
 
 function initContactPage() {
@@ -18,6 +20,7 @@ function initContactPage() {
     const topic = topicEl ? topicEl.value : "General Inquiry";
     const message = document.getElementById("contact-message").value.trim();
 
+    // Step 1: Validate required inputs
     if (!name || !email.includes("@") || message.length < 10) {
       feedback.className = "alert alert-error";
       feedback.textContent = "Please enter your name, a valid email, and a message (at least 10 characters).";
@@ -25,9 +28,10 @@ function initContactPage() {
       return;
     }
 
+    // Step 2: Save inquiry to localStorage
     const inquiries = getInquiries();
     const newInq = {
-      id: "INQ-" + Math.floor(1000 + Math.random() * 9000),
+      id: `INQ-${Math.floor(1000 + Math.random() * 9000)}`,
       type: topic,
       propertyTitle: "Panabo City Marketplace Inquiry",
       senderName: name,
@@ -39,16 +43,12 @@ function initContactPage() {
     inquiries.unshift(newInq);
     saveInquiries(inquiries);
 
+    // Step 3: Show confirmation alert & toast
     feedback.className = "alert alert-success";
-    feedback.innerHTML =
-      "Thank you, <strong>" +
-      escapeHtml(name) +
-      "</strong>! Your inquiry (" +
-      escapeHtml(newInq.id) +
-      ") has been saved.";
+    feedback.innerHTML = `Thank you, <strong>${escapeHtml(name)}</strong>! Your inquiry (${escapeHtml(newInq.id)}) has been recorded.`;
     feedback.classList.remove("hidden");
     form.reset();
-    showToast("Inquiry " + newInq.id + " sent");
+    showToast(`Inquiry ${newInq.id} sent`);
   });
 }
 

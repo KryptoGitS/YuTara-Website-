@@ -1,12 +1,18 @@
 /* ==========================================================================
    YuTara Page — Marketplace Directory (js/pages/marketplace.js -> marketplace.html)
-   Sidebar filtering, quick barangay chips, sorting, and pagination.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. ITEMS_PER_PAGE     — Default listings shown per page (currently 4)
+   2. syncActiveChips()  — Highlights active barangay chip matching current filter
+   3. renderPagination() — Renders Prev / Page N / Next / Load All buttons
+   4. filterProperties() — Applies keyword, barangay, category, price, saved, & sort
    ========================================================================== */
 
 function initMarketplacePage() {
   const grid = document.getElementById("marketplace-grid");
   if (!grid) return;
 
+  // DOM References
   const locationInput = document.getElementById("filter-location");
   const barangaySelect = document.getElementById("filter-barangay");
   const typeSelect = document.getElementById("filter-type");
@@ -22,17 +28,17 @@ function initMarketplacePage() {
   const mobileFilterBtn = document.getElementById("mobile-filter-btn");
   const filterSidebar = document.getElementById("filter-sidebar");
 
-  // Populate Barangay Dropdown in Sidebar
+  // Step 1: Populate Barangay Dropdown from PANABO_BARANGAYS (js/data.js)
   if (barangaySelect) {
     const optionsHtml = ['<option value="">All Panabo Barangays</option>'].concat(
       PANABO_BARANGAYS.map(function (b) {
-        return '<option value="' + escapeHtml(b) + '">Brgy. ' + escapeHtml(b) + "</option>";
+        return `<option value="${escapeHtml(b)}">Brgy. ${escapeHtml(b)}</option>`;
       })
     );
     barangaySelect.innerHTML = optionsHtml.join("");
   }
 
-  // Mobile Collapsible Filter Panel Toggle
+  // Step 2: Mobile Collapsible Filter Panel Toggle
   if (mobileFilterBtn && filterSidebar) {
     mobileFilterBtn.addEventListener("click", function () {
       const isOpen = filterSidebar.classList.toggle("open");
@@ -44,12 +50,12 @@ function initMarketplacePage() {
     });
   }
 
-  // Pagination state (4 items per page by default, or showAll = true)
+  // Pagination Configuration (change ITEMS_PER_PAGE here during live demo if asked)
   const ITEMS_PER_PAGE = 4;
   let currentPage = 1;
   let showAllMode = false;
 
-  // Read URL Query Parameters
+  // Step 3: Pre-fill filters from URL Query Parameters (?location=&type=&min=&max=)
   const urlLocation = getQueryParam("location");
   if (urlLocation) {
     locationInput.value = urlLocation;
@@ -80,7 +86,7 @@ function initMarketplacePage() {
 
   function updateSavedCount() {
     if (savedCountLabel) {
-      savedCountLabel.textContent = "(" + getSavedIds().length + ")";
+      savedCountLabel.textContent = `(${getSavedIds().length})`;
     }
   }
 
@@ -97,36 +103,25 @@ function initMarketplacePage() {
 
     let html = "";
     if (!showAllMode) {
-      html +=
-        '<button type="button" class="page-btn" data-page="prev" ' +
-        (currentPage === 1 ? "disabled" : "") +
-        ">&larr; Prev</button>";
-
+      const pageButtons = [];
       for (let p = 1; p <= totalPages; p++) {
-        html +=
-          '<button type="button" class="page-btn ' +
-          (p === currentPage ? "active" : "") +
-          '" data-page="' +
-          p +
-          '">Page ' +
-          p +
-          "</button>";
+        pageButtons.push(
+          `<button type="button" class="page-btn ${p === currentPage ? "active" : ""}" data-page="${p}">Page ${p}</button>`
+        );
       }
 
-      html +=
-        '<button type="button" class="page-btn" data-page="next" ' +
-        (currentPage === totalPages ? "disabled" : "") +
-        ">Next &rarr;</button>";
-
-      html +=
-        '<button type="button" class="page-btn" data-page="all">Load All (' +
-        totalItems +
-        ")</button>";
+      html = `
+        <button type="button" class="page-btn" data-page="prev" ${currentPage === 1 ? "disabled" : ""}>&larr; Prev</button>
+        ${pageButtons.join("")}
+        <button type="button" class="page-btn" data-page="next" ${currentPage === totalPages ? "disabled" : ""}>Next &rarr;</button>
+        <button type="button" class="page-btn" data-page="all">Load All (${totalItems})</button>
+      `;
     } else {
-      html +=
-        '<button type="button" class="page-btn active" data-page="paginate">Showing All ' +
-        totalItems +
-        " Listings (Switch to Pages)</button>";
+      html = `
+        <button type="button" class="page-btn active" data-page="paginate">
+          Showing All ${totalItems} Listings (Switch to Pages)
+        </button>
+      `;
     }
 
     paginationContainer.innerHTML = html;
@@ -152,12 +147,12 @@ function initMarketplacePage() {
     });
   }
 
+  // Step 4: Main Filter + Sort + Render Pipeline
   function filterProperties(resetPage) {
     if (resetPage !== false) {
       currentPage = 1;
     }
 
-    // All lands appear on the Marketplace immediately upon submission.
     const allProperties = getProperties();
     const savedIds = getSavedIds();
     const keyword = locationInput.value.trim().toLowerCase();
@@ -169,7 +164,7 @@ function initMarketplacePage() {
     const onlySaved = savedOnlyCheck && savedOnlyCheck.checked;
     const sortBy = sortSelect ? sortSelect.value : "featured";
 
-    let filtered = allProperties.filter(function (prop) {
+    const filtered = allProperties.filter(function (prop) {
       const highlightText = (prop.highlights || []).join(" ").toLowerCase();
       const textMatch =
         !keyword ||
@@ -207,12 +202,13 @@ function initMarketplacePage() {
     updateSavedCount();
 
     if (filtered.length === 0) {
-      countText.textContent = "Showing 0 of " + allProperties.length + " properties in Panabo City";
-      grid.innerHTML =
-        '<div class="card empty-state-card">' +
-        "  <h3>No matching properties found</h3>" +
-        "  <p>Try clearing your filters or selecting another Panabo City barangay.</p>" +
-        "</div>";
+      countText.textContent = `Showing 0 of ${allProperties.length} properties in Panabo City`;
+      grid.innerHTML = `
+        <div class="card empty-state-card">
+          <h3>No matching properties found</h3>
+          <p>Try clearing your filters or selecting another Panabo City barangay.</p>
+        </div>
+      `;
       if (paginationContainer) paginationContainer.innerHTML = "";
       return;
     }
@@ -221,12 +217,7 @@ function initMarketplacePage() {
       ? filtered
       : filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-    countText.textContent =
-      "Showing " +
-      visibleItems.length +
-      " of " +
-      filtered.length +
-      " matching properties in Panabo City";
+    countText.textContent = `Showing ${visibleItems.length} of ${filtered.length} matching properties in Panabo City`;
 
     grid.innerHTML = visibleItems.map(createPropertyCardHTML).join("");
     bindSaveButtons(grid, function () {
@@ -237,6 +228,7 @@ function initMarketplacePage() {
     renderPagination(filtered.length);
   }
 
+  // Step 5: Event Listeners for Live Filtering
   [locationInput, typeSelect, minInput, maxInput, sortSelect, savedOnlyCheck].forEach(function (el) {
     if (el) {
       el.addEventListener("input", function () {

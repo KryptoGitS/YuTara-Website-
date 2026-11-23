@@ -1,13 +1,19 @@
 /* ==========================================================================
    YuTara Core — Utilities, Diagnostics & Animation Debugger (js/core/utils.js)
-   Shared helpers loaded on every page. Inspect errors via window.YuTaraDiagnostics
-   and control animations via window.YuTaraAnimDebug (.slow() / .off() / .normal()).
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. STORAGE_KEYS          — All localStorage / sessionStorage key names
+   2. YuTaraAnimDebug       — Live animation speed switcher (.slow / .off / .normal)
+   3. reportDiagnostic()    — Structured console warning logger
+   4. lockFormSubmission()  — Prevents accidental double-submit on forms
+   5. showToast()           — Bottom-right status notification pill
+   6. Price & Text Helpers  — formatPeso(), formatPropertyPrice(), escapeHtml()
    ========================================================================== */
 
 const STORAGE_KEYS = {
   properties: "yutara_v7_properties",
   saved: "yutara_v6_saved",
-  transactions: "yutara_v6_transactions",
+  transactions: "yutara_v7_transactions",
   inquiries: "yutara_v6_inquiries",
   accounts: "yutara_v6_accounts",
   messages: "yutara_v6_messages",

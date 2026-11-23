@@ -388,6 +388,7 @@
   box-shadow: var(--shadow-xs);
   display: flex;
   flex-direction: column;
+  height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -478,9 +479,11 @@
 }
 
 .property-title {
+  font-family: var(--font-display);
   font-size: 1.06rem;
+  line-height: 1.32;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .property-location {
@@ -512,19 +515,22 @@
   margin-top: auto;
   margin-bottom: 14px;
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .property-price {
-  font-size: 1.22rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
   font-weight: 800;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
   color: var(--forest-green);
 }
 
 .property-note {
-  font-size: 0.78rem;
+  font-size: 0.79rem;
   color: var(--text-muted);
 }
 
@@ -539,6 +545,7 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .location-card:hover {
@@ -576,6 +583,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  flex: 1;
 }
 
 .location-card-title {

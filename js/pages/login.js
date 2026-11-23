@@ -1,6 +1,11 @@
 /* ==========================================================================
    YuTara Page — Login (js/pages/login.js -> login.html)
-   Account sign-in, remembered email, ?next= return notice, and demo accounts.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. ?next= Redirect Banner  — Alerts user if redirected from a guarded action
+   2. Remembered Email        — Restores saved email from localStorage
+   3. Login Form Submit       — Validates email/password, checks SUSPENDED status
+   4. Quick Demo Role Buttons — [data-demo-role] instant 1-click User/Admin login
    ========================================================================== */
 
 function initLoginPage() {
@@ -11,6 +16,7 @@ function initLoginPage() {
   const emailInput = document.getElementById("login-email");
   const rememberCheck = document.getElementById("login-remember");
 
+  // Step 1: Show helpful notice if redirected from a protected page (?next=...)
   const nextRedirect = getSafeNextPath(getQueryParam("next"));
   if (nextRedirect && statusBox) {
     statusBox.className = "alert alert-warning";
@@ -18,7 +24,7 @@ function initLoginPage() {
     statusBox.classList.remove("hidden");
   }
 
-  // Restore remembered email if previously checked
+  // Step 2: Restore remembered email if previously checked
   try {
     const rememberedEmail = localStorage.getItem("yutara_remember_email");
     if (rememberedEmail && emailInput) {
@@ -29,6 +35,7 @@ function initLoginPage() {
     reportDiagnostic("AuthUI", "LoginPage", "restoreRememberedEmail", err);
   }
 
+  // Step 3: Handle Credential Sign-In
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     if (lockFormSubmission(form)) return;
@@ -38,7 +45,7 @@ function initLoginPage() {
     const roleEl = document.getElementById("login-role");
     const selectedRole = roleEl ? roleEl.value : "User";
 
-    if (!email || password.length < 4) {
+    if (!email || !email.includes("@") || password.length < 4) {
       statusBox.className = "alert alert-error";
       statusBox.textContent = "Please enter a valid email address and password (at least 4 characters).";
       statusBox.classList.remove("hidden");
@@ -63,17 +70,13 @@ function initLoginPage() {
     if (matchedAccount) {
       if (matchedAccount.status === "SUSPENDED") {
         statusBox.className = "alert alert-error";
-        statusBox.textContent =
-          "This account (" +
-          matchedAccount.email +
-          ") is currently suspended by an Administrator.";
+        statusBox.textContent = `This account (${matchedAccount.email}) is currently suspended by an Administrator.`;
         statusBox.classList.remove("hidden");
         return;
       }
       if (password !== matchedAccount.password) {
         statusBox.className = "alert alert-error";
-        statusBox.textContent =
-          "Incorrect email or password. Please check your credentials and try again.";
+        statusBox.textContent = "Incorrect email or password. Please check your credentials and try again.";
         statusBox.classList.remove("hidden");
         return;
       }
@@ -86,29 +89,32 @@ function initLoginPage() {
       return;
     }
 
-    const displayName =
-      selectedRole === "Admin"
-        ? "YuTara System Admin"
-        : email.split("@")[0];
+    const displayName = selectedRole === "Admin" ? "YuTara System Admin" : email.split("@")[0];
     setSession({ name: displayName, email: email, role: selectedRole });
     window.location.href = getPostLoginDestination(selectedRole);
   });
 
+  // Step 4: Quick Demo Account Buttons (User & Admin)
   document.querySelectorAll("[data-demo-role]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       const role = btn.getAttribute("data-demo-role");
       const name = btn.getAttribute("data-demo-name");
-      const email = btn.getAttribute("data-demo-email") || role.toLowerCase().replace(/\s+/g, "") + "@yutara.ph";
+      const email =
+        btn.getAttribute("data-demo-email") ||
+        `${role.toLowerCase().replace(/\s+/g, "")}@yutara.ph`;
+
       const allAccounts = getAllAccounts();
       const matched = allAccounts.find(function (acc) {
         return acc.email.toLowerCase() === email.toLowerCase();
       });
+
       if (matched && matched.status === "SUSPENDED") {
         statusBox.className = "alert alert-error";
         statusBox.textContent = "This account is currently suspended by an Administrator.";
         statusBox.classList.remove("hidden");
         return;
       }
+
       const effectiveRole = matched ? matched.role : role;
       const effectiveName = matched ? matched.name : name;
       setSession({ name: effectiveName, email: email, role: effectiveRole });

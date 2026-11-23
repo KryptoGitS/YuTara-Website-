@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simulated Property Reservation — YuTara Land Marketplace</title>
+  <title>Property Reservation — YuTara Land Marketplace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/base.css?v=31" />
-  <link rel="stylesheet" href="css/components.css?v=31" />
-  <link rel="stylesheet" href="css/pages/marketplace.css?v=31" />
-  <link rel="stylesheet" href="css/utilities.css?v=31" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/base.css?v=34" />
+  <link rel="stylesheet" href="css/components.css?v=34" />
+  <link rel="stylesheet" href="css/pages/marketplace.css?v=34" />
+  <link rel="stylesheet" href="css/utilities.css?v=34" />
 </head>
 <body>
 
@@ -43,11 +46,11 @@
       </div>
 
       <div class="card">
-        <span class="section-tag">MVP Demonstration Workflow</span>
-        <h1 class="section-title mb-2">Simulated Property Reservation</h1>
+        <span class="section-tag">Property Reservation</span>
+        <h1 class="section-title mb-2">Reserve Panabo City Property</h1>
 
         <div class="alert alert-warning">
-          <strong>Transparent MVP Simulation Notice:</strong> This reservation checkout demonstrates YuTara's agency-assisted booking and milestone tracking workflow. No real funds are charged or transferred during this academic prototype demonstration.
+          <strong>Reservation Workflow Notice:</strong> Submitting this request notifies the landowner and starts a 5-stage reservation tracker in your YuTara account. No online payment is collected on this page.
         </div>
 
         <!-- Selected Property Summary -->
@@ -93,19 +96,19 @@
             <label class="form-label" for="res-payment-method">Preferred Reservation Method</label>
             <select id="res-payment-method" class="form-select">
               <option value="Direct On-Site Reservation">On-Site Inspection + Seller Agreement</option>
-              <option value="Bank Manager's Check (Simulated)">Bank Manager's Check upon Closing</option>
-              <option value="Escrow Hold (Simulated)">Simulated Reservation Hold (₱25,000)</option>
+              <option value="Bank Manager's Check">Bank Manager's Check upon Closing</option>
+              <option value="Reservation Hold Agreement">Reservation Hold Agreement (₱25,000)</option>
             </select>
           </div>
 
           <div class="form-group">
             <label class="checkbox-row" for="res-agree">
               <input type="checkbox" id="res-agree" checked required />
-              <span>I understand this is a simulated MVP reservation that creates a live tracking entry in the YuTara Workflow Hub.</span>
+              <span>I confirm my reservation request and understand that the landowner will review and coordinate the next steps in YuTara.</span>
             </label>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-full">Create Simulated Reservation &amp; Track Progress &rarr;</button>
+          <button type="submit" class="btn btn-primary btn-full">Submit Reservation Request &rarr;</button>
         </form>
       </div>
     </div>
@@ -137,11 +140,11 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=31"></script>
-  <script src="js/core/utils.js?v=31"></script>
-  <script src="js/core/store.js?v=31"></script>
-  <script src="js/core/auth.js?v=31"></script>
-  <script src="js/core/ui.js?v=31"></script>
-  <script src="js/pages/reservation.js?v=31"></script>
+  <script src="js/data.js?v=34"></script>
+  <script src="js/core/utils.js?v=34"></script>
+  <script src="js/core/store.js?v=34"></script>
+  <script src="js/core/auth.js?v=34"></script>
+  <script src="js/core/ui.js?v=34"></script>
+  <script src="js/pages/reservation.js?v=34"></script>
 </body>
 </html>

@@ -1,6 +1,10 @@
 /* ==========================================================================
    YuTara — Base Design Tokens, Reset & Layout Grid (css/base.css)
-   Edit brand colors, typography, spacing, and container grids here.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. :root Brand Colors, Font Stacks & Shadows
+   2. Base Reset, Clean Typography & Focus States
+   3. Layout Containers, Section Headers & Grid Helpers
    ========================================================================== */
 
 /* 1. BRAND COLOR & TYPOGRAPHY VARIABLES */
@@ -68,6 +72,7 @@ body {
   color: var(--text-secondary);
   background-color: var(--white);
   overflow-x: hidden;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -105,8 +110,10 @@ textarea:focus-visible {
 }
 
 h1, h2, h3, h4 {
+  font-family: var(--font-display);
   color: var(--text-primary);
   line-height: 1.24;
+  letter-spacing: -0.02em;
   font-weight: 700;
 }
 

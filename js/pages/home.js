@@ -1,9 +1,15 @@
 /* ==========================================================================
    YuTara Page — Homepage (js/pages/home.js -> index.html)
-   Featured property cards, interactive hero spotlight switcher, and search bar.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. Featured Properties Grid (#featured-grid — renders top 3 Panabo listings)
+   2. Hero Spotlight Switcher  ([data-spotlight-id] — switches Brgy. New Pandan / Gredu)
+   3. Quick Search Bar         (#home-search-form -> marketplace.html?location=...)
+   4. Quick Barangay Chips     ([data-home-chip] -> marketplace.html?location=...)
    ========================================================================== */
 
 function initHomePage() {
+  // Step 1: Render the top 3 Featured Properties on the homepage
   const featuredGrid = document.getElementById("featured-grid");
   if (featuredGrid) {
     const properties = getProperties().slice(0, 3);
@@ -11,40 +17,61 @@ function initHomePage() {
     bindSaveButtons(featuredGrid);
   }
 
-  // Interactive Hero Spotlight Switcher (Brgy. New Pandan <-> Brgy. Gredu)
+  // Step 2: Interactive Hero Spotlight Switcher (Brgy. New Pandan <-> Brgy. Gredu)
   const spotlightTabs = document.querySelectorAll("[data-spotlight-id]");
   if (spotlightTabs.length > 0) {
     const allProps = getProperties();
 
     function renderSpotlight(propId) {
-      const prop = allProps.find(function (p) { return p.id === Number(propId); }) || allProps[0];
+      const prop =
+        allProps.find(function (p) {
+          return p.id === Number(propId);
+        }) || allProps[0];
       if (!prop) return;
 
-      document.getElementById("spotlight-img").src = prop.image;
-      document.getElementById("spotlight-img").alt = prop.title;
-      document.getElementById("spotlight-badge").innerHTML = SVG_ICONS.checkCircle + " " + escapeHtml(prop.badgeText || "Verified");
-      document.getElementById("spotlight-badge").className = "badge badge-with-icon " + (prop.badgeStyle || "badge-green");
+      const imgEl = document.getElementById("spotlight-img");
+      const badgeEl = document.getElementById("spotlight-badge");
       const catBadge = document.getElementById("spotlight-cat");
-      if (catBadge) {
-        catBadge.innerHTML = SVG_ICONS.house + " " + escapeHtml(prop.type);
-      }
       const areaEl = document.getElementById("spotlight-area-val");
-      if (areaEl) {
-        areaEl.textContent = Number(prop.area).toLocaleString() + " sqm";
-      }
       const typeEl = document.getElementById("spotlight-type-val");
+      const titleEl = document.getElementById("spotlight-title");
+      const locTextEl = document.getElementById("spotlight-loc-text");
+      const priceEl = document.getElementById("spotlight-price");
+      const metaEl = document.getElementById("spotlight-meta");
+      const linkEl = document.getElementById("spotlight-link");
+
+      if (imgEl) {
+        imgEl.src = prop.image;
+        imgEl.alt = prop.title;
+      }
+      if (badgeEl) {
+        badgeEl.innerHTML = `${SVG_ICONS.checkCircle} ${escapeHtml(prop.badgeText || "Verified")}`;
+        badgeEl.className = `badge badge-with-icon ${prop.badgeStyle || "badge-green"}`;
+      }
+      if (catBadge) {
+        catBadge.innerHTML = `${SVG_ICONS.house} ${escapeHtml(prop.type)}`;
+      }
+      if (areaEl) {
+        areaEl.textContent = `${Number(prop.area).toLocaleString()} sqm`;
+      }
       if (typeEl) {
         typeEl.textContent = prop.type;
       }
-      document.getElementById("spotlight-title").textContent = prop.title;
-      const locTextEl = document.getElementById("spotlight-loc-text");
-      if (locTextEl) {
-        locTextEl.textContent = "Brgy. " + prop.barangay + ", " + prop.city;
+      if (titleEl) {
+        titleEl.textContent = prop.title;
       }
-      document.getElementById("spotlight-price").textContent = formatPropertyPrice(prop);
-      document.getElementById("spotlight-meta").textContent =
-        (prop.cardTags || []).join(" • ");
-      document.getElementById("spotlight-link").href = "property.html?id=" + prop.id;
+      if (locTextEl) {
+        locTextEl.textContent = `Brgy. ${prop.barangay}, ${prop.city}`;
+      }
+      if (priceEl) {
+        priceEl.textContent = formatPropertyPrice(prop);
+      }
+      if (metaEl) {
+        metaEl.textContent = (prop.cardTags || []).join(" • ");
+      }
+      if (linkEl) {
+        linkEl.href = `property.html?id=${prop.id}`;
+      }
 
       spotlightTabs.forEach(function (tab) {
         tab.classList.toggle("active", Number(tab.getAttribute("data-spotlight-id")) === prop.id);
@@ -57,9 +84,11 @@ function initHomePage() {
       });
     });
 
+    // Default hero spotlight shows Listing #2 (Brgy. New Pandan)
     renderSpotlight(2);
   }
 
+  // Step 3: Hero Quick Search Form -> Redirects with URL parameters to marketplace.html
   const searchForm = document.getElementById("home-search-form");
   if (searchForm) {
     searchForm.addEventListener("submit", function (event) {
@@ -75,15 +104,16 @@ function initHomePage() {
       if (min) params.set("min", min);
       if (max) params.set("max", max);
 
-      window.location.href = "marketplace.html" + (params.toString() ? "?" + params.toString() : "");
+      window.location.href = `marketplace.html${params.toString() ? "?" + params.toString() : ""}`;
     });
   }
 
+  // Step 4: Quick Barangay Chips under the search bar
   document.querySelectorAll("[data-home-chip]").forEach(function (chip) {
     chip.addEventListener("click", function () {
       const brgy = chip.getAttribute("data-home-chip");
       window.location.href = brgy
-        ? "marketplace.html?location=" + encodeURIComponent(brgy)
+        ? `marketplace.html?location=${encodeURIComponent(brgy)}`
         : "marketplace.html";
     });
   });

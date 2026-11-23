@@ -1,7 +1,11 @@
 /* ==========================================================================
    YuTara Page — Workspace Router & Auth Gate (js/pages/tracker.js -> tracker.html)
-   Enforces login gate for guests, applies 2-Role RBAC (Admin vs User),
-   controls collapsible sidebar/drawer, and coordinates workspace sub-modules.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. renderTrackerAuthGate()    — Full-page login reminder shown to guests
+   2. isTabAllowedForRole()      — 2-Role RBAC check (Admin vs User tabs)
+   3. applyRolePermissionsToUI() — Toggles sidebar items & labels per role
+   4. activateTab()              — Switches active workspace panel cleanly
    ========================================================================== */
 
 function renderTrackerAuthGate() {
@@ -21,39 +25,40 @@ function renderTrackerAuthGate() {
   gate.id = "tracker-auth-gate";
   gate.className = "auth-page-gate";
   gate.setAttribute("role", "main");
-  gate.innerHTML =
-    '<section class="auth-gate-card anim-fade-up" data-anim="ytFadeInUp" aria-labelledby="auth-gate-heading">' +
-    '  <img src="assets/yutara-logo.png" alt="YuTara" class="auth-gate-logo" />' +
-    '  <div class="auth-guard-icon" aria-hidden="true">' +
-    '    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
-    '      <rect x="4" y="11" width="16" height="10" rx="2.5" ry="2.5"></rect>' +
-    '      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>' +
-    '      <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"></circle>' +
-    "    </svg>" +
-    "  </div>" +
-    '  <h1 class="auth-guard-title" id="auth-gate-heading">Please Log In First</h1>' +
-    '  <p class="auth-guard-message">' + escapeHtml(reasonText) + "</p>" +
-    '  <p class="auth-guard-subtext">Sign in to your YuTara account or register a free account to continue.</p>' +
-    '  <div class="auth-guard-divider" aria-hidden="true"></div>' +
-    '  <div class="auth-guard-actions">' +
-    '    <a href="' + escapeHtml(loginHref) + '" class="btn btn-primary auth-guard-btn-login" id="gate-login-btn">' +
-    '      <svg class="auth-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-    '        <circle cx="12" cy="8" r="4"></circle>' +
-    '        <path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"></path>' +
-    "      </svg>" +
-    "      <span>Log In Now &rarr;</span>" +
-    "    </a>" +
-    '    <a href="register.html" class="btn btn-outline auth-guard-btn-register" id="gate-register-btn">' +
-    '      <svg class="auth-btn-icon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-    '        <circle cx="9.5" cy="8" r="3.8"></circle>' +
-    '        <path d="M2.5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"></path>' +
-    '        <path d="M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>' +
-    "      </svg>" +
-    "      <span>Create Account</span>" +
-    "    </a>" +
-    "  </div>" +
-    '  <a href="marketplace.html" class="auth-gate-back">&larr; Back to Panabo Marketplace</a>' +
-    "</section>";
+  gate.innerHTML = `
+    <section class="auth-gate-card anim-fade-up" data-anim="ytFadeInUp" aria-labelledby="auth-gate-heading">
+      <img src="assets/yutara-logo.png" alt="YuTara" class="auth-gate-logo" />
+      <div class="auth-guard-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="11" width="16" height="10" rx="2.5" ry="2.5"></rect>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+          <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"></circle>
+        </svg>
+      </div>
+      <h1 class="auth-guard-title" id="auth-gate-heading">Please Log In First</h1>
+      <p class="auth-guard-message">${escapeHtml(reasonText)}</p>
+      <p class="auth-guard-subtext">Sign in to your YuTara account or register a free account to continue.</p>
+      <div class="auth-guard-divider" aria-hidden="true"></div>
+      <div class="auth-guard-actions">
+        <a href="${escapeHtml(loginHref)}" class="btn btn-primary auth-guard-btn-login" id="gate-login-btn">
+          <svg class="auth-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 20c0-3.8 3.6-6.5 8-6.5s8 2.7 8 6.5"></path>
+          </svg>
+          <span>Log In Now &rarr;</span>
+        </a>
+        <a href="register.html" class="btn btn-outline auth-guard-btn-register" id="gate-register-btn">
+          <svg class="auth-btn-icon" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="9.5" cy="8" r="3.8"></circle>
+            <path d="M2.5 20c0-3.5 3.1-6 7-6s7 2.5 7 6"></path>
+            <path d="M19 8v6M16 11h6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+          </svg>
+          <span>Create Account</span>
+        </a>
+      </div>
+      <a href="marketplace.html" class="auth-gate-back">&larr; Back to Panabo Marketplace</a>
+    </section>
+  `;
   document.body.appendChild(gate);
 }
 
@@ -61,6 +66,7 @@ function initTrackerPage() {
   const tabContainer = document.getElementById("workflow-tabs");
   if (!tabContainer) return;
 
+  // Step 1: Require authenticated session before loading workspace
   const session = getSession();
   if (!session) {
     renderTrackerAuthGate();
@@ -76,6 +82,7 @@ function initTrackerPage() {
   const tabBtns = tabContainer.querySelectorAll("[data-tab]");
   const rbacAlert = document.getElementById("rbac-alert");
 
+  // Step 2: Role-Based Access Control (Admin vs Standard User)
   function isTabAllowedForRole(targetId) {
     if (isAdmin) {
       return targetId === "panel-accounts" || targetId === "panel-seller";
@@ -140,7 +147,7 @@ function initTrackerPage() {
       if (mobileTopbarTitle) mobileTopbarTitle.textContent = "My Account Listings";
       if (brandSub) brandSub.textContent = "Yuta ba? YuTara!";
       if (groupTitle) groupTitle.textContent = "User Navigation";
-      if (heading) heading.textContent = "Welcome back, " + currentName + "!";
+      if (heading) heading.textContent = `Welcome back, ${currentName}!`;
       if (navHome) navHome.classList.add("hidden");
       if (navMarketplace) navMarketplace.classList.remove("hidden");
       if (navUserProps) navUserProps.classList.remove("hidden");
@@ -155,7 +162,7 @@ function initTrackerPage() {
     }
   }
 
-  // Desktop collapsible sidebar & mobile drawer controls
+  // Step 3: Desktop collapsible sidebar & mobile drawer controls
   const workspaceShellEl = document.getElementById("workspace-shell");
   const collapseBtn = document.getElementById("sidebar-collapse-btn");
   const mobileDrawerBtn = document.getElementById("mobile-sidebar-btn");
@@ -181,13 +188,11 @@ function initTrackerPage() {
   if (mobileBackdrop) mobileBackdrop.addEventListener("click", closeMobileDrawer);
   if (mobileLogoutBtn) mobileLogoutBtn.addEventListener("click", requestLogoutConfirmation);
 
+  // Step 4: Tab Switching Logic
   function activateTab(targetId) {
     if (!isTabAllowedForRole(targetId)) {
       if (rbacAlert) {
-        rbacAlert.textContent =
-          "Access Restricted: Your current role (" +
-          currentRole +
-          ") is not authorized for that section.";
+        rbacAlert.textContent = `Access Restricted: Your current role (${currentRole}) is not authorized for that section.`;
         rbacAlert.classList.remove("hidden");
       }
       targetId = getDefaultTabForRole(currentRole);
@@ -213,7 +218,7 @@ function initTrackerPage() {
     });
   });
 
-  // Shared context object passed across workspace sub-modules
+  // Step 5: Shared Context Object passed into Workspace Sub-Modules
   const ctx = {
     currentRole: currentRole,
     currentName: currentName,

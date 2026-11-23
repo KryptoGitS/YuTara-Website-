@@ -502,6 +502,41 @@
   border-bottom: none;
 }
 
+.account-inline-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 112px;
+  padding: 6px 30px 6px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23434D3E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.account-inline-select:hover:not(:disabled) {
+  border-color: var(--forest-green);
+}
+
+.account-inline-select:focus {
+  outline: none;
+  border-color: var(--forest-green);
+  box-shadow: 0 0 0 3px rgba(49, 91, 25, 0.14);
+}
+
+.account-inline-select:disabled {
+  background-color: var(--soft-off-white);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
 .quick-fill-box {
   background-color: var(--green-tint);
   border: 1px solid var(--green-border);

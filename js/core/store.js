@@ -1,7 +1,12 @@
 /* ==========================================================================
    YuTara Core — LocalStorage Data Store (js/core/store.js)
-   CRUD accessors for properties, saved listings, transactions, inquiries,
-   direct messages, and accounts.
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. Properties CRUD     — getProperties(), saveProperties()
+   2. Saved Bookmarks     — getSavedIds(), toggleSavedProperty()
+   3. Reservations / TX   — getTransactions(), saveTransactions()
+   4. Inquiries & Chat    — getInquiries(), getMessages(), addMessage()
+   5. Accounts Directory  — getAllAccounts(), saveAllAccounts(), accountEmailExists()
    ========================================================================== */
 
 function getProperties() {
@@ -27,7 +32,19 @@ function saveProperties(list) {
 function getSavedIds() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.saved) || "[]");
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    const validIds = new Set(
+      getProperties().map(function (p) {
+        return Number(p.id);
+      })
+    );
+    return parsed
+      .map(function (id) {
+        return Number(id);
+      })
+      .filter(function (id) {
+        return validIds.has(id);
+      });
   } catch (err) {
     reportDiagnostic("DataStore", "SavedListings", "getSavedIds", err);
     return [];
@@ -177,4 +194,12 @@ function saveCustomAccounts(customList) {
     return acc.builtIn;
   });
   saveAllAccounts(builtIns.concat(customList));
+}
+
+function accountEmailExists(email) {
+  const normalized = String(email || "").trim().toLowerCase();
+  if (!normalized) return false;
+  return getAllAccounts().some(function (acc) {
+    return String(acc.email || "").toLowerCase() === normalized;
+  });
 }

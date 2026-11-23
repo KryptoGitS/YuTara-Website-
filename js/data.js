@@ -1,6 +1,13 @@
 /* ==========================================================================
-   YuTara Land Marketplace — Data Store (Easy to Edit for Live Debugging)
-   Panabo Lot 1 (Brgy. Gredu) and Panabo Lot 2 (Brgy. New Pandan) are at top.
+   YuTara Land Marketplace — Seed Data Store (js/data.js)
+   --------------------------------------------------------------------------
+   QUICK DEBUG INDEX:
+   1. PANABO_BARANGAYS     — Official list of 22 Panabo City barangays
+   2. DEFAULT_PROPERTIES   — 4 verified Panabo City land listings
+   3. DEMO_ACCOUNTS        — Built-in Admin & User login credentials
+   4. MILESTONE_STEPS      — 5-stage Buyer-Seller transaction stages
+   5. DEFAULT_TRANSACTIONS — Sample active reservation (TX-1001)
+   6. DEFAULT_INQUIRIES    — Sample buyer inquiries
    ========================================================================== */
 
 const PANABO_BARANGAYS = [
@@ -215,15 +222,15 @@ const MILESTONE_STEPS = [
 const DEFAULT_TRANSACTIONS = [
   {
     id: "TX-1001",
-    propertyId: 2,
-    propertyTitle: "Fenced 2-Room House & Lot Near Agriya",
-    location: "Brgy. New Pandan, Panabo City",
+    propertyId: 3,
+    propertyTitle: "Quiet Family Lot Near the City Center",
+    location: "Brgy. San Vicente, Panabo City",
     buyerName: "Juan Dela Cruz",
     buyerEmail: "user@yutara.ph",
-    sellerName: "Verified Panabo Owner",
-    sellerEmail: "owner@yutara.ph",
-    salePrice: 1600000,
-    priceLabel: "₱1,600,000",
+    sellerName: "Maya Santos",
+    sellerEmail: "maya.santos@yutara.ph",
+    salePrice: 2500000,
+    priceLabel: "₱2,500,000",
     reservationFee: 25000,
     stageIndex: 1,
     approvalStatus: "approved",
