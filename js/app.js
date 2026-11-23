@@ -392,12 +392,22 @@ function getInitials(name) {
   return String(name || "YU").slice(0, 2).toUpperCase();
 }
 
+function clearLegacyPersistentSessions() {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.session);
+    localStorage.removeItem("yutara_v5_session");
+    localStorage.removeItem("yutara_v4_session");
+    localStorage.removeItem("yutara_v3_session");
+  } catch (err) {
+    reportDiagnostic("DataStore", "AuthSession", "clearLegacyPersistentSessions", err);
+  }
+}
+
 function getSession() {
   try {
-    const raw =
-      localStorage.getItem(STORAGE_KEYS.session) ||
-      localStorage.getItem("yutara_v4_session") ||
-      localStorage.getItem("yutara_v3_session");
+    // Active login lives in sessionStorage so closing the tab/browser automatically logs out
+    clearLegacyPersistentSessions();
+    const raw = sessionStorage.getItem(STORAGE_KEYS.session);
     return JSON.parse(raw || "null");
   } catch (err) {
     reportDiagnostic("DataStore", "AuthSession", "getSession", err);
@@ -407,18 +417,20 @@ function getSession() {
 
 function setSession(userObj) {
   try {
-    localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(userObj));
-    localStorage.removeItem("yutara_v4_session");
-    localStorage.removeItem("yutara_v3_session");
+    clearLegacyPersistentSessions();
+    sessionStorage.setItem(STORAGE_KEYS.session, JSON.stringify(userObj));
   } catch (err) {
     reportDiagnostic("DataStore", "AuthSession", "setSession", err);
   }
 }
 
 function logoutUser() {
-  localStorage.removeItem(STORAGE_KEYS.session);
-  localStorage.removeItem("yutara_v4_session");
-  localStorage.removeItem("yutara_v3_session");
+  try {
+    sessionStorage.removeItem(STORAGE_KEYS.session);
+  } catch (err) {
+    reportDiagnostic("DataStore", "AuthSession", "logoutUser", err);
+  }
+  clearLegacyPersistentSessions();
   if (window.location.pathname.indexOf("tracker.html") >= 0) {
     window.location.href = "login.html";
   } else {
@@ -627,10 +639,12 @@ function resetDemoData() {
   localStorage.removeItem(STORAGE_KEYS.inquiries);
   localStorage.removeItem(STORAGE_KEYS.messages);
   localStorage.removeItem(STORAGE_KEYS.accounts);
-  localStorage.removeItem(STORAGE_KEYS.session);
-  localStorage.removeItem("yutara_v5_session");
-  localStorage.removeItem("yutara_v4_session");
-  localStorage.removeItem("yutara_v3_session");
+  try {
+    sessionStorage.removeItem(STORAGE_KEYS.session);
+  } catch (err) {
+    reportDiagnostic("DataStore", "AuthSession", "resetDemoData", err);
+  }
+  clearLegacyPersistentSessions();
   window.location.reload();
 }
 
