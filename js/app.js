@@ -19,13 +19,13 @@
    1. STORAGE KEYS, DIAGNOSTIC REPORTER & HELPER UTILITIES
    -------------------------------------------------------------------------- */
 const STORAGE_KEYS = {
-  properties: "yutara_v5_properties",
-  saved: "yutara_v5_saved",
-  transactions: "yutara_v5_transactions",
-  inquiries: "yutara_v5_inquiries",
-  accounts: "yutara_v5_accounts",
-  messages: "yutara_v5_messages",
-  session: "yutara_v5_session"
+  properties: "yutara_v6_properties",
+  saved: "yutara_v6_saved",
+  transactions: "yutara_v6_transactions",
+  inquiries: "yutara_v6_inquiries",
+  accounts: "yutara_v6_accounts",
+  messages: "yutara_v6_messages",
+  session: "yutara_v6_session"
 };
 
 /* --------------------------------------------------------------------------
@@ -507,6 +507,7 @@ function resetDemoData() {
   localStorage.removeItem(STORAGE_KEYS.messages);
   localStorage.removeItem(STORAGE_KEYS.accounts);
   localStorage.removeItem(STORAGE_KEYS.session);
+  localStorage.removeItem("yutara_v5_session");
   localStorage.removeItem("yutara_v4_session");
   localStorage.removeItem("yutara_v3_session");
   window.location.reload();
@@ -528,13 +529,11 @@ function initNavbar() {
   const session = getSession();
   if (session) {
     const isAdminSession = session.role === "Admin";
-    const isVerifierSession =
-      session.role === "Lucky Seven Land Verifier" || session.role === "Agency";
     const pathLower = (window.location.pathname || "").toLowerCase();
     const pageFile = pathLower.split("/").pop() || "index.html";
 
-    // Admin & Lucky Seven Verifier go STRAIGHT to their dedicated Dashboard (no separate Home or Marketplace)
-    if (isAdminSession || isVerifierSession) {
+    // Admin goes STRAIGHT to the Admin Dashboard (no separate Home or Marketplace)
+    if (isAdminSession) {
       const restrictedPublicPages = [
         "",
         "index.html",
@@ -548,7 +547,6 @@ function initNavbar() {
         return;
       }
 
-      // On detail inspection pages (e.g., property.html), remove Home & Marketplace links so only Dashboard + Log Out remain
       document.querySelectorAll(".nav-links a").forEach(function (link) {
         link.remove();
       });
@@ -573,12 +571,10 @@ function initNavbar() {
     if (navActions) {
       const workspaceLabel = isAdminSession
         ? "← Back to Admin Dashboard"
-        : isVerifierSession
-        ? "← Back to Lucky Seven Dashboard"
         : "My Account Listings";
       navActions.innerHTML =
         '<a href="' +
-        (isAdminSession || isVerifierSession
+        (isAdminSession
           ? escapeHtml(getPostLoginDestination(session.role))
           : "tracker.html") +
         '" class="btn btn-primary btn-sm">' +
@@ -963,8 +959,6 @@ function initMarketplacePage() {
     }
 
     // All lands appear on the Marketplace immediately upon submission.
-    // Lucky Seven Verification remains functional for document review and
-    // land transaction milestone advancement, but no longer gates listing publication.
     const allProperties = getProperties();
     const savedIds = getSavedIds();
     const keyword = locationInput.value.trim().toLowerCase();
@@ -1458,17 +1452,15 @@ function initReservationPage() {
 }
 
 /* --------------------------------------------------------------------------
-   8. LOGIN PAGE (login.html) — Admin, User & Lucky Seven Land Verifier
+   8. LOGIN PAGE (login.html) — Admin & User Buyer / Seller
    -------------------------------------------------------------------------- */
 function getDefaultTabForRole(role) {
   if (role === "Admin") return "panel-accounts";
-  if (role === "Lucky Seven Land Verifier" || role === "Agency") return "panel-agency";
   return "panel-buyer";
 }
 
 function getPostLoginDestination(role) {
   if (role === "Admin") return "tracker.html?tab=panel-accounts";
-  if (role === "Lucky Seven Land Verifier" || role === "Agency") return "tracker.html?tab=panel-agency";
   // Standard User goes straight to the Marketplace after logging in
   return "marketplace.html";
 }
@@ -1550,9 +1542,7 @@ function initLoginPage() {
     }
 
     const displayName =
-      selectedRole === "Lucky Seven Land Verifier"
-        ? "Lucky Seven Land Verifier"
-        : selectedRole === "Admin"
+      selectedRole === "Admin"
         ? "YuTara System Admin"
         : email.split("@")[0];
     setSession({ name: displayName, email: email, role: selectedRole });
@@ -1743,7 +1733,7 @@ function initContactPage() {
 }
 
 /* --------------------------------------------------------------------------
-   11. WORKSPACE HUB (tracker.html — Strict 3-Role RBAC + Legitimate Docs Gate)
+   11. WORKSPACE HUB (tracker.html — 2-Role RBAC: Admin & User Buyer/Seller)
    -------------------------------------------------------------------------- */
 function initTrackerPage() {
   const tabContainer = document.getElementById("workflow-tabs");
@@ -1754,8 +1744,7 @@ function initTrackerPage() {
   const currentName = session && session.name ? session.name : "Juan Dela Cruz";
   const currentEmail = session && session.email ? session.email : "user@yutara.ph";
   const isAdmin = currentRole === "Admin";
-  const isVerifier = currentRole === "Lucky Seven Land Verifier" || currentRole === "Agency";
-  const isStandardUser = !isAdmin && !isVerifier;
+  const isStandardUser = !isAdmin;
 
   const tabBtns = tabContainer.querySelectorAll("[data-tab]");
   const rbacAlert = document.getElementById("rbac-alert");
@@ -1765,11 +1754,7 @@ function initTrackerPage() {
       // Admin can ONLY modify accounts (panel-accounts) and edit/delete properties (panel-seller)
       return targetId === "panel-accounts" || targetId === "panel-seller";
     }
-    if (isVerifier) {
-      // Lucky Seven can ONLY verify land listings/properties with legitimate documents (panel-agency)
-      return targetId === "panel-agency";
-    }
-    // Standard User can ONLY view Marketplace + his own account listings (panel-buyer & panel-seller)
+    // Standard User can view Marketplace, own account listings, and Add Land for Sale
     return targetId === "panel-buyer" || targetId === "panel-seller";
   }
 
@@ -1790,29 +1775,26 @@ function initTrackerPage() {
     const navUserProps = document.getElementById("nav-item-user-props");
     const navUserSell = document.getElementById("nav-item-user-sell");
     const navAdminAccounts = document.getElementById("nav-item-admin-accounts");
-    const navVerifierDesk = document.getElementById("nav-item-verifier-desk");
 
     const heading = document.getElementById("dashboard-heading");
     const adminCrudCard = document.getElementById("admin-crud-card");
     const adminEditOnlyNotice = document.getElementById("admin-edit-only-notice");
-    const sellerDocsSection = document.getElementById("seller-docs-section");
     const tabBtnSeller = document.getElementById("tab-btn-seller");
     const tabBtnSellerLabel = document.getElementById("tab-btn-seller-label");
-    const tabBtnAgency = document.getElementById("tab-btn-agency");
 
     if (avatarEl) avatarEl.textContent = getInitials(currentName);
     if (displayEl) displayEl.textContent = currentName;
     if (emailEl) emailEl.textContent = currentEmail;
 
+    if (sidebarLogoImg) {
+      sidebarLogoImg.src = "assets/yutara-logo.png";
+      sidebarLogoImg.alt = "YuTara Logo";
+      sidebarLogoImg.className = "sidebar-logo-img";
+    }
+    if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/yutara-logo.png";
+
     if (isAdmin) {
-      if (workspaceShell) workspaceShell.classList.remove("theme-lucky-seven");
       if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "tracker.html?tab=panel-accounts");
-      if (sidebarLogoImg) {
-        sidebarLogoImg.src = "assets/yutara-logo.png";
-        sidebarLogoImg.alt = "YuTara Logo";
-        sidebarLogoImg.className = "sidebar-logo-img";
-      }
-      if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/yutara-logo.png";
       if (mobileTopbarTitle) mobileTopbarTitle.textContent = "Admin Portal";
       if (brandSub) brandSub.textContent = "Admin Dashboard";
       if (groupTitle) groupTitle.textContent = "Admin Controls";
@@ -1823,46 +1805,15 @@ function initTrackerPage() {
       if (navUserSell) navUserSell.classList.remove("hidden");
       if (tabBtnSellerLabel) tabBtnSellerLabel.textContent = "Edit / Delete Properties";
       if (tabBtnSeller) tabBtnSeller.setAttribute("title", "Edit / Delete Properties");
-      if (navVerifierDesk) navVerifierDesk.classList.add("hidden");
       if (adminCrudCard) adminCrudCard.classList.remove("hidden");
       if (adminEditOnlyNotice) adminEditOnlyNotice.classList.remove("hidden");
-      if (sellerDocsSection) sellerDocsSection.classList.add("hidden");
       const lifecycleBar = document.getElementById("seller-lifecycle-bar");
       const photoGroup = document.getElementById("seller-photo-group");
       if (lifecycleBar) lifecycleBar.classList.add("hidden");
       if (photoGroup) photoGroup.classList.add("hidden");
-    } else if (isVerifier) {
-      if (workspaceShell) workspaceShell.classList.add("theme-lucky-seven");
-      if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "tracker.html?tab=panel-agency");
-      if (sidebarLogoImg) {
-        sidebarLogoImg.src = "assets/lucky-seven-logo.jpg";
-        sidebarLogoImg.alt = "Lucky Seven Property Management Solutions, Inc.";
-        sidebarLogoImg.className = "sidebar-lucky-logo";
-      }
-      if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/lucky-seven-logo.jpg";
-      if (mobileTopbarTitle) mobileTopbarTitle.textContent = "Lucky Seven Verification";
-      if (brandSub) brandSub.textContent = "Property Management Solutions, Inc.";
-      if (groupTitle) groupTitle.textContent = "Verification Desk";
-      if (navHome) navHome.classList.add("hidden");
-      if (navMarketplace) navMarketplace.classList.add("hidden");
-      if (navUserProps) navUserProps.classList.add("hidden");
-      if (navUserSell) navUserSell.classList.add("hidden");
-      if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
-      if (navVerifierDesk) navVerifierDesk.classList.remove("hidden");
-      if (adminCrudCard) adminCrudCard.classList.add("hidden");
-      if (adminEditOnlyNotice) adminEditOnlyNotice.classList.add("hidden");
-      if (tabBtnSeller) tabBtnSeller.classList.add("hidden");
-      if (tabBtnAgency) tabBtnAgency.classList.remove("hidden");
     } else {
-      // Standard User: Marketplace + My Account Listings only
-      if (workspaceShell) workspaceShell.classList.remove("theme-lucky-seven");
+      // Standard User: Marketplace + My Account Listings + Add Land for Sale
       if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "marketplace.html");
-      if (sidebarLogoImg) {
-        sidebarLogoImg.src = "assets/yutara-logo.png";
-        sidebarLogoImg.alt = "YuTara Logo";
-        sidebarLogoImg.className = "sidebar-logo-img";
-      }
-      if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/yutara-logo.png";
       if (mobileTopbarTitle) mobileTopbarTitle.textContent = "My Account Listings";
       if (brandSub) brandSub.textContent = "Yuta ba? YuTara!";
       if (groupTitle) groupTitle.textContent = "User Navigation";
@@ -1872,17 +1823,14 @@ function initTrackerPage() {
       if (navUserProps) navUserProps.classList.remove("hidden");
       if (navUserSell) navUserSell.classList.remove("hidden");
       if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
-      if (navVerifierDesk) navVerifierDesk.classList.add("hidden");
       if (adminCrudCard) adminCrudCard.classList.add("hidden");
       if (adminEditOnlyNotice) adminEditOnlyNotice.classList.add("hidden");
-      if (sellerDocsSection) sellerDocsSection.classList.remove("hidden");
       if (tabBtnSellerLabel) tabBtnSellerLabel.textContent = "Add Land for Sale";
       if (tabBtnSeller) tabBtnSeller.setAttribute("title", "Add Land for Sale");
       const lifecycleBarU = document.getElementById("seller-lifecycle-bar");
       const photoGroupU = document.getElementById("seller-photo-group");
       if (lifecycleBarU) lifecycleBarU.classList.remove("hidden");
       if (photoGroupU) photoGroupU.classList.remove("hidden");
-      if (tabBtnAgency) tabBtnAgency.classList.add("hidden");
     }
   }
 
@@ -1892,7 +1840,6 @@ function initTrackerPage() {
   const mobileDrawerBtn = document.getElementById("mobile-sidebar-btn");
   const mobileBackdrop = document.getElementById("sidebar-mobile-backdrop");
   const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
-  const lsTopLogoutBtn = document.getElementById("ls-top-logout-btn");
 
   if (collapseBtn && workspaceShellEl) {
     collapseBtn.addEventListener("click", function () {
@@ -1917,10 +1864,6 @@ function initTrackerPage() {
 
   if (mobileLogoutBtn) {
     mobileLogoutBtn.addEventListener("click", requestLogoutConfirmation);
-  }
-
-  if (lsTopLogoutBtn) {
-    lsTopLogoutBtn.addEventListener("click", requestLogoutConfirmation);
   }
 
   function activateTab(targetId) {
@@ -2036,7 +1979,7 @@ function initTrackerPage() {
       if (formHeading) formHeading.textContent = "Add Land for Sale in Panabo City";
       if (formSubtitle) {
         formSubtitle.textContent =
-          "Enter your Panabo City land details. Your listing goes live on the Marketplace immediately; Lucky Seven verification supports your land transaction milestones.";
+          "Enter your Panabo City land details to publish your listing directly to the Marketplace.";
       }
       if (submitBtn) {
         submitBtn.innerHTML = "Submit Land for Sale &rarr;";
@@ -2192,1101 +2135,164 @@ function initTrackerPage() {
     });
   }
 
-  /* ------------------------------------------------------------------------
-     LUCKY SEVEN EXCLUSIVE DESK — REDESIGNED DOCUMENT VERIFICATION PORTAL
-     Preserves exact 3-document legitimate verification criteria (hasAllLegitimateDocs)
-     ------------------------------------------------------------------------ */
-  const LS_ICONS = {
-    mapPin:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
-    user:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
-    fileText:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>',
-    receipt:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 17.5v-11"></path></svg>',
-    idCard:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><circle cx="8" cy="10" r="2"></circle><path d="M14 9h4"></path><path d="M14 13h4"></path><path d="M6 16c.6-1.5 1.8-2 2-2s1.4.5 2 2"></path></svg>',
-    checkCircle:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
-    clock:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
-    shieldAlert:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
-    eye:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
-    externalLink:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>',
-    shieldCheck:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>',
-    shieldOff:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.69 14a6.9 6.9 0 0 0 .31-2V5l-8-3-3.16 1.18"></path><path d="M4.73 4.73 4 5v7c0 6 8 10 8 10a20.29 20.29 0 0 0 5.62-4.38"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>',
-    ban:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>',
-    parcel:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>',
-    lock:
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>',
-    dotCheck:
-      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>',
-    dotPending:
-      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"></line></svg>',
-    dotAlert:
-      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="6" x2="12" y2="13"></line><circle cx="12" cy="17.5" r="0.8" fill="currentColor"></circle></svg>'
-  };
-
-  const LS_DOC_META = {
-    tct: {
-      shortTitle: "TCT / OCT",
-      tileTitle: "Land Title (TCT/OCT)",
-      icon: LS_ICONS.fileText,
-      category: "Land Title Registry"
-    },
-    taxDec: {
-      shortTitle: "Tax Clearance",
-      tileTitle: "Tax Clearance",
-      icon: LS_ICONS.receipt,
-      category: "Panabo City Assessor"
-    },
-    ownerId: {
-      shortTitle: "Owner ID",
-      tileTitle: "Owner ID",
-      icon: LS_ICONS.idCard,
-      category: "Owner Identity Proof"
-    }
-  };
-
-  const lsSearchInput = document.getElementById("ls-search-input");
-  const lsBarangayFilter = document.getElementById("ls-filter-barangay");
-  const lsStatusFilter = document.getElementById("ls-filter-status");
-  const lsCompletenessFilter = document.getElementById("ls-filter-completeness");
-  const lsResetFilterBtn = document.getElementById("ls-filter-reset");
-  const lsResultsSummary = document.getElementById("ls-results-summary");
-
-  if (lsBarangayFilter && lsBarangayFilter.options.length <= 1) {
-    lsBarangayFilter.innerHTML =
-      '<option value="">All Barangays</option>' +
-      PANABO_BARANGAYS.map(function (b) {
-        return '<option value="' + escapeHtml(b) + '">Brgy. ' + escapeHtml(b) + "</option>";
-      }).join("");
-  }
-
-  function getPropertyVerificationState(prop) {
-    const docs = ensurePropertyDocuments(prop);
-    const docList = [docs.tct, docs.taxDec, docs.ownerId];
-    const missingCount = docList.filter(function (d) { return !d.submitted; }).length;
-    const validCount = docList.filter(function (d) { return d.submitted && d.legitimate; }).length;
-    const allDocsLegit = hasAllLegitimateDocs(prop);
-    const isVerified = prop.verificationStatus === "Verified by Lucky Seven" && allDocsLegit;
-
-    if (isVerified) {
-      return {
-        key: "Verified",
-        label: "Verified",
-        pillClass: "status-verified",
-        pillIcon: LS_ICONS.checkCircle,
-        summaryClass: "sum-verified",
-        summaryText: "Verified by Lucky Seven: All 3 required legal documents (TCT/OCT, Tax Clearance, Owner ID) are authenticated.",
-        allDocsLegit: true,
-        isVerified: true,
-        missingCount: 0,
-        validCount: 3
-      };
-    }
-    if (allDocsLegit) {
-      return {
-        key: "Pending Review",
-        label: "Pending Review",
-        pillClass: "status-pending",
-        pillIcon: LS_ICONS.clock,
-        summaryClass: "sum-ready",
-        summaryText: "3/3 submitted documents authenticated — Eligible for final Lucky Seven verification approval.",
-        allDocsLegit: true,
-        isVerified: false,
-        missingCount: 0,
-        validCount: 3
-      };
-    }
-    if (missingCount > 0) {
-      return {
-        key: "Blocked",
-        label: "Blocked",
-        pillClass: "status-blocked",
-        pillIcon: LS_ICONS.ban,
-        summaryClass: "sum-blocked",
-        summaryText:
-          "Blocked: Missing " +
-          missingCount +
-          " required legal " +
-          (missingCount === 1 ? "document" : "documents") +
-          ". Cannot verify until all 3 legitimate documents are submitted.",
-        allDocsLegit: false,
-        isVerified: false,
-        missingCount: missingCount,
-        validCount: validCount
-      };
-    }
-    return {
-      key: "Incomplete Documents",
-      label: "Incomplete Documents",
-      pillClass: "status-pending",
-      pillIcon: LS_ICONS.clock,
-      summaryClass: "sum-blocked",
-      summaryText:
-        validCount +
-        "/3 submitted documents authenticated — Review and verify all remaining documents before approval.",
-      allDocsLegit: false,
-      isVerified: false,
-      missingCount: 0,
-      validCount: validCount
-    };
-  }
-
-  function buildLuckyDocumentPanelHTML(prop, docKey, doc) {
-    const meta = LS_DOC_META[docKey] || { tileTitle: doc.label, icon: LS_ICONS.fileText };
-    const stateClass = !doc.submitted
-      ? "doc-state-missing"
-      : doc.legitimate
-      ? "doc-state-valid"
-      : "doc-state-pending";
-    const statusLabel = !doc.submitted ? "Missing" : doc.legitimate ? "Verified" : "Pending";
-    const dotIcon = !doc.submitted
-      ? LS_ICONS.dotAlert
-      : doc.legitimate
-      ? LS_ICONS.dotCheck
-      : LS_ICONS.dotPending;
-    const tooltipRef = !doc.submitted
-      ? meta.tileTitle + ": Missing — Click to view requirements"
-      : meta.tileTitle + " (" + (doc.refNo || "Submitted") + ") — Click to inspect";
-
-    return (
-      '<button type="button" class="ls-doc-panel ls-doc-tile ' +
-      stateClass +
-      '" data-open-doc-prop-id="' +
-      prop.id +
-      '" data-open-doc-key="' +
-      docKey +
-      '" title="' +
-      escapeHtml(tooltipRef) +
-      '">' +
-      '  <span class="ls-doc-tile-head">' +
-      '    <span class="ls-doc-tile-ico" aria-hidden="true">' +
-      meta.icon +
-      "</span>" +
-      '    <span class="ls-doc-tile-name">' +
-      escapeHtml(meta.tileTitle) +
-      "</span>" +
-      "  </span>" +
-      '  <span class="ls-doc-tile-foot">' +
-      '    <span class="ls-doc-state-dot" aria-hidden="true">' +
-      dotIcon +
-      "</span>" +
-      "    <span>" +
-      statusLabel +
-      "</span>" +
-      "  </span>" +
-      "</button>"
-    );
-  }
-
-  function buildLuckyPropertyCardHTML(prop) {
-    const docs = ensurePropertyDocuments(prop);
-    const state = getPropertyVerificationState(prop);
-    const shortStatusLabel =
-      state.key === "Pending Review"
-        ? "Ready"
-        : state.key === "Incomplete Documents"
-        ? "Needs Review"
-        : state.label;
-
-    const docPanelsHtml = ["tct", "taxDec", "ownerId"]
-      .map(function (key) {
-        return buildLuckyDocumentPanelHTML(prop, key, docs[key]);
-      })
-      .join("");
-
-    const firstPendingKey =
-      ["tct", "taxDec", "ownerId"].find(function (k) {
-        return docs[k].submitted && !docs[k].legitimate;
-      }) || "tct";
-
-    let actionButtonsHtml = "";
-    if (state.isVerified) {
-      actionButtonsHtml =
-        '<button type="button" class="btn btn-ls-navy ls-row-main-btn" data-open-doc-prop-id="' +
-        prop.id +
-        '" data-open-doc-key="tct">' +
-        LS_ICONS.eye +
-        " <span>View Docs</span></button>" +
-        '<a href="property.html?id=' +
-        prop.id +
-        '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
-        LS_ICONS.externalLink +
-        "</a>" +
-        '<button type="button" class="btn btn-ls-danger ls-row-icon-btn" data-open-revoke-prop-id="' +
-        prop.id +
-        '" title="Revoke Lucky Seven Verification" aria-label="Revoke Lucky Seven Verification">' +
-        LS_ICONS.shieldOff +
-        "</button>";
-    } else if (state.allDocsLegit) {
-      actionButtonsHtml =
-        '<button type="button" class="btn btn-ls-verify ls-row-main-btn" data-verify-prop-id="' +
-        prop.id +
-        '" title="All 3 legitimate documents verified — Click to approve">' +
-        LS_ICONS.shieldCheck +
-        " <span>Verify Lot</span></button>" +
-        '<button type="button" class="btn btn-ls-navy ls-row-icon-btn" data-open-doc-prop-id="' +
-        prop.id +
-        '" data-open-doc-key="tct" title="Inspect Submitted Documents" aria-label="Inspect Submitted Documents">' +
-        LS_ICONS.eye +
-        "</button>" +
-        '<a href="property.html?id=' +
-        prop.id +
-        '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
-        LS_ICONS.externalLink +
-        "</a>";
-    } else {
-      const reviewBtnLabel = state.missingCount === 0 ? "Review Docs" : "View Docs";
-      actionButtonsHtml =
-        '<button type="button" class="btn btn-ls-navy ls-row-main-btn" data-open-doc-prop-id="' +
-        prop.id +
-        '" data-open-doc-key="' +
-        firstPendingKey +
-        '">' +
-        LS_ICONS.eye +
-        " <span>" +
-        reviewBtnLabel +
-        "</span></button>" +
-        '<a href="property.html?id=' +
-        prop.id +
-        '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
-        LS_ICONS.externalLink +
-        "</a>" +
-        '<button type="button" class="btn btn-ls-verify ls-row-icon-btn" data-verify-prop-id="' +
-        prop.id +
-        '" disabled title="' +
-        (state.missingCount === 0
-          ? "Review and mark all 3 documents Legitimate first"
-          : "Blocked: All 3 legitimate documents are required") +
-        '" aria-label="Verification Locked">' +
-        LS_ICONS.lock +
-        "</button>";
-    }
-
-    const areaText = prop.area
-      ? Number(prop.area).toLocaleString() + " sqm (" + escapeHtml(prop.type || "Land") + ")"
-      : escapeHtml(prop.type || "Land Lot");
-
-    return (
-      '<article class="ls-prop-card ls-prop-row-card anim-fade-up" data-anim="ytFadeInUp">' +
-      '  <div class="ls-row-prop-zone">' +
-      '    <img src="' +
-      escapeHtml(prop.image) +
-      '" alt="' +
-      escapeHtml(prop.title) +
-      '" class="ls-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
-      '    <div class="ls-row-prop-info">' +
-      '      <h3 class="ls-prop-title">#' +
-      prop.id +
-      " " +
-      escapeHtml(prop.title) +
-      "</h3>" +
-      '      <div class="ls-prop-meta-row">' +
-      '        <span class="ls-meta-chip">' +
-      LS_ICONS.mapPin +
-      " " +
-      escapeHtml(prop.barangay) +
-      ", Panabo City</span>" +
-      '        <span class="ls-meta-chip">' +
-      LS_ICONS.user +
-      " " +
-      escapeHtml(prop.seller || "Owner") +
-      "</span>" +
-      "      </div>" +
-      '      <div class="ls-prop-sub-row">' +
-      '        <span class="ls-meta-chip">' +
-      LS_ICONS.parcel +
-      " " +
-      areaText +
-      "</span>" +
-      '        <span class="ls-meta-price">' +
-      escapeHtml(formatPropertyPrice(prop)) +
-      "</span>" +
-      "      </div>" +
-      "    </div>" +
-      "  </div>" +
-      '  <div class="ls-row-docs-zone">' +
-      docPanelsHtml +
-      "  </div>" +
-      '  <div class="ls-row-action-zone">' +
-      '    <span class="ls-status-pill ' +
-      state.pillClass +
-      '">' +
-      state.pillIcon +
-      " <span>" +
-      escapeHtml(shortStatusLabel) +
-      "</span></span>" +
-      '    <div class="ls-row-btn-group">' +
-      actionButtonsHtml +
-      "    </div>" +
-      "  </div>" +
-      "</article>"
-    );
-  }
-
-  /* Dedicated Document Inspection & Review Modal Controller */
-  let activeDocViewerPropId = null;
-  let activeDocViewerKey = "tct";
-  const docViewerModal = document.getElementById("ls-doc-viewer-modal");
-  const docViewerCloseBtn = document.getElementById("ls-doc-modal-close");
-
-  function closeDocumentViewerModal() {
-    if (docViewerModal) docViewerModal.classList.add("hidden");
-    activeDocViewerPropId = null;
-  }
-
-  function renderDocumentViewerContent() {
-    if (!docViewerModal || !activeDocViewerPropId) return;
-    const prop = getProperties().find(function (p) {
-      return p.id === Number(activeDocViewerPropId);
-    });
-    if (!prop) {
-      closeDocumentViewerModal();
-      return;
-    }
-
-    const docs = ensurePropertyDocuments(prop);
-    const activeDoc = docs[activeDocViewerKey] || docs.tct;
-    const meta = LS_DOC_META[activeDocViewerKey] || LS_DOC_META.tct;
-
-    const titleEl = document.getElementById("ls-doc-modal-title");
-    const subEl = document.getElementById("ls-doc-modal-sub");
-    const tabsEl = document.getElementById("ls-doc-tabs");
-    const previewEl = document.getElementById("ls-doc-preview-pane");
-    const statusWrap = document.getElementById("ls-doc-status-badge-wrap");
-    const notesEl = document.getElementById("ls-doc-notes-input");
-    const actionsEl = document.getElementById("ls-doc-review-actions");
-
-    if (titleEl) titleEl.textContent = "#" + prop.id + " — " + prop.title;
-    if (subEl) {
-      subEl.innerHTML =
-        LS_ICONS.mapPin +
-        " <span>Brgy. " +
-        escapeHtml(prop.barangay) +
-        ", Panabo City &bull; Owner: " +
-        escapeHtml(prop.seller || "Panabo Landowner") +
-        " &bull; " +
-        Number(prop.area || 0).toLocaleString() +
-        " sqm</span>";
-    }
-
-    if (tabsEl) {
-      tabsEl.innerHTML = ["tct", "taxDec", "ownerId"]
-        .map(function (key) {
-          const d = docs[key];
-          const m = LS_DOC_META[key];
-          const dot = !d.submitted ? "Missing" : d.legitimate ? "✓" : "Pending";
-          return (
-            '<button type="button" class="ls-doc-tab-btn ' +
-            (key === activeDocViewerKey ? "active" : "") +
-            '" data-modal-doc-tab="' +
-            key +
-            '">' +
-            m.icon +
-            " <span>" +
-            escapeHtml(m.shortTitle) +
-            " (" +
-            dot +
-            ")</span></button>"
-          );
-        })
-        .join("");
-
-      tabsEl.querySelectorAll("[data-modal-doc-tab]").forEach(function (tBtn) {
-        tBtn.addEventListener("click", function () {
-          activeDocViewerKey = tBtn.getAttribute("data-modal-doc-tab");
-          renderDocumentViewerContent();
-        });
-      });
-    }
-
-    if (previewEl) {
-      const infoIcon =
-        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-      const refValue = activeDoc.submitted ? escapeHtml(activeDoc.refNo || "—") : '<span class="ls-preview-missing-val">&mdash; Missing</span>';
-      const subStateValue = activeDoc.submitted
-        ? "Submitted by Property Owner"
-        : '<span class="ls-preview-missing-val">Not Uploaded (Missing File)</span>';
-      const missingPill = !activeDoc.submitted
-        ? '<span class="ls-status-pill status-blocked">' + LS_ICONS.shieldAlert + " Missing</span>"
-        : "";
-
-      const attachedRow = activeDoc.fileName
-        ? "      <tr><td>Attached File</td><td>" + escapeHtml(activeDoc.fileName) + "</td></tr>"
-        : "";
-
-      previewEl.innerHTML =
-        '<div class="ls-doc-preview-sheet' +
-        (!activeDoc.submitted ? " preview-missing" : "") +
-        '">' +
-        '  <div class="ls-preview-inner">' +
-        '    <div class="ls-preview-badge-row">' +
-        '      <div class="ls-preview-seal">' +
-        LS_ICONS.shieldCheck +
-        " <span>" +
-        escapeHtml(meta.category) +
-        "</span></div>" +
-        missingPill +
-        "    </div>" +
-        '    <h3 class="ls-preview-heading">Property Details</h3>' +
-        '    <table class="ls-preview-meta-table">' +
-        "      <tr><td>Reference No.</td><td>" +
-        refValue +
-        "</td></tr>" +
-        attachedRow +
-        "      <tr><td>Registered Owner</td><td>" +
-        escapeHtml(prop.seller || "Panabo Landowner") +
-        "</td></tr>" +
-        "      <tr><td>Location</td><td>Brgy. " +
-        escapeHtml(prop.barangay) +
-        ", Panabo City</td></tr>" +
-        "      <tr><td>Parcel Size</td><td>" +
-        Number(prop.area || 0).toLocaleString() +
-        " sqm (" +
-        escapeHtml(prop.type) +
-        ")</td></tr>" +
-        "      <tr><td>Submission State</td><td>" +
-        subStateValue +
-        "</td></tr>" +
-        "    </table>" +
-        "  </div>" +
-        '  <div class="ls-preview-footer">' +
-        infoIcon +
-        " <span>Access restricted to authorized Lucky Seven Verifiers.</span>" +
-        "  </div>" +
-        "</div>";
-    }
-
-    if (notesEl) {
-      notesEl.value = activeDoc.notes || "";
-    }
-
-    if (actionsEl) {
-      const checkSvg =
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-      const toggleLegitBtn = !activeDoc.submitted
-        ? '<button type="button" class="ls-modal-btn-outline" disabled>Missing File</button>'
-        : activeDoc.legitimate
-        ? '<button type="button" class="ls-modal-btn-outline" id="ls-modal-unmark-legit-btn">Mark Pending</button>'
-        : '<button type="button" class="ls-modal-btn-outline" id="ls-modal-mark-legit-btn">Mark Legitimate</button>';
-
-      actionsEl.innerHTML =
-        toggleLegitBtn +
-        '<button type="button" class="ls-modal-btn-solid" id="ls-modal-save-notes-btn">' +
-        checkSvg +
-        " <span>Save Notes</span></button>";
-
-      const markBtn = document.getElementById("ls-modal-mark-legit-btn");
-      const unmarkBtn = document.getElementById("ls-modal-unmark-legit-btn");
-      const saveNotesBtn = document.getElementById("ls-modal-save-notes-btn");
-
-      function updateCurrentDoc(mutator, toastMsg) {
-        if (!isVerifier) return;
-        const list = getProperties();
-        const target = list.find(function (p) {
-          return p.id === Number(activeDocViewerPropId);
-        });
-        if (!target) return;
-        target.documents = ensurePropertyDocuments(target);
-        const docObj = target.documents[activeDocViewerKey];
-        if (!docObj) return;
-        mutator(target, docObj);
-        if (!hasAllLegitimateDocs(target) && target.verificationStatus === "Verified by Lucky Seven") {
-          target.verificationStatus = "Incomplete Documents";
-          target.badgeText = "Incomplete Documents";
-          target.badgeStyle = "badge-warning";
-        }
-        saveProperties(list);
-        renderLuckyPropertyVerificationDesk();
-        renderWorkflows();
-        renderDocumentViewerContent();
-        showToast(toastMsg);
-      }
-
-      if (markBtn) {
-        markBtn.addEventListener("click", function () {
-          updateCurrentDoc(function (_t, d) {
-            if (d.submitted) d.legitimate = true;
-            if (notesEl) d.notes = notesEl.value.trim();
-          }, "Marked document as Legitimate ✓");
-        });
-      }
-      if (unmarkBtn) {
-        unmarkBtn.addEventListener("click", function () {
-          updateCurrentDoc(function (_t, d) {
-            d.legitimate = false;
-            if (notesEl) d.notes = notesEl.value.trim();
-          }, "Marked document as Pending Check");
-        });
-      }
-      if (saveNotesBtn) {
-        saveNotesBtn.addEventListener("click", function () {
-          updateCurrentDoc(function (_t, d) {
-            if (notesEl) d.notes = notesEl.value.trim();
-          }, "Saved Lucky Seven verification notes");
-        });
-      }
-    }
-  }
-
-  function openDocumentViewerModal(propId, initialDocKey) {
-    if (!isVerifier || !docViewerModal) return;
-    activeDocViewerPropId = Number(propId);
-    activeDocViewerKey = initialDocKey || "tct";
-    renderDocumentViewerContent();
-    docViewerModal.classList.remove("hidden");
-  }
-
-  if (docViewerCloseBtn) {
-    docViewerCloseBtn.addEventListener("click", closeDocumentViewerModal);
-  }
-  if (docViewerModal) {
-    docViewerModal.addEventListener("click", function (event) {
-      if (event.target === docViewerModal) closeDocumentViewerModal();
-    });
-  }
-
-  /* Revoke Verification Confirmation Modal Controller */
-  let pendingRevokePropId = null;
-  const revokeModal = document.getElementById("ls-revoke-modal");
-  const revokeCloseBtn = document.getElementById("ls-revoke-modal-close");
-  const revokeCancelBtn = document.getElementById("ls-revoke-cancel-btn");
-  const revokeConfirmBtn = document.getElementById("ls-revoke-confirm-btn");
-
-  function closeRevokeModal() {
-    if (revokeModal) revokeModal.classList.add("hidden");
-    pendingRevokePropId = null;
-    const reasonEl = document.getElementById("ls-revoke-reason");
-    if (reasonEl) reasonEl.value = "";
-  }
-
-  function openRevokeConfirmModal(propId) {
-    if (!isVerifier || !revokeModal) return;
-    const prop = getProperties().find(function (p) {
-      return p.id === Number(propId);
-    });
-    if (!prop) return;
-    pendingRevokePropId = prop.id;
-    const msgEl = document.getElementById("ls-revoke-modal-msg");
-    if (msgEl) {
-      msgEl.innerHTML =
-        "Are you sure you want to revoke Lucky Seven verification for <strong>#" +
-        prop.id +
-        " — " +
-        escapeHtml(prop.title) +
-        "</strong>? Its public Marketplace badge will revert to Pending Review.";
-    }
-    revokeModal.classList.remove("hidden");
-  }
-
-  if (revokeCloseBtn) revokeCloseBtn.addEventListener("click", closeRevokeModal);
-  if (revokeCancelBtn) revokeCancelBtn.addEventListener("click", closeRevokeModal);
-  if (revokeModal) {
-    revokeModal.addEventListener("click", function (event) {
-      if (event.target === revokeModal) closeRevokeModal();
-    });
-  }
-  if (revokeConfirmBtn) {
-    revokeConfirmBtn.addEventListener("click", function () {
-      if (!isVerifier || !pendingRevokePropId) return;
-      const reasonEl = document.getElementById("ls-revoke-reason");
-      const reason = reasonEl ? reasonEl.value.trim() : "";
-      const list = getProperties();
-      const target = list.find(function (p) {
-        return p.id === Number(pendingRevokePropId);
-      });
-      if (target) {
-        target.verificationStatus = "Pending Lucky Seven Review";
-        target.badgeText = "Docs Submitted (Pending Review)";
-        target.badgeStyle = "badge-warning";
-        if (reason) target.revokeNote = reason;
-        saveProperties(list);
-        showToast("Revoked verification for Property #" + target.id);
-      }
-      closeRevokeModal();
-      renderLuckyPropertyVerificationDesk();
-      renderWorkflows();
-    });
-  }
-
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      if (docViewerModal && !docViewerModal.classList.contains("hidden")) {
-        closeDocumentViewerModal();
-      }
-      if (revokeModal && !revokeModal.classList.contains("hidden")) {
-        closeRevokeModal();
-      }
-    }
-  });
-
-  function renderLuckyPropertyVerificationDesk() {
-    const listEl = document.getElementById("lucky-property-verification-list");
-    if (!listEl) return;
-
-    // Strict RBAC guard: ONLY Lucky Seven Land Verifier can verify land listings
-    if (!isVerifier) {
-      listEl.innerHTML = "";
-      return;
-    }
-
-    const properties = getProperties();
-
-    // Always compute KPI statistics from actual full dataset
-    const verifiedCount = properties.filter(function (p) {
-      return getPropertyVerificationState(p).key === "Verified";
-    }).length;
-    const eligibleCount = properties.filter(function (p) {
-      return getPropertyVerificationState(p).key === "Pending Review";
-    }).length;
-    const blockedCount = properties.filter(function (p) {
-      const k = getPropertyVerificationState(p).key;
-      return k === "Blocked" || k === "Incomplete Documents";
-    }).length;
-
-    const totalEl = document.getElementById("lucky-stat-total");
-    const verEl = document.getElementById("lucky-stat-verified");
-    const eligEl = document.getElementById("lucky-stat-eligible");
-    const blkEl = document.getElementById("lucky-stat-blocked");
-
-    if (totalEl) totalEl.textContent = properties.length;
-    if (verEl) verEl.textContent = verifiedCount;
-    if (eligEl) eligEl.textContent = eligibleCount;
-    if (blkEl) blkEl.textContent = blockedCount;
-
-    // Apply Search & Filter Toolbar criteria
-    const query = lsSearchInput ? lsSearchInput.value.trim().toLowerCase() : "";
-    const brgyFilter = lsBarangayFilter ? lsBarangayFilter.value.trim().toLowerCase() : "";
-    const statusFilter = lsStatusFilter ? lsStatusFilter.value : "";
-    const completenessFilter = lsCompletenessFilter ? lsCompletenessFilter.value : "";
-
-    const filtered = properties.filter(function (prop) {
-      const state = getPropertyVerificationState(prop);
-      const docs = ensurePropertyDocuments(prop);
-      const searchable = [
-        prop.title,
-        prop.barangay,
-        prop.seller,
-        prop.type,
-        docs.tct.refNo,
-        docs.taxDec.refNo,
-        docs.ownerId.refNo
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      const matchQuery = !query || searchable.indexOf(query) >= 0;
-      const matchBrgy = !brgyFilter || String(prop.barangay || "").toLowerCase() === brgyFilter;
-      const matchStatus = !statusFilter || state.key === statusFilter;
-      const matchComplete =
-        !completenessFilter ||
-        (completenessFilter === "complete" && state.allDocsLegit) ||
-        (completenessFilter === "incomplete" && !state.allDocsLegit);
-
-      return matchQuery && matchBrgy && matchStatus && matchComplete;
-    });
-
-    if (lsResultsSummary) {
-      lsResultsSummary.textContent = String(filtered.length);
-    }
-
-    if (filtered.length === 0) {
-      listEl.innerHTML =
-        '<div class="ls-empty-state">' +
-        "  <h3>No matching properties found</h3>" +
-        '  <p class="text-muted mb-2">Adjust your search keyword, barangay, or document status filter to view more land listings.</p>' +
-        '  <button type="button" class="btn btn-ls-navy btn-sm" id="ls-empty-clear-btn">Clear All Filters</button>' +
-        "</div>";
-      const clearBtn = document.getElementById("ls-empty-clear-btn");
-      if (clearBtn) {
-        clearBtn.addEventListener("click", resetLuckyFilters);
-      }
-      return;
-    }
-
-    listEl.innerHTML = filtered.map(buildLuckyPropertyCardHTML).join("");
-
-    // Bind inline document authenticity checkboxes (strictly blocked for missing files)
-    listEl.querySelectorAll("[data-doc-prop-id]").forEach(function (checkbox) {
-      checkbox.addEventListener("change", function () {
-        if (!isVerifier) return;
-        const propId = Number(checkbox.getAttribute("data-doc-prop-id"));
-        const docKey = checkbox.getAttribute("data-doc-key");
-        const list = getProperties();
-        const target = list.find(function (p) {
-          return p.id === propId;
-        });
-        if (!target) return;
-        target.documents = ensurePropertyDocuments(target);
-        if (!target.documents[docKey] || !target.documents[docKey].submitted) {
-          checkbox.checked = false;
-          showToast("Cannot check a missing document as legitimate");
-          return;
-        }
-        target.documents[docKey].legitimate = checkbox.checked;
-        if (!hasAllLegitimateDocs(target) && target.verificationStatus === "Verified by Lucky Seven") {
-          target.verificationStatus = "Incomplete Documents";
-          target.badgeText = "Incomplete Documents";
-          target.badgeStyle = "badge-warning";
-        }
-        saveProperties(list);
-        renderLuckyPropertyVerificationDesk();
-        renderWorkflows();
-      });
-    });
-
-    // Bind View Documents / Inspect Document buttons
-    listEl.querySelectorAll("[data-open-doc-prop-id]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        openDocumentViewerModal(
-          btn.getAttribute("data-open-doc-prop-id"),
-          btn.getAttribute("data-open-doc-key") || "tct"
-        );
-      });
-    });
-
-    // Bind Verify Land Property (strictly enforces hasAllLegitimateDocs)
-    listEl.querySelectorAll("[data-verify-prop-id]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        if (!isVerifier) return;
-        const propId = Number(btn.getAttribute("data-verify-prop-id"));
-        const list = getProperties();
-        const target = list.find(function (p) {
-          return p.id === propId;
-        });
-        if (!target) return;
-
-        if (!hasAllLegitimateDocs(target)) {
-          showToast(
-            "Verification Blocked: All 3 legitimate documents are required before Lucky Seven can verify."
-          );
-          return;
-        }
-
-        target.verificationStatus = "Verified by Lucky Seven";
-        target.badgeText = "Lucky Seven Verified";
-        target.badgeStyle = "badge-green";
-        if (target.priceNote === "Submitted for Lucky Seven verification") {
-          target.priceNote = "Verified Panabo City parcel";
-        }
-        if (Array.isArray(target.cardTags)) {
-          target.cardTags = target.cardTags.map(function (t) {
-            return t === "Pending Verification" || t === "Needs Legal Docs"
-              ? "Lucky Seven Verified"
-              : t;
-          });
-        }
-        saveProperties(list);
-        renderLuckyPropertyVerificationDesk();
-        renderWorkflows();
-        showToast("Land Property #" + propId + " verified by Lucky Seven ✓");
-      });
-    });
-
-    // Bind Revoke Verification (opens confirmation dialog to prevent accidental actions)
-    listEl.querySelectorAll("[data-open-revoke-prop-id]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        openRevokeConfirmModal(btn.getAttribute("data-open-revoke-prop-id"));
-      });
-    });
-  }
-
-  function resetLuckyFilters() {
-    if (lsSearchInput) lsSearchInput.value = "";
-    if (lsBarangayFilter) lsBarangayFilter.value = "";
-    if (lsStatusFilter) lsStatusFilter.value = "";
-    if (lsCompletenessFilter) lsCompletenessFilter.value = "";
-    renderLuckyPropertyVerificationDesk();
-  }
-
-  [lsSearchInput, lsBarangayFilter, lsStatusFilter, lsCompletenessFilter].forEach(function (ctrl) {
-    if (!ctrl) return;
-    ctrl.addEventListener("input", renderLuckyPropertyVerificationDesk);
-    ctrl.addEventListener("change", renderLuckyPropertyVerificationDesk);
-  });
-
-  if (lsResetFilterBtn) {
-    lsResetFilterBtn.addEventListener("click", function () {
-      resetLuckyFilters();
-      showToast("Verification filters reset");
-    });
-  }
-
-  // Clickable KPI Cards act as quick filters
-  document.querySelectorAll("[data-ls-kpi-filter]").forEach(function (kpiBtn) {
-    kpiBtn.addEventListener("click", function () {
-      if (!isVerifier) return;
-      const filterType = kpiBtn.getAttribute("data-ls-kpi-filter");
-      resetLuckyFilters();
-      if (filterType !== "all" && lsStatusFilter) {
-        lsStatusFilter.value = filterType;
-      }
-      renderLuckyPropertyVerificationDesk();
-    });
-  });
-
   function renderWorkflows() {
     const transactions = getTransactions();
     const buyerList = document.getElementById("buyer-tracker-list");
-    const agencyList = document.getElementById("agency-queue-list");
-    const allProps = getProperties();
 
-    if (buyerList) {
-      // Filter transactions by user role for privacy
-      let visibleTransactions = transactions;
-      if (isStandardUser) {
-        visibleTransactions = transactions.filter(function (tx) {
-          return (tx.buyerEmail && tx.buyerEmail.toLowerCase() === currentEmail.toLowerCase()) ||
-                 (tx.sellerEmail && tx.sellerEmail.toLowerCase() === currentEmail.toLowerCase()) ||
-                 tx.buyerName === currentName ||
-                 tx.sellerName === currentName;
-        });
-      }
+    if (!buyerList) return;
 
-      if (visibleTransactions.length === 0) {
-        buyerList.innerHTML =
-          '<div class="card text-center">' +
-          "  <h3>No reservations</h3>" +
-          '  <p class="mb-2">You have no buyer or seller reservations yet.</p>' +
-          (isStandardUser
-            ? '  <a href="marketplace.html" class="btn btn-primary btn-sm">Explore Marketplace &rarr;</a>'
-            : "") +
-          "</div>";
-      } else {
-        buyerList.innerHTML = visibleTransactions
-          .map(function (tx) {
-            const isPending = tx.approvalStatus === "pending";
-            const isRejected = tx.approvalStatus === "rejected";
-            const isApproved = tx.approvalStatus === "approved" || !tx.approvalStatus;
-            const percent = isPending || isRejected
-              ? 0
-              : Math.round(((tx.stageIndex + 1) / MILESTONE_STEPS.length) * 100);
-            const stepsHtml = MILESTONE_STEPS.map(function (label, idx) {
-              const done = isApproved && idx <= tx.stageIndex;
-              return (
-                '<li class="milestone-item ' + (done ? "completed" : "") + '">' +
-                "<span>" + (done ? "✓" : idx + 1) + "</span> " +
-                escapeHtml(label) +
-                "</li>"
-              );
-            }).join("");
-
-            const docsHtml = (tx.documents || [])
-              .map(function (doc) {
-                return "<li><strong>" + escapeHtml(doc.name) + ":</strong> " + escapeHtml(doc.status) + "</li>";
-              })
-              .join("");
-
-            const txPriceDisplay = tx.priceLabel || formatPeso(tx.salePrice);
-
-            // Role label for the other party
-            const otherParty = isStandardUser
-              ? (tx.buyerEmail && tx.buyerEmail.toLowerCase() === currentEmail.toLowerCase() || tx.buyerName === currentName
-                ? "Seller: " + escapeHtml(tx.sellerName)
-                : "Buyer: " + escapeHtml(tx.buyerName))
-              : "Buyer: " + escapeHtml(tx.buyerName) + " &bull; Seller: " + escapeHtml(tx.sellerName);
-
-            // Status badge
-            let statusBadgeHtml = "";
-            if (isPending) {
-              statusBadgeHtml = '<span class="badge badge-warning">Awaiting Seller Approval</span>';
-            } else if (isRejected) {
-              statusBadgeHtml = '<span class="badge badge-brown-soft">Rejected by Seller</span>';
-            } else {
-              statusBadgeHtml = '<span class="badge badge-green">' + escapeHtml(tx.id) + " &bull; " + escapeHtml(txPriceDisplay) + "</span>";
-            }
-
-            // Approve/Reject buttons for seller on pending requests + Direct Message link
-            let actionButtonsHtml = "";
-            const msgBtnHtml =
-              '<a href="property.html?id=' +
-              Number(tx.propertyId || 1) +
-              '#msg-section" class="btn btn-outline btn-sm">Message</a>';
-            if (isPending && isStandardUser) {
-              const isSeller = (tx.sellerEmail && tx.sellerEmail.toLowerCase() === currentEmail.toLowerCase()) || tx.sellerName === currentName;
-              if (isSeller) {
-                actionButtonsHtml =
-                  '  <div class="mt-2 flex-wrap-gap">' +
-                  '    <button type="button" class="btn btn-primary btn-sm" data-approve-tx-id="' + tx.id + '">Accept Reservation</button>' +
-                  '    <button type="button" class="btn btn-outline btn-sm" data-reject-tx-id="' + tx.id + '">Reject Reservation</button>' +
-                  "    " + msgBtnHtml +
-                  "  </div>";
-              } else {
-                actionButtonsHtml = '  <div class="mt-2 flex-wrap-gap">' + msgBtnHtml + "</div>";
-              }
-            } else {
-              actionButtonsHtml = '  <div class="mt-2 flex-wrap-gap">' + msgBtnHtml + "</div>";
-            }
-
-            return (
-              '<div class="card mb-2 anim-fade-up" data-anim="ytFadeInUp">' +
-              '  <div class="tx-card-header">' +
-              '    <div><h3>' + escapeHtml(tx.propertyTitle) + '</h3><p class="text-no-margin">' + escapeHtml(tx.location) + " &bull; " + otherParty + "</p></div>" +
-              statusBadgeHtml +
-              "  </div>" +
-              (isApproved && !isPending && !isRejected
-                ? '  <div class="progress-header"><span>Progress: ' + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</span><span>" + percent + "%</span></div>" +
-                  '  <div class="progress-track"><div class="progress-fill" data-progress-width="' + percent + '"></div></div>' +
-                  '  <ul class="milestone-list">' + stepsHtml + "</ul>" +
-                  '  <div class="mt-2 doc-vault-box"><strong>Document Vault (MVP Preview):</strong><ul class="doc-vault-list">' + docsHtml + "</ul></div>"
-                : "") +
-              actionButtonsHtml +
-              "</div>"
-            );
-          })
-          .join("");
-
-        buyerList.querySelectorAll("[data-progress-width]").forEach(function (bar) {
-          bar.style.width = bar.getAttribute("data-progress-width") + "%";
-        });
-
-        // Bind Approve buttons
-        buyerList.querySelectorAll("[data-approve-tx-id]").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const txId = btn.getAttribute("data-approve-tx-id");
-            const list = getTransactions();
-            const tx = list.find(function (t) { return t.id === txId; });
-            if (tx) {
-              tx.approvalStatus = "approved";
-              tx.status = "active";
-              saveTransactions(list);
-              renderWorkflows();
-              showToast("Reservation " + txId + " accepted");
-            }
-          });
-        });
-
-        // Bind Reject buttons
-        buyerList.querySelectorAll("[data-reject-tx-id]").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const txId = btn.getAttribute("data-reject-tx-id");
-            const list = getTransactions();
-            const tx = list.find(function (t) { return t.id === txId; });
-            if (tx) {
-              tx.approvalStatus = "rejected";
-              tx.status = "rejected";
-              saveTransactions(list);
-              renderWorkflows();
-              showToast("Reservation " + txId + " rejected");
-            }
-          });
-        });
-      }
+    // Filter transactions by user role for privacy
+    let visibleTransactions = transactions;
+    if (isStandardUser) {
+      visibleTransactions = transactions.filter(function (tx) {
+        return (tx.buyerEmail && tx.buyerEmail.toLowerCase() === currentEmail.toLowerCase()) ||
+               (tx.sellerEmail && tx.sellerEmail.toLowerCase() === currentEmail.toLowerCase()) ||
+               tx.buyerName === currentName ||
+               tx.sellerName === currentName;
+      });
     }
 
-    if (!agencyList) return;
-
-    // Strict RBAC guard: ONLY Lucky Seven Land Verifier can operate the Verification Queue (NOT Admin, NOT User)
-    if (!isVerifier) {
-      agencyList.innerHTML = "";
-      return;
-    }
-
-    // Agency queue shows only approved/active reservations (pending seller approval are not yet active)
-    const agencyTransactions = transactions.filter(function (tx) {
-      return tx.approvalStatus === "approved" || !tx.approvalStatus;
-    });
-
-    if (agencyTransactions.length === 0) {
-      agencyList.innerHTML =
+    if (visibleTransactions.length === 0) {
+      buyerList.innerHTML =
         '<div class="card text-center">' +
-        "  <h3>Lucky Seven reservation queue is empty</h3>" +
-        "  <p>New buyer reservations will appear here for document milestone verification once sellers approve them.</p>" +
+        "  <h3>No reservations</h3>" +
+        '  <p class="mb-2">You have no buyer or seller reservations yet.</p>' +
+        (isStandardUser
+          ? '  <a href="marketplace.html" class="btn btn-primary btn-sm">Explore Marketplace &rarr;</a>'
+          : "") +
         "</div>";
       return;
     }
 
-    agencyList.innerHTML = agencyTransactions
-      .map(function (tx, idx) {
-        const linkedProp = allProps.find(function (p) {
-          return p.id === Number(tx.propertyId);
-        });
-        const docsValid = linkedProp ? hasAllLegitimateDocs(linkedProp) : false;
-        const nextStageIsVerification = tx.stageIndex >= 2;
-        const blockedByDocs = nextStageIsVerification && !docsValid;
+    buyerList.innerHTML = visibleTransactions
+      .map(function (tx) {
+        const isPending = tx.approvalStatus === "pending";
+        const isRejected = tx.approvalStatus === "rejected";
+        const isApproved = tx.approvalStatus === "approved" || !tx.approvalStatus;
         const isDone = tx.stageIndex >= MILESTONE_STEPS.length - 1;
-        const percent = Math.round(((tx.stageIndex + 1) / MILESTONE_STEPS.length) * 100);
+        const percent = isPending || isRejected
+          ? 0
+          : Math.round(((tx.stageIndex + 1) / MILESTONE_STEPS.length) * 100);
+        const stepsHtml = MILESTONE_STEPS.map(function (label, idx) {
+          const done = isApproved && idx <= tx.stageIndex;
+          return (
+            '<li class="milestone-item ' + (done ? "completed" : "") + '">' +
+            "<span>" + (done ? "✓" : idx + 1) + "</span> " +
+            escapeHtml(label) +
+            "</li>"
+          );
+        }).join("");
+
+        const docsHtml = (tx.documents || [])
+          .map(function (doc) {
+            return "<li><strong>" + escapeHtml(doc.name) + ":</strong> " + escapeHtml(doc.status) + "</li>";
+          })
+          .join("");
+
         const txPriceDisplay = tx.priceLabel || formatPeso(tx.salePrice);
+        const isSeller = (tx.sellerEmail && tx.sellerEmail.toLowerCase() === currentEmail.toLowerCase()) || tx.sellerName === currentName;
+
+        const otherParty = isStandardUser
+          ? (tx.buyerEmail && tx.buyerEmail.toLowerCase() === currentEmail.toLowerCase() || tx.buyerName === currentName
+            ? "Seller: " + escapeHtml(tx.sellerName)
+            : "Buyer: " + escapeHtml(tx.buyerName))
+          : "Buyer: " + escapeHtml(tx.buyerName) + " &bull; Seller: " + escapeHtml(tx.sellerName);
+
+        let statusBadgeHtml = "";
+        if (isPending) {
+          statusBadgeHtml = '<span class="badge badge-warning">Awaiting Seller Approval</span>';
+        } else if (isRejected) {
+          statusBadgeHtml = '<span class="badge badge-brown-soft">Rejected by Seller</span>';
+        } else {
+          statusBadgeHtml = '<span class="badge badge-green">' + escapeHtml(tx.id) + " &bull; " + escapeHtml(txPriceDisplay) + "</span>";
+        }
+
+        const msgBtnHtml =
+          '<a href="property.html?id=' +
+          Number(tx.propertyId || 1) +
+          '#msg-section" class="btn btn-outline btn-sm">Message</a>';
+
+        let actionButtonsHtml = "";
+        if (isPending && isStandardUser && isSeller) {
+          actionButtonsHtml =
+            '  <div class="mt-2 flex-wrap-gap">' +
+            '    <button type="button" class="btn btn-primary btn-sm" data-approve-tx-id="' + tx.id + '">Accept Reservation</button>' +
+            '    <button type="button" class="btn btn-outline btn-sm" data-reject-tx-id="' + tx.id + '">Reject Reservation</button>' +
+            "    " + msgBtnHtml +
+            "  </div>";
+        } else if (isApproved && isStandardUser && isSeller && !isDone) {
+          actionButtonsHtml =
+            '  <div class="mt-2 flex-wrap-gap">' +
+            '    <button type="button" class="btn btn-primary btn-sm" data-seller-advance-tx-id="' + tx.id + '">Advance Stage &rarr;</button>' +
+            "    " + msgBtnHtml +
+            "  </div>";
+        } else {
+          actionButtonsHtml = '  <div class="mt-2 flex-wrap-gap">' + msgBtnHtml + "</div>";
+        }
 
         return (
-          '<article class="ls-prop-card anim-fade-up" data-anim="ytFadeInUp">' +
-          '  <div class="ls-prop-header">' +
-          "    <div>" +
-          '      <h3 class="ls-prop-title">' + escapeHtml(tx.id) + " &bull; " + escapeHtml(tx.propertyTitle) + "</h3>" +
-          '      <div class="ls-prop-meta-row">' +
-          '        <span class="ls-meta-chip">' + LS_ICONS.mapPin + " " + escapeHtml(tx.location) + "</span>" +
-          '        <span class="ls-meta-chip">' + LS_ICONS.user + " " + escapeHtml(tx.buyerName) + "</span>" +
-          '        <span class="ls-meta-chip">' + escapeHtml(txPriceDisplay) + "</span>" +
-          "      </div>" +
-          "    </div>" +
-          '    <span class="ls-status-pill ' + (isDone ? "status-verified" : "status-pending") + '">' +
-          escapeHtml(MILESTONE_STEPS[tx.stageIndex]) +
-          " (" + (tx.stageIndex + 1) + "/" + MILESTONE_STEPS.length + ")" +
-          "    </span>" +
+          '<div class="card mb-2 anim-fade-up" data-anim="ytFadeInUp">' +
+          '  <div class="tx-card-header">' +
+          '    <div><h3>' + escapeHtml(tx.propertyTitle) + '</h3><p class="text-no-margin">' + escapeHtml(tx.location) + " &bull; " + otherParty + "</p></div>" +
+          statusBadgeHtml +
           "  </div>" +
-          '  <div class="progress-track mt-2 mb-2"><div class="progress-fill" data-agency-progress-width="' + percent + '"></div></div>' +
-          '  <div class="ls-card-footer">' +
-          '    <span class="ls-results-count">' + percent + "% complete</span>" +
-          '    <div class="ls-action-group">' +
-          '      <button type="button" class="btn btn-ls-navy btn-sm" data-advance-tx-id="' + tx.id + '" ' + (isDone || blockedByDocs ? "disabled" : "") + ">" +
-          (isDone ? "Done ✓" : blockedByDocs ? "Blocked" : "Advance &rarr;") +
-          "      </button>" +
-          '      <button type="button" class="btn btn-ls-outline btn-sm" data-reset-tx-id="' + tx.id + '">Reset</button>' +
-          "    </div>" +
-          "  </div>" +
-          "</article>"
+          (isApproved && !isPending && !isRejected
+            ? '  <div class="progress-header"><span>Progress: ' + escapeHtml(MILESTONE_STEPS[tx.stageIndex]) + "</span><span>" + percent + "%</span></div>" +
+              '  <div class="progress-track"><div class="progress-fill" data-progress-width="' + percent + '"></div></div>' +
+              '  <ul class="milestone-list">' + stepsHtml + "</ul>" +
+              '  <div class="mt-2 doc-vault-box"><strong>Transaction Checklist:</strong><ul class="doc-vault-list">' + docsHtml + "</ul></div>"
+            : "") +
+          actionButtonsHtml +
+          "</div>"
         );
       })
       .join("");
 
-    agencyList.querySelectorAll("[data-agency-progress-width]").forEach(function (bar) {
-      bar.style.width = bar.getAttribute("data-agency-progress-width") + "%";
+    buyerList.querySelectorAll("[data-progress-width]").forEach(function (bar) {
+      bar.style.width = bar.getAttribute("data-progress-width") + "%";
     });
 
-    agencyList.querySelectorAll("[data-advance-tx-id]").forEach(function (btn) {
+    buyerList.querySelectorAll("[data-approve-tx-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        if (!isVerifier) return;
-        const txId = btn.getAttribute("data-advance-tx-id");
-        const list = getTransactions();
-        const tx = list.find(function (t) { return t.id === txId; });
-        if (!tx || tx.stageIndex >= MILESTONE_STEPS.length - 1) return;
-
-        const linkedProp = getProperties().find(function (p) {
-          return p.id === Number(tx.propertyId);
-        });
-        if (tx.stageIndex >= 2 && (!linkedProp || !hasAllLegitimateDocs(linkedProp))) {
-          showToast("Blocked: All 3 legitimate land documents are required to verify this transaction.");
-          return;
-        }
-
-        tx.stageIndex += 1;
-        saveTransactions(list);
-        renderWorkflows();
-        showToast("Milestone updated to: " + MILESTONE_STEPS[tx.stageIndex]);
-      });
-    });
-
-    agencyList.querySelectorAll("[data-reset-tx-id]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        if (!isVerifier) return;
-        const txId = btn.getAttribute("data-reset-tx-id");
+        const txId = btn.getAttribute("data-approve-tx-id");
         const list = getTransactions();
         const tx = list.find(function (t) { return t.id === txId; });
         if (tx) {
-          tx.stageIndex = 0;
+          tx.approvalStatus = "approved";
+          tx.status = "active";
+          if (tx.stageIndex < 1) tx.stageIndex = 1;
           saveTransactions(list);
           renderWorkflows();
-          showToast("Reset transaction " + tx.id + " to Stage 1");
+          showToast("Reservation " + txId + " accepted");
+        }
+      });
+    });
+
+    buyerList.querySelectorAll("[data-reject-tx-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const txId = btn.getAttribute("data-reject-tx-id");
+        const list = getTransactions();
+        const tx = list.find(function (t) { return t.id === txId; });
+        if (tx) {
+          tx.approvalStatus = "rejected";
+          tx.status = "rejected";
+          saveTransactions(list);
+          renderWorkflows();
+          showToast("Reservation " + txId + " rejected");
+        }
+      });
+    });
+
+    buyerList.querySelectorAll("[data-seller-advance-tx-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const txId = btn.getAttribute("data-seller-advance-tx-id");
+        const list = getTransactions();
+        const tx = list.find(function (t) { return t.id === txId; });
+        if (tx && tx.stageIndex < MILESTONE_STEPS.length - 1) {
+          tx.stageIndex += 1;
+          saveTransactions(list);
+          renderWorkflows();
+          showToast("Milestone updated to: " + MILESTONE_STEPS[tx.stageIndex]);
         }
       });
     });
@@ -3305,14 +2311,6 @@ function initTrackerPage() {
         feedback.className = "alert alert-error";
         feedback.textContent =
           "Admin Restriction: Click Edit on an existing property listing above to modify it.";
-        feedback.classList.remove("hidden");
-        return;
-      }
-
-      // Strict RBAC guard: Lucky Seven cannot submit or edit properties
-      if (isVerifier) {
-        feedback.className = "alert alert-error";
-        feedback.textContent = "Lucky Seven Land Verifier can only verify land documents.";
         feedback.classList.remove("hidden");
         return;
       }
@@ -3364,26 +2362,7 @@ function initTrackerPage() {
         }
       }
 
-      // Standard User submitting their own account's new Panabo City land for Lucky Seven Verification
-      const tctInput = document.getElementById("seller-doc-tct");
-      const taxInput = document.getElementById("seller-doc-tax");
-      const idInput = document.getElementById("seller-doc-id");
-      const tctFileInput = document.getElementById("seller-file-tct");
-      const taxFileInput = document.getElementById("seller-file-tax");
-      const idFileInput = document.getElementById("seller-file-id");
-
-      const tctVal = tctInput ? tctInput.value.trim() : "";
-      const taxVal = taxInput ? taxInput.value.trim() : "";
-      const idVal = idInput ? idInput.value.trim() : "";
-      const tctFile = tctFileInput && tctFileInput.files && tctFileInput.files[0] ? tctFileInput.files[0].name : "";
-      const taxFile = taxFileInput && taxFileInput.files && taxFileInput.files[0] ? taxFileInput.files[0].name : "";
-      const idFile = idFileInput && idFileInput.files && idFileInput.files[0] ? idFileInput.files[0].name : "";
-
-      const hasTct = Boolean(tctVal || tctFile);
-      const hasTax = Boolean(taxVal || taxFile);
-      const hasId = Boolean(idVal || idFile);
-      const hasAllSubmitted = hasTct && hasTax && hasId;
-
+      // Standard User publishing a new Panabo City land listing straight to Marketplace
       const nextId = list.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
 
       list.unshift({
@@ -3395,12 +2374,12 @@ function initTrackerPage() {
         province: "Davao del Norte",
         price: price,
         priceLabel: price > 0 ? formatPeso(price) : "Negotiable (For Sale)",
-        priceNote: "Submitted for Lucky Seven verification",
+        priceNote: "Direct owner listing",
         area: area,
         roadAccess: roadAccess,
-        badgeText: hasAllSubmitted ? "Under Lucky Seven Verification" : "Missing Legal Docs",
-        badgeStyle: "badge-warning",
-        verificationStatus: hasAllSubmitted ? "Pending Lucky Seven Verification" : "Incomplete Documents",
+        badgeText: "For Sale",
+        badgeStyle: "badge-green",
+        verificationStatus: "Active Listing",
         submittedByUser: true,
         submittedAt: new Date().toISOString().slice(0, 10),
         promoted: false,
@@ -3409,38 +2388,13 @@ function initTrackerPage() {
         latitude: "7.3100",
         longitude: "125.6820",
         image: pendingPhotoDataUrl || "assets/property-hero.png",
-        documents: {
-          tct: {
-            label: "Clean Transfer Certificate of Title (TCT / OCT)",
-            refNo: tctVal || (tctFile ? "Uploaded: " + tctFile : "Missing — TCT Copy Not Uploaded"),
-            fileName: tctFile,
-            submitted: hasTct,
-            legitimate: false
-          },
-          taxDec: {
-            label: "Updated Real Property Tax Declaration & Clearance",
-            refNo: taxVal || (taxFile ? "Uploaded: " + taxFile : "Missing — Tax Declaration Not Uploaded"),
-            fileName: taxFile,
-            submitted: hasTax,
-            legitimate: false
-          },
-          ownerId: {
-            label: "Verified Owner Government ID & Deed / Authority",
-            refNo: idVal || (idFile ? "Uploaded: " + idFile : "Missing — Owner ID Not Uploaded"),
-            fileName: idFile,
-            submitted: hasId,
-            legitimate: false
-          }
-        },
-        cardTags: [type + " Lot", hasAllSubmitted ? "Pending Verification" : "Needs Legal Docs", "Panabo City"],
+        cardTags: [type + " Lot", "Direct Owner", "Panabo City"],
         highlights: [
           Number(area).toLocaleString() + " SQM Lot Area",
           roadAccess,
-          hasAllSubmitted
-            ? "Submitted with 3 legal documents — Undergoing Lucky Seven verification"
-            : "Missing required legal documents — Cannot be verified until complete"
+          "Direct buyer-seller communication & reservation available"
         ],
-        description: description || "Submitted through the YuTara landowner portal for Lucky Seven verification."
+        description: description || "Listed directly by the landowner on YuTara Panabo City Marketplace."
       });
 
       saveProperties(list);
@@ -3451,195 +2405,11 @@ function initTrackerPage() {
       feedback.innerHTML =
         "<strong>Land Property #" +
         nextId +
-        " Sent to Lucky Seven Verification!</strong> " +
-        (hasAllSubmitted
-          ? "Your land is now live on the Panabo City Marketplace. All 3 legal documents are queued for Lucky Seven Land Verifier review to support your land transaction milestones. "
-          : "Your land is now live on the Panabo City Marketplace. Notice: One or more legal documents are missing, so Lucky Seven will hold verification until you upload them under My Account Listings. ") +
-        '<button type="button" class="btn btn-outline btn-sm mt-1" id="go-track-my-listings-btn">Track Verification in My Account Listings &rarr;</button>';
+        " Published to Marketplace!</strong> Your listing is now live in Panabo City. " +
+        '<a href="marketplace.html" class="inline-action-link">View on Marketplace &rarr;</a>';
       feedback.classList.remove("hidden");
-      const trackBtn = document.getElementById("go-track-my-listings-btn");
-      if (trackBtn) {
-        trackBtn.addEventListener("click", function () {
-          activateTab("panel-buyer");
-        });
-      }
-      showToast("Land #" + nextId + " submitted for Lucky Seven Verification");
+      showToast("Land #" + nextId + " is now live on Marketplace");
     });
-  }
-
-  /* User Missing/Update Legal Documents Modal Controller */
-  const userDocsModal = document.getElementById("user-docs-modal");
-  const userDocsCloseBtn = document.getElementById("user-docs-modal-close");
-  const userDocsCancelBtn = document.getElementById("user-docs-modal-cancel");
-  const userDocsForm = document.getElementById("user-docs-update-form");
-
-  function closeUserDocsModal() {
-    if (userDocsModal) userDocsModal.classList.add("hidden");
-  }
-
-  function openUserDocsModal(propId) {
-    if (!isStandardUser || !userDocsModal) return;
-    const prop = getProperties().find(function (p) {
-      return p.id === Number(propId);
-    });
-    if (!prop) return;
-    const docs = ensurePropertyDocuments(prop);
-    const idField = document.getElementById("user-docs-prop-id");
-    const subEl = document.getElementById("user-docs-modal-sub");
-    const tctEl = document.getElementById("user-modal-doc-tct");
-    const taxEl = document.getElementById("user-modal-doc-tax");
-    const ownerEl = document.getElementById("user-modal-doc-id");
-
-    if (idField) idField.value = String(prop.id);
-    if (subEl) {
-      subEl.textContent =
-        "Update legal document references for #" +
-        prop.id +
-        " — " +
-        prop.title +
-        " so Lucky Seven Land Verifier can authenticate it.";
-    }
-    if (tctEl) tctEl.value = docs.tct.submitted ? docs.tct.refNo : "";
-    if (taxEl) taxEl.value = docs.taxDec.submitted ? docs.taxDec.refNo : "";
-    if (ownerEl) ownerEl.value = docs.ownerId.submitted ? docs.ownerId.refNo : "";
-
-    userDocsModal.classList.remove("hidden");
-  }
-
-  if (userDocsCloseBtn) userDocsCloseBtn.addEventListener("click", closeUserDocsModal);
-  if (userDocsCancelBtn) userDocsCancelBtn.addEventListener("click", closeUserDocsModal);
-  if (userDocsModal) {
-    userDocsModal.addEventListener("click", function (event) {
-      if (event.target === userDocsModal) closeUserDocsModal();
-    });
-  }
-
-  if (userDocsForm) {
-    userDocsForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      if (!isStandardUser) return;
-      const propId = Number(document.getElementById("user-docs-prop-id").value);
-      const tctVal = document.getElementById("user-modal-doc-tct").value.trim();
-      const taxVal = document.getElementById("user-modal-doc-tax").value.trim();
-      const ownerVal = document.getElementById("user-modal-doc-id").value.trim();
-
-      const list = getProperties();
-      const target = list.find(function (p) {
-        return p.id === propId;
-      });
-      if (!target) return;
-
-      target.documents = ensurePropertyDocuments(target);
-      function applyDocUpdate(docObj, newRef, missingText) {
-        if (newRef) {
-          const changed = !docObj.submitted || docObj.refNo !== newRef;
-          docObj.refNo = newRef;
-          docObj.submitted = true;
-          if (changed) docObj.legitimate = false;
-        } else {
-          docObj.refNo = missingText;
-          docObj.submitted = false;
-          docObj.legitimate = false;
-        }
-      }
-
-      applyDocUpdate(target.documents.tct, tctVal, "Missing — TCT Copy Not Uploaded");
-      applyDocUpdate(target.documents.taxDec, taxVal, "Missing — Tax Declaration Not Uploaded");
-      applyDocUpdate(target.documents.ownerId, ownerVal, "Missing — Owner ID Not Uploaded");
-
-      const allSubmitted =
-        target.documents.tct.submitted &&
-        target.documents.taxDec.submitted &&
-        target.documents.ownerId.submitted;
-
-      if (target.verificationStatus !== "Verified by Lucky Seven" || !hasAllLegitimateDocs(target)) {
-        target.verificationStatus = allSubmitted
-          ? "Pending Lucky Seven Verification"
-          : "Incomplete Documents";
-        target.badgeText = allSubmitted ? "Under Lucky Seven Verification" : "Missing Legal Docs";
-        target.badgeStyle = "badge-warning";
-      }
-
-      saveProperties(list);
-      closeUserDocsModal();
-      renderUserWorkspace();
-      showToast("Updated documents for Property #" + propId + " — Sent to Lucky Seven");
-    });
-  }
-
-  function buildUserVerificationTrackerHTML(prop) {
-    const docs = ensurePropertyDocuments(prop);
-    const docList = [
-      { key: "TCT/OCT", doc: docs.tct },
-      { key: "Tax Clearance", doc: docs.taxDec },
-      { key: "Owner ID", doc: docs.ownerId }
-    ];
-    const legitCount = docList.filter(function (item) {
-      return item.doc.submitted && item.doc.legitimate;
-    }).length;
-    const missingCount = docList.filter(function (item) {
-      return !item.doc.submitted;
-    }).length;
-    const isVerified = prop.verificationStatus === "Verified by Lucky Seven" && legitCount === 3;
-
-    let pillClass = "state-pending";
-    let pillText = "Undergoing Lucky Seven Verification";
-    let progressText = legitCount + "/3 Docs Verified";
-
-    if (isVerified) {
-      pillClass = "state-verified";
-      pillText = "✓ Verified by Lucky Seven";
-      progressText = "Verified on Marketplace";
-    } else if (missingCount > 0) {
-      pillClass = "state-missing";
-      pillText = "Missing " + missingCount + " Legal Doc" + (missingCount > 1 ? "s" : "");
-      progressText = "Live • Docs Needed for Verification";
-    } else if (legitCount === 3) {
-      pillClass = "state-pending";
-      pillText = "Ready for Lucky Seven Approval";
-      progressText = "3/3 Docs Checked";
-    }
-
-    const chipsHtml = docList
-      .map(function (item) {
-        const cls = !item.doc.submitted
-          ? "doc-miss"
-          : item.doc.legitimate
-          ? "doc-ok"
-          : "doc-wait";
-        const mark = !item.doc.submitted ? "!" : item.doc.legitimate ? "✓" : "•";
-        return '<span class="user-doc-mini ' + cls + '">' + mark + " " + item.key + "</span>";
-      })
-      .join("");
-
-    const actionHtml = !isVerified
-      ? '<button type="button" class="btn btn-outline btn-sm" data-user-update-docs-id="' +
-        prop.id +
-        '">' +
-        (missingCount > 0 ? "Upload Missing Docs" : "Update Docs") +
-        "</button>"
-      : "";
-
-    return (
-      '<div class="user-verify-tracker">' +
-      '  <div class="user-verify-top">' +
-      '    <span class="user-verify-pill ' +
-      pillClass +
-      '">' +
-      pillText +
-      "</span>" +
-      '    <span class="user-verify-progress">' +
-      progressText +
-      "</span>" +
-      "  </div>" +
-      '  <div class="user-verify-docs-row">' +
-      '    <div class="user-verify-doc-chips">' +
-      chipsHtml +
-      "</div>" +
-      actionHtml +
-      "  </div>" +
-      "</div>"
-    );
   }
 
   function renderUserWorkspace() {
@@ -3667,9 +2437,9 @@ function initTrackerPage() {
         landGrid.innerHTML =
           '<div class="card text-center">' +
           "  <h3>No account listings yet</h3>" +
-          '  <p class="mb-2">You have not submitted any land listings under ' +
+          '  <p class="mb-2">You have not published any land listings under ' +
           escapeHtml(currentEmail) +
-          ' yet. Add a Panabo City land parcel to start Lucky Seven verification.</p>' +
+          ' yet. Add a Panabo City land parcel to list it on the Marketplace.</p>' +
           '  <button type="button" class="btn btn-primary btn-sm" id="user-empty-add-land-btn">+ Add Land for Sale</button>' +
           "</div>";
         const emptyAddBtn = document.getElementById("user-empty-add-land-btn");
@@ -3680,20 +2450,9 @@ function initTrackerPage() {
           });
         }
       } else {
-        landGrid.innerHTML = myProps
-          .map(function (prop) {
-            const baseCard = createPropertyCardHTML(prop);
-            const trackerStrip = buildUserVerificationTrackerHTML(prop);
-            return baseCard.replace("</article>", trackerStrip + "</article>");
-          })
-          .join("");
+        landGrid.innerHTML = myProps.map(createPropertyCardHTML).join("");
         bindSaveButtons(landGrid, function () {
           if (savedEl) savedEl.textContent = getSavedIds().length;
-        });
-        landGrid.querySelectorAll("[data-user-update-docs-id]").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            openUserDocsModal(btn.getAttribute("data-user-update-docs-id"));
-          });
         });
       }
     }
@@ -3713,9 +2472,7 @@ function initTrackerPage() {
 
     if (totalEl) totalEl.textContent = props.length;
     if (openEl) {
-      openEl.textContent = props.filter(function (p) {
-        return p.verificationStatus === "Verified by Lucky Seven";
-      }).length;
+      openEl.textContent = props.length;
     }
     if (accEl) accEl.textContent = allAccounts.length;
     if (pendEl) {
@@ -3741,9 +2498,6 @@ function initTrackerPage() {
           '  <option value="Admin"' +
           (acc.role === "Admin" ? " selected" : "") +
           ">Admin</option>" +
-          '  <option value="Lucky Seven Land Verifier"' +
-          (acc.role === "Lucky Seven Land Verifier" ? " selected" : "") +
-          ">Lucky Seven Land Verifier</option>" +
           "</select>";
 
         const toggleStatusBtn = isCurrentAdminSelf
@@ -3831,9 +2585,8 @@ function initTrackerPage() {
     if (listingsTbody) {
       listingsTbody.innerHTML = props
         .map(function (prop) {
-          const isVerified = prop.verificationStatus === "Verified by Lucky Seven";
-          const statusClass = isVerified ? "badge-green" : "badge-brown-soft";
-          const statusLabel = prop.verificationStatus || "Pending Lucky Seven Review";
+          const statusClass = "badge-green";
+          const statusLabel = prop.badgeText || "Active Listing";
           return (
             "<tr>" +
             '  <td><div class="table-prop-cell">' +
@@ -3940,7 +2693,6 @@ function initTrackerPage() {
 
   renderUserWorkspace();
   renderAdminAccountsPortal();
-  renderLuckyPropertyVerificationDesk();
   renderWorkflows();
   renderManagedProperties();
 }

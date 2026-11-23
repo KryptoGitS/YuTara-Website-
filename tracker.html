@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=22" />
+  <link rel="stylesheet" href="css/styles.css?v=23" />
 </head>
 <body>
 
@@ -38,7 +38,7 @@
       </button>
     </header>
 
-    <!-- Collapsible Full-Height Left Sidebar Navigation (Role-Strict; Navy/Gold for Lucky Seven) -->
+    <!-- Collapsible Full-Height Left Sidebar Navigation (2-Role Strict: Admin & User) -->
     <aside class="workspace-sidebar" id="workspace-sidebar" aria-label="Workspace Navigation">
       <div>
         <div class="sidebar-brand-box">
@@ -112,20 +112,10 @@
               <span class="sidebar-nav-label" id="tab-btn-seller-label">Add Land for Sale</span>
             </button>
           </li>
-          <!-- Lucky Seven Verifier Links (Strictly Legitimate Land Document Verification) -->
-          <li id="nav-item-verifier-desk" class="hidden">
-            <button type="button" class="sidebar-nav-btn" data-tab="panel-agency" id="tab-btn-agency" title="Land Verification">
-              <svg class="sidebar-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                <polyline points="9 12 11 14 15 10"></polyline>
-              </svg>
-              <span class="sidebar-nav-label">Land Verification</span>
-            </button>
-          </li>
         </ul>
       </div>
 
-      <!-- Bottom Verifier / User Profile & Logout -->
+      <!-- Bottom User / Admin Profile & Logout -->
       <div class="sidebar-footer-box">
         <div class="sidebar-profile-card" title="Signed-in Account">
           <div class="sidebar-avatar" id="sidebar-avatar">JD</div>
@@ -184,7 +174,7 @@
             </div>
           </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=22 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=23 -->
           </div>
         </div>
 
@@ -192,7 +182,7 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=22 -->
+            <!-- Populated dynamically via js/app.js?v=23 -->
           </div>
         </div>
       </div>
@@ -202,7 +192,7 @@
         <div class="workspace-eyebrow">Admin Workspace &middot; Account Modification &amp; Property Edit/Delete Only</div>
         <h1 class="workspace-title">Admin Portal</h1>
         <p class="workspace-subtitle">
-          Modify user, admin, and verifier accounts, or edit and delete land property listings. Land title verification is exclusively handled by Lucky Seven.
+          Modify user and admin accounts, or edit and delete land property listings.
         </p>
 
         <div class="kpi-grid-4 mt-2">
@@ -211,12 +201,12 @@
             <strong class="kpi-value" id="admin-stat-total">6</strong>
           </div>
           <div class="kpi-box anim-card" data-anim="hover-lift">
-            <span class="kpi-label">Lucky Seven Verified</span>
-            <strong class="kpi-value" id="admin-stat-open">2</strong>
+            <span class="kpi-label">Active Listings</span>
+            <strong class="kpi-value" id="admin-stat-open">6</strong>
           </div>
           <div class="kpi-box anim-card" data-anim="hover-lift">
             <span class="kpi-label">Total Accounts</span>
-            <strong class="kpi-value" id="admin-stat-accounts">3</strong>
+            <strong class="kpi-value" id="admin-stat-accounts">2</strong>
           </div>
           <div class="kpi-box anim-card" data-anim="hover-lift">
             <span class="kpi-label">Suspended Accounts</span>
@@ -236,7 +226,6 @@
               <select id="prov-role" class="form-select">
                 <option value="User">User Account (USER)</option>
                 <option value="Admin">Admin Account (ADMIN)</option>
-                <option value="Lucky Seven Land Verifier">Lucky Seven Land Verifier</option>
               </select>
             </div>
             <div>
@@ -278,7 +267,7 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=22 -->
+              <!-- Populated dynamically via js/app.js?v=23 -->
             </tbody>
           </table>
         </div>
@@ -301,12 +290,12 @@
                 <th>Property</th>
                 <th>Location &amp; Type</th>
                 <th>Price &amp; Lot Area</th>
-                <th>Lucky Seven Status</th>
+                <th>Listing Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=22 -->
+              <!-- Populated dynamically via js/app.js?v=23 -->
             </tbody>
           </table>
         </div>
@@ -326,7 +315,7 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=22 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=23 for Admin role only -->
           </div>
         </div>
 
@@ -343,7 +332,7 @@
                 <div class="workspace-eyebrow" id="seller-form-tag">Add Land for Sale</div>
                 <h2 class="section-title seller-form-title" id="seller-form-heading">Add Land for Sale in Panabo City</h2>
                 <p class="seller-form-subtitle" id="seller-form-subtitle">
-                  Enter your Panabo City land details. Your listing goes live on the Marketplace immediately; Lucky Seven verification supports your land transaction milestones.
+                  Enter your Panabo City land details to publish your listing directly to the Marketplace.
                 </p>
               </div>
             </div>
@@ -355,9 +344,9 @@
             <span class="lifecycle-arrow" aria-hidden="true">&rarr;</span>
             <div class="lifecycle-step active"><span class="lifecycle-dot">2</span><span>Live on Marketplace</span></div>
             <span class="lifecycle-arrow" aria-hidden="true">&rarr;</span>
-            <div class="lifecycle-step"><span class="lifecycle-dot">3</span><span>Buyer &amp; Seller Agree</span></div>
+            <div class="lifecycle-step"><span class="lifecycle-dot">3</span><span>Buyer &amp; Seller Chat</span></div>
             <span class="lifecycle-arrow" aria-hidden="true">&rarr;</span>
-            <div class="lifecycle-step"><span class="lifecycle-dot">4</span><span>Lucky Seven Verification</span></div>
+            <div class="lifecycle-step"><span class="lifecycle-dot">4</span><span>Deal Completed</span></div>
           </div>
 
           <div id="admin-edit-only-notice" class="alert alert-warning hidden">
@@ -422,41 +411,7 @@
               </div>
             </div>
 
-            <!-- Section 2: Supporting Legal Documents -->
-            <div class="seller-docs-box" id="seller-docs-section">
-              <div class="seller-docs-head">
-                <div class="seller-docs-title-row">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <polyline points="9 12 11 14 15 10"></polyline>
-                  </svg>
-                  <span class="seller-docs-title">Supporting Legal Documents</span>
-                </div>
-                <span class="seller-docs-req-pill">Required for Lucky Seven Verification</span>
-              </div>
-              <p class="seller-docs-hint">
-                Submitted lands go directly to <strong>Lucky Seven Land Verifier</strong>. Enter all 3 document references (and optional scanned files) so Lucky Seven can authenticate and publish your listing.
-              </p>
-              <div class="grid grid-3">
-                <div class="form-group">
-                  <label class="form-label" for="seller-doc-tct">Clean TCT / OCT Number</label>
-                  <input type="text" id="seller-doc-tct" class="form-control" placeholder="e.g., TCT No. 142-2026001234" />
-                  <input type="file" id="seller-file-tct" class="seller-doc-file-input" accept=".pdf,.jpg,.jpeg,.png" aria-label="Attach TCT or OCT copy" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="seller-doc-tax">Updated Tax Declaration No.</label>
-                  <input type="text" id="seller-doc-tax" class="form-control" placeholder="e.g., TD-2026-PANABO-0412" />
-                  <input type="file" id="seller-file-tax" class="seller-doc-file-input" accept=".pdf,.jpg,.jpeg,.png" aria-label="Attach Tax Clearance copy" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="seller-doc-id">Owner Valid ID / Deed Ref.</label>
-                  <input type="text" id="seller-doc-id" class="form-control" placeholder="e.g., Gov ID &amp; Deed Matched" />
-                  <input type="file" id="seller-file-id" class="seller-doc-file-input" accept=".pdf,.jpg,.jpeg,.png" aria-label="Attach Owner Valid ID copy" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Section 3: Description & Publish Action -->
+            <!-- Section 2: Description & Publish Action -->
             <div class="seller-step-group">
               <div class="form-group">
                 <label class="form-label" for="seller-desc">Property Description &amp; Title Notes</label>
@@ -465,301 +420,16 @@
             </div>
 
             <div class="seller-form-footer">
-              <span class="seller-footer-note" id="seller-footer-note">Your land is live on the Marketplace immediately. Lucky Seven verification supports your land transaction milestones.</span>
+              <span class="seller-footer-note" id="seller-footer-note">Your land listing goes live immediately on the Panabo City Marketplace.</span>
               <button type="submit" class="btn btn-primary" id="seller-submit-btn">Submit Land for Sale &rarr;</button>
             </div>
           </form>
         </div>
       </div>
-
-      <!-- PANEL 4: EXECUTIVE LUCKY SEVEN LAND VERIFICATION PORTAL -->
-      <div id="panel-agency" class="tab-panel hidden anim-tab-enter" data-anim="ytTabEnter">
-        <!-- Co-Branded Navy & Gold Curved Top Ribbon -->
-        <div class="ls-cobrand-ribbon">
-          <div class="ls-cobrand-inner">
-            <div class="ls-cobrand-left">
-              <span class="ls-partnership-label">in partnership with</span>
-              <span class="ls-yutara-lockup">
-                <img src="assets/yutara-logo.png" alt="YuTara" class="ls-yutara-logo" />
-              </span>
-            </div>
-
-            <div class="ls-cobrand-actions">
-              <span class="ls-ribbon-policy-pill" title="Requires authenticated TCT/OCT, Tax Clearance & Owner ID">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  <polyline points="9 12 11 14 15 10"></polyline>
-                </svg>
-                <span>3-Doc Verified Policy</span>
-              </span>
-              <button type="button" class="ls-ribbon-logout-btn" id="ls-top-logout-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                <span>Log out</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Sweeping Metallic Gold & Off-White Curved Divider Wave -->
-          <svg class="ls-ribbon-wave" viewBox="0 0 1440 58" preserveAspectRatio="none" aria-hidden="true">
-            <defs>
-              <linearGradient id="lsGoldRibbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#C8911E"></stop>
-                <stop offset="48%" stop-color="#F2CA5E"></stop>
-                <stop offset="100%" stop-color="#D59D27"></stop>
-              </linearGradient>
-            </defs>
-            <path d="M0,26 C310,56 640,2 990,22 C1210,35 1350,46 1440,38 L1440,58 L0,58 Z" fill="url(#lsGoldRibbonGrad)"></path>
-            <path d="M0,36 C310,60 640,12 990,32 C1210,45 1350,53 1440,47 L1440,58 L0,58 Z" fill="#F4F6FA"></path>
-          </svg>
-        </div>
-
-        <div class="ls-portal-body">
-          <!-- Title Section with Gold-Navy Shield Emblem & Subtle Town Silhouette -->
-          <header class="ls-title-banner">
-            <div class="ls-title-left">
-              <div class="ls-shield-emblem" aria-hidden="true">
-                <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
-                  <path d="M24 4L40 10V23C40 33.2 33.1 41.3 24 44C14.9 41.3 8 33.2 8 23V10L24 4Z" fill="#142553" stroke="#D9A62E" stroke-width="2.6"></path>
-                  <circle cx="24" cy="23" r="9.5" stroke="#F3D17C" stroke-width="2.2"></circle>
-                  <path d="M19.5 23.2L22.6 26.3L29 19.8" stroke="#F3D17C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
-              </div>
-              <div>
-                <h1 class="ls-header-title">Land Verification</h1>
-                <p class="ls-header-desc">Review property documents and verify listings.</p>
-              </div>
-            </div>
-
-            <!-- Subtle Architectural Town Watermark Silhouette -->
-            <svg class="ls-skyline-watermark" viewBox="0 0 360 64" fill="none" aria-hidden="true">
-              <path d="M10 64V44L26 32L42 44V64H10ZM54 64V36H76V64H54ZM88 64V22H118V64H88ZM130 64V30L148 16L166 30V64H130ZM178 64V38H206V64H178ZM218 64V18H254V64H218ZM266 64V34L286 20L306 34V64H266ZM316 64V40H348V64H316Z" fill="#CBD5E1" fill-opacity="0.38"></path>
-            </svg>
-          </header>
-
-          <!-- 4 Circular-Icon KPI Cards (Clickable Quick Filters) -->
-          <section class="ls-kpi-grid" aria-label="Verification Statistics">
-            <button type="button" class="ls-kpi-card anim-card" data-anim="hover-lift" data-ls-kpi-filter="all" title="Show all listings">
-              <span class="ls-kpi-icon kpi-navy" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-              </span>
-              <div>
-                <span class="ls-kpi-label">Total</span>
-                <strong class="ls-kpi-value" id="lucky-stat-total">6</strong>
-              </div>
-            </button>
-
-            <button type="button" class="ls-kpi-card anim-card" data-anim="hover-lift" data-ls-kpi-filter="Verified" title="Show Verified listings">
-              <span class="ls-kpi-icon kpi-success" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  <polyline points="9 12 11 14 15 10"></polyline>
-                </svg>
-              </span>
-              <div>
-                <span class="ls-kpi-label">Verified</span>
-                <strong class="ls-kpi-value" id="lucky-stat-verified">2</strong>
-              </div>
-            </button>
-
-            <button type="button" class="ls-kpi-card anim-card" data-anim="hover-lift" data-ls-kpi-filter="Pending Review" title="Show Ready listings">
-              <span class="ls-kpi-icon kpi-gold" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-              </span>
-              <div>
-                <span class="ls-kpi-label">Ready</span>
-                <strong class="ls-kpi-value" id="lucky-stat-eligible">2</strong>
-              </div>
-            </button>
-
-            <button type="button" class="ls-kpi-card anim-card" data-anim="hover-lift" data-ls-kpi-filter="Blocked" title="Show Blocked listings">
-              <span class="ls-kpi-icon kpi-error" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
-                </svg>
-              </span>
-              <div>
-                <span class="ls-kpi-label">Blocked</span>
-                <strong class="ls-kpi-value" id="lucky-stat-blocked">2</strong>
-              </div>
-            </button>
-          </section>
-
-          <!-- Clean Search & Filter Bar with Solid Navy Reset Button -->
-          <section class="ls-filter-toolbar" aria-label="Search and Filter Properties">
-            <div class="ls-search-wrap">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input type="search" id="ls-search-input" class="ls-search-input" placeholder="Search by property or owner..." aria-label="Search by property or owner" />
-            </div>
-
-            <select id="ls-filter-barangay" class="ls-filter-select" aria-label="Filter by barangay">
-              <option value="">All Barangays</option>
-            </select>
-
-            <select id="ls-filter-status" class="ls-filter-select" aria-label="Filter by status">
-              <option value="">All Status</option>
-              <option value="Verified">Verified</option>
-              <option value="Pending Review">Ready</option>
-              <option value="Incomplete Documents">Pending</option>
-              <option value="Blocked">Blocked</option>
-            </select>
-
-            <select id="ls-filter-completeness" class="ls-filter-select" aria-label="Filter by docs">
-              <option value="">All Docs</option>
-              <option value="complete">3/3 Complete</option>
-              <option value="incomplete">Missing Docs</option>
-            </select>
-
-            <button type="button" class="btn btn-ls-navy btn-sm ls-reset-btn" id="ls-filter-reset" title="Reset all filters">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                <path d="M3 3v5h5"></path>
-              </svg>
-              <span>Reset</span>
-            </button>
-          </section>
-
-          <div class="ls-results-bar">
-            <h2 class="ls-section-heading">Properties (<span id="ls-results-summary">6</span>)</h2>
-          </div>
-
-          <div id="lucky-property-verification-list" class="mb-4">
-            <!-- Populated dynamically with sleek 3-zone horizontal property cards via js/app.js?v=22 -->
-          </div>
-
-          <div class="ls-results-bar">
-            <h2 class="ls-section-heading">Active Reservations</h2>
-          </div>
-          <div id="agency-queue-list">
-            <!-- Populated dynamically via js/app.js?v=22 -->
-          </div>
-        </div>
-      </div>
     </main>
   </div>
 
-  <!-- Dedicated Document Inspection & Review Modal (Lucky Seven Branded Design) -->
-  <div id="ls-doc-viewer-modal" class="ls-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ls-doc-modal-title" data-anim="ytOverlayFade">
-    <div class="ls-modal-box ls-doc-modal-shell" data-anim="ytModalPop">
-      <!-- Top Brand Bar + Full-Width Gold Divider -->
-      <div class="ls-doc-brand-bar">
-        <img src="assets/lucky-seven-logo.jpg" alt="Lucky Seven Property Management Solutions, Inc." class="ls-doc-modal-logo" />
-        <button type="button" class="ls-modal-close-btn" id="ls-doc-modal-close" aria-label="Close Document Viewer">&times;</button>
-      </div>
-
-      <div class="ls-doc-modal-body">
-        <div class="ls-doc-title-block">
-          <h2 class="ls-doc-prop-heading" id="ls-doc-modal-title">Inspect Property Documents</h2>
-          <p class="ls-doc-prop-sub" id="ls-doc-modal-sub">Panabo City</p>
-        </div>
-
-        <div class="ls-doc-tabs" id="ls-doc-tabs" role="tablist">
-          <!-- Populated dynamically with the 3 required legal document tabs -->
-        </div>
-
-        <div class="ls-doc-viewer-layout">
-          <!-- Left Card: Property & Document Details -->
-          <div id="ls-doc-preview-pane"></div>
-
-          <!-- Right Column: Navy-Header Verification Notes Card + Equal Action Buttons -->
-          <div class="ls-doc-details-pane">
-            <div class="ls-notes-card">
-              <div class="ls-notes-card-header">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  <polyline points="9 12 11 14 15 10"></polyline>
-                </svg>
-                <span>Verification Notes</span>
-              </div>
-              <div class="ls-notes-card-body">
-                <textarea id="ls-doc-notes-input" class="ls-notes-textarea" placeholder="Add notes about this property..." aria-label="Verification Notes"></textarea>
-              </div>
-            </div>
-
-            <div class="ls-modal-btn-row" id="ls-doc-review-actions">
-              <!-- Populated dynamically with Mark Pending / Mark Legitimate + ✓ Save Notes -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Revoke Verification Confirmation Modal (Prevents Accidental Destructive Action) -->
-  <div id="ls-revoke-modal" class="ls-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ls-revoke-modal-title" data-anim="ytOverlayFade">
-    <div class="ls-revoke-modal-box" data-anim="ytModalPop">
-      <div class="ls-modal-header">
-        <div>
-          <span class="workspace-eyebrow">Confirmation Required</span>
-          <h2 class="section-title" id="ls-revoke-modal-title">Revoke Verification?</h2>
-        </div>
-        <button type="button" class="ls-modal-close-btn" id="ls-revoke-modal-close" aria-label="Close">&times;</button>
-      </div>
-      <p class="mb-2" id="ls-revoke-modal-msg">
-        Are you sure you want to revoke Lucky Seven verification for this land listing?
-      </p>
-      <div class="form-group">
-        <label class="form-label" for="ls-revoke-reason">Reason for Revocation (Optional Note)</label>
-        <input type="text" id="ls-revoke-reason" class="form-control" placeholder="e.g., Pending re-validation of updated Tax Declaration" />
-      </div>
-      <div class="logout-modal-actions">
-        <button type="button" class="btn btn-outline" id="ls-revoke-cancel-btn">Cancel</button>
-        <button type="button" class="btn btn-ls-danger" id="ls-revoke-confirm-btn">Yes, Revoke Verification</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- User Missing/Update Legal Documents Modal (Resubmits Straight to Lucky Seven) -->
-  <div id="user-docs-modal" class="ls-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="user-docs-modal-title" data-anim="ytOverlayFade">
-    <div class="user-docs-modal-box" data-anim="ytModalPop">
-      <div class="ls-modal-header">
-        <div>
-          <span class="workspace-eyebrow">Lucky Seven Document Submission</span>
-          <h2 class="section-title" id="user-docs-modal-title">Submit Required Legal Documents</h2>
-        </div>
-        <button type="button" class="ls-modal-close-btn" id="user-docs-modal-close" aria-label="Close">&times;</button>
-      </div>
-      <p class="text-muted mb-3" id="user-docs-modal-sub">
-        Provide your missing document references below to send this property for Lucky Seven Land Verification.
-      </p>
-      <form id="user-docs-update-form">
-        <input type="hidden" id="user-docs-prop-id" value="" />
-        <div class="form-group">
-          <label class="form-label" for="user-modal-doc-tct">Clean TCT / OCT Number</label>
-          <input type="text" id="user-modal-doc-tct" class="form-control" placeholder="e.g., TCT No. 142-2026001234" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="user-modal-doc-tax">Updated Tax Declaration No.</label>
-          <input type="text" id="user-modal-doc-tax" class="form-control" placeholder="e.g., TD-2026-PANABO-0412" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="user-modal-doc-id">Owner Valid ID / Deed Ref.</label>
-          <input type="text" id="user-modal-doc-id" class="form-control" placeholder="e.g., Gov ID &amp; Deed Matched" />
-        </div>
-        <div class="logout-modal-actions mt-3">
-          <button type="button" class="btn btn-outline" id="user-docs-modal-cancel">Cancel</button>
-          <button type="submit" class="btn btn-primary">Send to Lucky Seven &rarr;</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script src="js/data.js?v=22"></script>
-  <script src="js/app.js?v=22"></script>
+  <script src="js/data.js?v=23"></script>
+  <script src="js/app.js?v=23"></script>
 </body>
 </html>

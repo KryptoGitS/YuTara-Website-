@@ -41,9 +41,9 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Negotiable for serious buyers",
     area: 229,
     roadAccess: "Accessible Paved Road with Wide Frontage",
-    badgeText: "Lucky Seven Verified",
+    badgeText: "Clean Title",
     badgeStyle: "badge-green",
-    verificationStatus: "Verified by Lucky Seven",
+    verificationStatus: "Active Listing",
     promoted: true,
     seller: "Juan Dela Cruz",
     ownerEmail: "user@yutara.ph",
@@ -81,9 +81,9 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Markdown Selling Price",
     area: 200,
     roadAccess: "Accessible Residential Street with Parking Space",
-    badgeText: "Docs Submitted (Pending Review)",
-    badgeStyle: "badge-warning",
-    verificationStatus: "Pending Lucky Seven Review",
+    badgeText: "For Sale",
+    badgeStyle: "badge-green",
+    verificationStatus: "Active Listing",
     promoted: true,
     seller: "Juan Dela Cruz",
     ownerEmail: "user@yutara.ph",
@@ -121,9 +121,9 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 200,
     roadAccess: "Accessible from Barangay Road",
-    badgeText: "Docs Submitted (Pending Review)",
+    badgeText: "Clean Title",
     badgeStyle: "badge-green",
-    verificationStatus: "Pending Lucky Seven Review",
+    verificationStatus: "Active Listing",
     promoted: true,
     seller: "Maya Santos",
     ownerEmail: "maya.santos@yutara.ph",
@@ -157,9 +157,9 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 1800,
     roadAccess: "Accessible from National Road",
-    badgeText: "Incomplete Documents",
+    badgeText: "For Sale",
     badgeStyle: "badge-warning",
-    verificationStatus: "Incomplete Documents",
+    verificationStatus: "Active Listing",
     promoted: false,
     seller: "Lio Navarro",
     ownerEmail: "lio.navarro@yutara.ph",
@@ -193,9 +193,9 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 2500,
     roadAccess: "Accessible from Barangay Road",
-    badgeText: "Incomplete Documents",
+    badgeText: "For Sale",
     badgeStyle: "badge-warning",
-    verificationStatus: "Incomplete Documents",
+    verificationStatus: "Active Listing",
     promoted: false,
     seller: "Rina Dela Cruz",
     ownerEmail: "rina.delacruz@yutara.ph",
@@ -229,9 +229,9 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 900,
     roadAccess: "Accessible from National Road",
-    badgeText: "Lucky Seven Verified",
+    badgeText: "Clean Title",
     badgeStyle: "badge-green",
-    verificationStatus: "Verified by Lucky Seven",
+    verificationStatus: "Active Listing",
     promoted: false,
     seller: "Eli Mercado",
     ownerEmail: "eli.mercado@yutara.ph",
@@ -248,7 +248,7 @@ const DEFAULT_PROPERTIES = [
       "900 SQM Industrial Parcel",
       "National Highway vehicle access",
       "Suitable for storage or logistics",
-      "Title & tax papers verified by Lucky Seven"
+      "Clean title & updated tax declaration available"
     ],
     description:
       "Strategically located Panabo City parcel with heavy-vehicle road access suited for logistics, storage, or light industrial operations."
@@ -273,23 +273,14 @@ const DEMO_ACCOUNTS = [
     role: "User",
     title: "Marketplace Viewer & Account Landowner",
     defaultTab: "panel-buyer"
-  },
-  {
-    key: "verifier",
-    name: "Lucky Seven Land Verifier",
-    email: "luckyseven@yutara.ph",
-    password: "lucky777",
-    role: "Lucky Seven Land Verifier",
-    title: "Legitimate Land Document Verification Partner",
-    defaultTab: "panel-agency"
   }
 ];
 
 const MILESTONE_STEPS = [
-  "Booking requested",
-  "Documents requested",
-  "Documents submitted",
-  "Verified by Lucky Seven Land Verifier",
+  "Reservation requested",
+  "Seller accepted",
+  "Documents exchanged",
+  "Site visit completed",
   "Transaction complete"
 ];
 
@@ -303,7 +294,6 @@ const DEFAULT_TRANSACTIONS = [
     buyerEmail: "user@yutara.ph",
     sellerName: "Verified Panabo Owner",
     sellerEmail: "owner@yutara.ph",
-    verifierAgency: "Lucky Seven Land Verifier",
     salePrice: 1600000,
     priceLabel: "₱1,600,000",
     reservationFee: 25000,
@@ -311,7 +301,7 @@ const DEFAULT_TRANSACTIONS = [
     approvalStatus: "approved",
     status: "active",
     documents: [
-      { name: "Clean Transfer Certificate of Title (TCT Copy)", status: "Under Review by Lucky Seven Land Verifier" },
+      { name: "Clean Transfer Certificate of Title (TCT Copy)", status: "Shared with Buyer" },
       { name: "Updated Real Property Tax Clearance", status: "Submitted" },
       { name: "Davao Light & Water Utility Verification", status: "Checked" }
     ]

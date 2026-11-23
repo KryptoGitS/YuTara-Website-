@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Simulated Property Reservation — YuTara Land Marketplace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=22" />
+  <link rel="stylesheet" href="css/styles.css?v=23" />
 </head>
 <body>
 
@@ -81,23 +81,13 @@
             </div>
           </div>
 
-          <div class="grid grid-2">
-            <div class="form-group">
-              <label class="form-label" for="res-payment-method">Simulated Holding Method</label>
-              <select id="res-payment-method" class="form-select">
-                <option value="Agency Escrow Hold (Simulated)">Partner Agency Escrow Hold (₱25,000 Simulated)</option>
-                <option value="Bank Manager's Check (Simulated)">Bank Manager's Check at Agency Office</option>
-                <option value="Direct On-Site Reservation">On-Site Inspection + Document Hold</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="res-agency">Assigned Panabo Partner Verifier</label>
-              <select id="res-agency" class="form-select">
-                <option value="Lucky Seven Land Verifier">Lucky Seven Land Verifier (Official Verification Partner)</option>
-                <option value="Panabo Realty &amp; Title Services">Panabo Realty &amp; Title Services</option>
-                <option value="Davao del Norte Land Coordinators">Davao del Norte Land Coordinators</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label class="form-label" for="res-payment-method">Preferred Reservation Method</label>
+            <select id="res-payment-method" class="form-select">
+              <option value="Direct On-Site Reservation">On-Site Inspection + Seller Agreement</option>
+              <option value="Bank Manager's Check (Simulated)">Bank Manager's Check upon Closing</option>
+              <option value="Escrow Hold (Simulated)">Simulated Reservation Hold (₱25,000)</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -139,7 +129,7 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=22"></script>
-  <script src="js/app.js?v=22"></script>
+  <script src="js/data.js?v=23"></script>
+  <script src="js/app.js?v=23"></script>
 </body>
 </html>
