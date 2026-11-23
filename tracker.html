@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YuTara | Workspace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=12" />
+  <link rel="stylesheet" href="css/styles.css?v=13" />
 </head>
 <body>
 
@@ -181,7 +181,7 @@
             </div>
           </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=12 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=13 -->
           </div>
         </div>
 
@@ -189,7 +189,7 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=12 -->
+            <!-- Populated dynamically via js/app.js?v=13 -->
           </div>
         </div>
       </div>
@@ -275,7 +275,7 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=12 -->
+              <!-- Populated dynamically via js/app.js?v=13 -->
             </tbody>
           </table>
         </div>
@@ -303,7 +303,7 @@
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=12 -->
+              <!-- Populated dynamically via js/app.js?v=13 -->
             </tbody>
           </table>
         </div>
@@ -323,7 +323,7 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=12 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=13 for Admin role only -->
           </div>
         </div>
 
@@ -527,48 +527,60 @@
         </div>
 
         <div id="lucky-property-verification-list" class="mb-4">
-          <!-- Populated dynamically via js/app.js?v=12 -->
+          <!-- Populated dynamically via js/app.js?v=13 -->
         </div>
 
         <div class="ls-results-bar">
           <h2 class="ls-section-heading">Reservations</h2>
         </div>
         <div id="agency-queue-list">
-          <!-- Populated dynamically via js/app.js?v=12 -->
+          <!-- Populated dynamically via js/app.js?v=13 -->
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Dedicated Document Inspection & Review Modal -->
+  <!-- Dedicated Document Inspection & Review Modal (Lucky Seven Branded Design) -->
   <div id="ls-doc-viewer-modal" class="ls-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="ls-doc-modal-title" data-anim="ytOverlayFade">
-    <div class="ls-modal-box" data-anim="ytModalPop">
-      <div class="ls-modal-header">
-        <div>
-          <span class="workspace-eyebrow">Lucky Seven Document Inspection Vault</span>
-          <h2 class="section-title" id="ls-doc-modal-title">Inspect Property Documents</h2>
-          <p class="text-muted text-no-margin" id="ls-doc-modal-sub">Panabo City Registry Review</p>
-        </div>
+    <div class="ls-modal-box ls-doc-modal-shell" data-anim="ytModalPop">
+      <!-- Top Brand Bar + Full-Width Gold Divider -->
+      <div class="ls-doc-brand-bar">
+        <img src="assets/lucky-seven-logo.jpg" alt="Lucky Seven Property Management Solutions, Inc." class="ls-doc-modal-logo" />
         <button type="button" class="ls-modal-close-btn" id="ls-doc-modal-close" aria-label="Close Document Viewer">&times;</button>
       </div>
 
-      <div class="ls-doc-tabs" id="ls-doc-tabs" role="tablist">
-        <!-- Populated dynamically with the 3 required legal document tabs -->
-      </div>
+      <div class="ls-doc-modal-body">
+        <div class="ls-doc-title-block">
+          <h2 class="ls-doc-prop-heading" id="ls-doc-modal-title">Inspect Property Documents</h2>
+          <p class="ls-doc-prop-sub" id="ls-doc-modal-sub">Panabo City</p>
+        </div>
 
-      <div class="ls-doc-viewer-layout">
-        <!-- Left: Document Preview Sheet (or Missing File Error State) -->
-        <div id="ls-doc-preview-pane"></div>
+        <div class="ls-doc-tabs" id="ls-doc-tabs" role="tablist">
+          <!-- Populated dynamically with the 3 required legal document tabs -->
+        </div>
 
-        <!-- Right: Metadata, Status, Verification Notes & Actions -->
-        <div class="ls-doc-details-pane">
-          <div id="ls-doc-status-badge-wrap"></div>
-          <div>
-            <label class="form-label" for="ls-doc-notes-input">Lucky Seven Verification Notes</label>
-            <textarea id="ls-doc-notes-input" class="ls-notes-textarea" placeholder="Record title registry number checks, assessor tax clearance verification, or owner ID match observations..."></textarea>
-          </div>
-          <div class="flex-wrap-gap" id="ls-doc-review-actions">
-            <!-- Populated dynamically with Mark Legitimate / Mark Pending / Save Notes -->
+        <div class="ls-doc-viewer-layout">
+          <!-- Left Card: Property & Document Details -->
+          <div id="ls-doc-preview-pane"></div>
+
+          <!-- Right Column: Navy-Header Verification Notes Card + Equal Action Buttons -->
+          <div class="ls-doc-details-pane">
+            <div class="ls-notes-card">
+              <div class="ls-notes-card-header">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+                <span>Verification Notes</span>
+              </div>
+              <div class="ls-notes-card-body">
+                <textarea id="ls-doc-notes-input" class="ls-notes-textarea" placeholder="Add notes about this property..." aria-label="Verification Notes"></textarea>
+              </div>
+            </div>
+
+            <div class="ls-modal-btn-row" id="ls-doc-review-actions">
+              <!-- Populated dynamically with Mark Pending / Mark Legitimate + ✓ Save Notes -->
+            </div>
           </div>
         </div>
       </div>
@@ -599,7 +611,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=12"></script>
-  <script src="js/app.js?v=12"></script>
+  <script src="js/data.js?v=13"></script>
+  <script src="js/app.js?v=13"></script>
 </body>
 </html>

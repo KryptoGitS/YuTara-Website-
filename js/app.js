@@ -2309,14 +2309,15 @@ function initTrackerPage() {
 
     if (titleEl) titleEl.textContent = "#" + prop.id + " — " + prop.title;
     if (subEl) {
-      subEl.textContent =
-        "Brgy. " +
-        prop.barangay +
-        ", Panabo City • Owner: " +
-        (prop.seller || "Panabo Landowner") +
-        " • " +
+      subEl.innerHTML =
+        LS_ICONS.mapPin +
+        " <span>Brgy. " +
+        escapeHtml(prop.barangay) +
+        ", Panabo City &bull; Owner: " +
+        escapeHtml(prop.seller || "Panabo Landowner") +
+        " &bull; " +
         Number(prop.area || 0).toLocaleString() +
-        " sqm";
+        " sqm</span>";
     }
 
     if (tabsEl) {
@@ -2324,7 +2325,7 @@ function initTrackerPage() {
         .map(function (key) {
           const d = docs[key];
           const m = LS_DOC_META[key];
-          const dot = !d.submitted ? "● Missing" : d.legitimate ? "✓ Legit" : "• Pending";
+          const dot = !d.submitted ? "Missing" : d.legitimate ? "✓" : "Pending";
           return (
             '<button type="button" class="ls-doc-tab-btn ' +
             (key === activeDocViewerKey ? "active" : "") +
@@ -2350,78 +2351,55 @@ function initTrackerPage() {
     }
 
     if (previewEl) {
-      if (!activeDoc.submitted) {
-        previewEl.innerHTML =
-          '<div class="ls-doc-preview-sheet preview-missing">' +
-          '  <span class="ls-status-pill status-blocked">' +
-          LS_ICONS.shieldAlert +
-          " Document File Missing</span>" +
-          "  <h3>No Document Submitted</h3>" +
-          '  <p class="text-muted">' +
-          escapeHtml(activeDoc.refNo || "The property owner has not uploaded this required legal document.") +
-          "</p>" +
-          '  <p class="text-muted">Lucky Seven cannot approve or mark a missing document legitimate under Panabo verification policy.</p>' +
-          "</div>";
-      } else {
-        previewEl.innerHTML =
-          '<div class="ls-doc-preview-sheet">' +
-          "  <div>" +
-          '    <div class="ls-preview-seal">' +
-          LS_ICONS.shieldCheck +
-          " " +
-          escapeHtml(meta.category) +
-          "</div>" +
-          "    <h3>" +
-          escapeHtml(activeDoc.label) +
-          "</h3>" +
-          '    <table class="ls-preview-meta-table">' +
-          "      <tr><td>Reference No.</td><td>" +
-          escapeHtml(activeDoc.refNo) +
-          "</td></tr>" +
-          "      <tr><td>Registered Owner</td><td>" +
-          escapeHtml(prop.seller || "Panabo Landowner") +
-          "</td></tr>" +
-          "      <tr><td>Location</td><td>Brgy. " +
-          escapeHtml(prop.barangay) +
-          ", Panabo City</td></tr>" +
-          "      <tr><td>Parcel Size</td><td>" +
-          Number(prop.area || 0).toLocaleString() +
-          " sqm (" +
-          escapeHtml(prop.type) +
-          ")</td></tr>" +
-          "      <tr><td>Submission State</td><td>Submitted by Property Owner</td></tr>" +
-          "    </table>" +
-          "  </div>" +
-          '  <div class="text-muted mt-2">Access restricted to authorized Lucky Seven Land Verifiers.</div>' +
-          "</div>";
-      }
-    }
+      const infoIcon =
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+      const refValue = activeDoc.submitted ? escapeHtml(activeDoc.refNo || "—") : '<span class="ls-preview-missing-val">&mdash; Missing</span>';
+      const subStateValue = activeDoc.submitted
+        ? "Submitted by Property Owner"
+        : '<span class="ls-preview-missing-val">Not Uploaded (Missing File)</span>';
+      const missingPill = !activeDoc.submitted
+        ? '<span class="ls-status-pill status-blocked">' + LS_ICONS.shieldAlert + " Missing</span>"
+        : "";
 
-    if (statusWrap) {
-      const badgeClass = !activeDoc.submitted
-        ? "status-blocked"
-        : activeDoc.legitimate
-        ? "status-verified"
-        : "status-pending";
-      const badgeIcon = !activeDoc.submitted
-        ? LS_ICONS.shieldAlert
-        : activeDoc.legitimate
-        ? LS_ICONS.checkCircle
-        : LS_ICONS.clock;
-      const badgeText = !activeDoc.submitted
-        ? "Missing Document — Cannot Verify"
-        : activeDoc.legitimate
-        ? "Authenticated & Legitimate"
-        : "Submitted — Pending Authenticity Check";
-
-      statusWrap.innerHTML =
-        '<span class="ls-status-pill ' +
-        badgeClass +
+      previewEl.innerHTML =
+        '<div class="ls-doc-preview-sheet' +
+        (!activeDoc.submitted ? " preview-missing" : "") +
         '">' +
-        badgeIcon +
-        " " +
-        badgeText +
-        "</span>";
+        '  <div class="ls-preview-inner">' +
+        '    <div class="ls-preview-badge-row">' +
+        '      <div class="ls-preview-seal">' +
+        LS_ICONS.shieldCheck +
+        " <span>" +
+        escapeHtml(meta.category) +
+        "</span></div>" +
+        missingPill +
+        "    </div>" +
+        '    <h3 class="ls-preview-heading">Property Details</h3>' +
+        '    <table class="ls-preview-meta-table">' +
+        "      <tr><td>Reference No.</td><td>" +
+        refValue +
+        "</td></tr>" +
+        "      <tr><td>Registered Owner</td><td>" +
+        escapeHtml(prop.seller || "Panabo Landowner") +
+        "</td></tr>" +
+        "      <tr><td>Location</td><td>Brgy. " +
+        escapeHtml(prop.barangay) +
+        ", Panabo City</td></tr>" +
+        "      <tr><td>Parcel Size</td><td>" +
+        Number(prop.area || 0).toLocaleString() +
+        " sqm (" +
+        escapeHtml(prop.type) +
+        ")</td></tr>" +
+        "      <tr><td>Submission State</td><td>" +
+        subStateValue +
+        "</td></tr>" +
+        "    </table>" +
+        "  </div>" +
+        '  <div class="ls-preview-footer">' +
+        infoIcon +
+        " <span>Access restricted to authorized Lucky Seven Verifiers.</span>" +
+        "  </div>" +
+        "</div>";
     }
 
     if (notesEl) {
@@ -2429,15 +2407,19 @@ function initTrackerPage() {
     }
 
     if (actionsEl) {
+      const checkSvg =
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
       const toggleLegitBtn = !activeDoc.submitted
-        ? '<button type="button" class="btn btn-ls-verify btn-sm" disabled>Cannot Mark Missing Doc Legitimate</button>'
+        ? '<button type="button" class="ls-modal-btn-outline" disabled>Missing File</button>'
         : activeDoc.legitimate
-        ? '<button type="button" class="btn btn-ls-danger btn-sm" id="ls-modal-unmark-legit-btn">Mark Pending / Unverified</button>'
-        : '<button type="button" class="btn btn-ls-verify btn-sm" id="ls-modal-mark-legit-btn">Mark Document Legitimate &checkmark;</button>';
+        ? '<button type="button" class="ls-modal-btn-outline" id="ls-modal-unmark-legit-btn">Mark Pending</button>'
+        : '<button type="button" class="ls-modal-btn-outline" id="ls-modal-mark-legit-btn">Mark Legitimate</button>';
 
       actionsEl.innerHTML =
         toggleLegitBtn +
-        '<button type="button" class="btn btn-ls-navy btn-sm" id="ls-modal-save-notes-btn">Save Verification Notes</button>';
+        '<button type="button" class="ls-modal-btn-solid" id="ls-modal-save-notes-btn">' +
+        checkSvg +
+        " <span>Save Notes</span></button>";
 
       const markBtn = document.getElementById("ls-modal-mark-legit-btn");
       const unmarkBtn = document.getElementById("ls-modal-unmark-legit-btn");
