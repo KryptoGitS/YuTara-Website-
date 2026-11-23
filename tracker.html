@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YuTara | Workspace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=7" />
+  <link rel="stylesheet" href="css/styles.css?v=8" />
 </head>
 <body>
 
   <div class="workspace-shell" id="workspace-shell">
-    <!-- Left Sidebar Navigation (Matches yutarasandbox.vercel.app; auto-themes for Lucky Seven) -->
+    <!-- Left Sidebar Navigation (Role-Strict; Auto-Themes for Lucky Seven) -->
     <aside class="workspace-sidebar">
       <div>
         <div class="sidebar-brand-box">
@@ -28,39 +28,33 @@
           <li>
             <a href="marketplace.html" class="sidebar-nav-btn">Marketplace</a>
           </li>
-          <!-- User Links -->
+          <!-- Admin Links (Strictly Modify Accounts + Edit/Delete Properties) -->
+          <li id="nav-item-admin-accounts" class="hidden">
+            <button type="button" class="sidebar-nav-btn" data-tab="panel-accounts" id="tab-btn-accounts">
+              <span>Modify Accounts &amp; Overview</span>
+            </button>
+          </li>
+          <!-- User Links (Strictly Marketplace + Account Listings) -->
           <li id="nav-item-user-props">
             <button type="button" class="sidebar-nav-btn active" data-tab="panel-buyer" id="tab-btn-buyer">
-              <span>My Properties</span>
+              <span>My Account Listings</span>
             </button>
           </li>
           <li id="nav-item-user-sell">
             <button type="button" class="sidebar-nav-btn" data-tab="panel-seller" id="tab-btn-seller">
-              <span>Sell Land</span>
+              <span>Submit Land Listing</span>
             </button>
           </li>
-          <!-- Admin Links (Hidden for User & Lucky Seven) -->
-          <li id="nav-item-admin-accounts" class="hidden">
-            <button type="button" class="sidebar-nav-btn" data-tab="panel-accounts" id="tab-btn-accounts">
-              <span>Admin Portal &amp; Overview</span>
-            </button>
-          </li>
-          <!-- Lucky Seven Verifier Links (Hidden for User) -->
+          <!-- Lucky Seven Verifier Links (Strictly Legitimate Land Document Verification) -->
           <li id="nav-item-verifier-desk" class="hidden">
             <button type="button" class="sidebar-nav-btn" data-tab="panel-agency" id="tab-btn-agency">
-              <span>Lucky Seven Verification</span>
-            </button>
-          </li>
-          <li id="nav-item-inquiries" class="hidden">
-            <button type="button" class="sidebar-nav-btn" data-tab="panel-inquiries" id="tab-btn-inquiries">
-              <span>Site Visits &amp; Inquiries</span>
-              <span id="inquiry-count-pill">(2)</span>
+              <span>Land Document Verification</span>
             </button>
           </li>
         </ul>
       </div>
 
-      <!-- Bottom User Profile & Logout -->
+      <!-- Bottom User Profile & Logout (Triggers "Are you sure you want to log out?" Modal) -->
       <div class="sidebar-footer-box">
         <div class="sidebar-profile-card">
           <div class="sidebar-avatar" id="sidebar-avatar">JD</div>
@@ -77,34 +71,42 @@
     <main class="workspace-main">
       <div id="rbac-alert" class="alert alert-error hidden"></div>
 
-      <!-- PANEL 1: USER WORKSPACE ("My Properties" — Matches yutarasandbox.vercel.app/dashboard) -->
-      <div id="panel-buyer" class="tab-panel">
-        <div class="workspace-eyebrow" id="dashboard-role-tag">My Properties</div>
+      <!-- PANEL 1: USER WORKSPACE (Can ONLY view Marketplace & his own account listings) -->
+      <div id="panel-buyer" class="tab-panel anim-tab-enter" data-anim="ytTabEnter">
+        <div class="workspace-eyebrow" id="dashboard-role-tag">User Account Workspace</div>
         <h1 class="workspace-title" id="dashboard-heading">Welcome back, Juan Dela Cruz!</h1>
         <p class="workspace-subtitle" id="dashboard-subtitle">
-          Everything about your land in one place: what you reserved, what you are selling, and what you have sold.
+          Browse the Panabo City Marketplace and track your own account land listings and reservations in one place.
         </p>
 
         <div class="kpi-grid-3">
-          <div class="kpi-box">
-            <span class="kpi-label">Saved Properties</span>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Saved Marketplace Lots</span>
             <strong class="kpi-value" id="user-stat-saved">0</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">Land on Sale</span>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">My Account Listings</span>
             <strong class="kpi-value" id="user-stat-onsale">2</strong>
           </div>
-          <div class="kpi-box">
+          <div class="kpi-box anim-card" data-anim="hover-lift">
             <span class="kpi-label">Account Role</span>
             <strong class="kpi-value-role" id="user-stat-role">USER</strong>
           </div>
         </div>
 
         <div class="mb-4">
-          <div class="workspace-eyebrow">Seller Workspace</div>
-          <h2 class="section-title mb-2">Land on sale</h2>
+          <div class="flex-between-wrap mb-2">
+            <div>
+              <div class="workspace-eyebrow">Your Account Property Inventory</div>
+              <h2 class="section-title">My Account Land Listings</h2>
+            </div>
+            <div class="flex-wrap-gap">
+              <a href="marketplace.html" class="btn btn-outline btn-sm">Explore Marketplace &rarr;</a>
+              <button type="button" class="btn btn-primary btn-sm" id="user-go-submit-btn">+ Submit New Listing</button>
+            </div>
+          </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with clean Panabo property cards via js/app.js?v=7 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=8 -->
           </div>
         </div>
 
@@ -112,40 +114,43 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=7 -->
+            <!-- Populated dynamically via js/app.js?v=8 -->
           </div>
         </div>
       </div>
 
-      <!-- PANEL 2: ADMIN PORTAL (Matches yutarasandbox.vercel.app/admin — Accounts + All Land Listings Overview) -->
-      <div id="panel-accounts" class="tab-panel hidden">
-        <div class="workspace-eyebrow">Admin Workspace &middot; Owner &amp; Account Support</div>
+      <!-- PANEL 2: ADMIN PORTAL (Strictly Modify Accounts & Edit/Delete Properties ONLY) -->
+      <div id="panel-accounts" class="tab-panel hidden anim-tab-enter" data-anim="ytTabEnter">
+        <div class="workspace-eyebrow">Admin Workspace &middot; Account Modification &amp; Property Edit/Delete Only</div>
         <h1 class="workspace-title">Admin Portal</h1>
+        <p class="workspace-subtitle">
+          Modify user, admin, and verifier accounts, or edit and delete land property listings. Land title verification is exclusively handled by Lucky Seven.
+        </p>
 
         <div class="kpi-grid-4 mt-2">
-          <div class="kpi-box">
-            <span class="kpi-label">Total Listings</span>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Total Properties</span>
             <strong class="kpi-value" id="admin-stat-total">6</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">Open for Offers</span>
-            <strong class="kpi-value" id="admin-stat-open">6</strong>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Lucky Seven Verified</span>
+            <strong class="kpi-value" id="admin-stat-open">2</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">Created Accounts</span>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Total Accounts</span>
             <strong class="kpi-value" id="admin-stat-accounts">3</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">Pending Approvals</span>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Suspended Accounts</span>
             <strong class="kpi-value" id="admin-stat-pending">0</strong>
           </div>
         </div>
 
-        <!-- Direct Account Provisioning Box -->
+        <!-- Direct Account Provisioning / Modification Box -->
         <div class="provisioning-card">
-          <div class="workspace-eyebrow">Direct Account Provisioning</div>
-          <h2 class="section-title">Create Admin, User, or Lucky Seven Account</h2>
-          <p class="text-muted">Add a new account directly from the Admin dashboard. Accounts created here are immediately active for login.</p>
+          <div class="workspace-eyebrow">Account Provisioning</div>
+          <h2 class="section-title">Create New Account</h2>
+          <p class="text-muted">Create an account or modify existing account roles and statuses in the table below.</p>
 
           <form id="admin-provision-form" class="provision-form-grid">
             <div>
@@ -174,14 +179,14 @@
           </form>
         </div>
 
-        <!-- Manage & Approve Accounts Table -->
+        <!-- Modify Accounts Table (Role + Status Modification + Remove) -->
         <div class="data-table-card">
           <div class="flex-between-wrap">
             <div>
-              <div class="workspace-eyebrow">User &amp; Admin Accounts</div>
-              <h2 class="section-title">Manage &amp; approve accounts</h2>
+              <div class="workspace-eyebrow">Account Management</div>
+              <h2 class="section-title">Modify Accounts</h2>
             </div>
-            <p class="text-muted">Built-in accounts for Admin, User, and Lucky Seven Land Verifier plus custom accounts.</p>
+            <p class="text-muted">Update account roles, toggle Approved/Suspended status, or remove custom accounts.</p>
           </div>
 
           <table class="data-table">
@@ -189,26 +194,25 @@
               <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>Modify Role</th>
+                <th>Account Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=7 -->
+              <!-- Populated dynamically via js/app.js?v=8 -->
             </tbody>
           </table>
         </div>
 
-        <!-- Owner Support: All Land Listings Table (Directly visible on Admin Portal just like yutarasandbox.vercel.app/admin) -->
+        <!-- Admin Property Edit / Delete Inventory Table -->
         <div class="data-table-card">
           <div class="flex-between-wrap">
             <div>
-              <div class="workspace-eyebrow">Owner Support &middot; Panabo City Property Inventory</div>
-              <h2 class="section-title">All land listings</h2>
+              <div class="workspace-eyebrow">Property Moderation &middot; Edit &amp; Delete Only</div>
+              <h2 class="section-title">Edit or Delete Properties</h2>
             </div>
             <div class="flex-wrap-gap">
-              <button type="button" class="btn btn-primary btn-sm" id="admin-go-add-listing-btn">+ Add / Edit Land Listing</button>
               <button type="button" class="btn btn-outline btn-sm" id="admin-reset-data-btn">Reset Demo Data</button>
             </div>
           </div>
@@ -219,25 +223,25 @@
                 <th>Property</th>
                 <th>Location &amp; Type</th>
                 <th>Price &amp; Lot Area</th>
-                <th>Verification Status</th>
+                <th>Lucky Seven Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=7 -->
+              <!-- Populated dynamically via js/app.js?v=8 -->
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- PANEL 3: LAND LISTINGS & SELL LAND (User Submit Form + Admin CRUD Table) -->
-      <div id="panel-seller" class="tab-panel hidden">
-        <!-- Admin-Only Managed Property Directory Table (Hidden from Users) -->
+      <!-- PANEL 3: USER SUBMIT LAND LISTING / ADMIN EDIT-ONLY PROPERTY EDITOR -->
+      <div id="panel-seller" class="tab-panel hidden anim-tab-enter" data-anim="ytTabEnter">
+        <!-- Admin-Only Managed Property Directory (Hidden from Users) -->
         <div class="data-table-card hidden" id="admin-crud-card">
           <div class="flex-between-wrap mb-2">
             <div>
-              <div class="workspace-eyebrow">Owner Support</div>
-              <h2 class="section-title">All land listings</h2>
+              <div class="workspace-eyebrow">Admin Property Moderation</div>
+              <h2 class="section-title">Select a Property to Edit or Delete</h2>
             </div>
             <div class="flex-wrap-gap">
               <span class="badge badge-green" id="managed-prop-count">6 Listings</span>
@@ -245,20 +249,26 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=7 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=8 for Admin role only -->
           </div>
         </div>
 
-        <!-- Submit / Edit Land Listing Form -->
-        <div class="card">
+        <!-- Submit New Listing (User) / Edit Existing Property (Admin) Form -->
+        <div class="card" id="seller-form-card">
           <div class="flex-between-wrap mb-2">
             <div>
-              <div class="workspace-eyebrow" id="seller-form-tag">Sell Land</div>
+              <div class="workspace-eyebrow" id="seller-form-tag">Submit Land Listing</div>
               <h2 class="section-title" id="seller-form-heading">Submit a New Panabo City Land Listing</h2>
             </div>
             <button type="button" class="btn btn-outline btn-sm hidden" id="seller-cancel-edit-btn">Cancel Edit</button>
           </div>
-          <p class="mb-3 text-muted" id="seller-form-subtitle">Enter the Panabo City parcel details below to publish your listing.</p>
+          <p class="mb-3 text-muted" id="seller-form-subtitle">
+            Enter your Panabo City parcel details and supporting legal documents for Lucky Seven Land Verifier screening.
+          </p>
+
+          <div id="admin-edit-only-notice" class="alert alert-warning hidden">
+            Admin Restriction: Administrators can only <strong>Edit</strong> or <strong>Delete</strong> existing properties. Click <strong>Edit</strong> on any listing above to load it into this editor.
+          </div>
 
           <div id="seller-feedback" class="alert hidden"></div>
 
@@ -300,6 +310,28 @@
               <input type="text" id="seller-road" class="form-control" value="Accessible from Paved Barangay Road with Davao Light &amp; Water" required />
             </div>
 
+            <!-- Legal Document Submission Block (Checked by Lucky Seven Land Verifier) -->
+            <div class="seller-docs-box" id="seller-docs-section">
+              <div class="seller-docs-title">Supporting Legal Documents (Required for Lucky Seven Verification)</div>
+              <p class="text-muted mb-2">
+                Provide legitimate document reference numbers below. Listings missing any required document cannot be verified by Lucky Seven.
+              </p>
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label class="form-label" for="seller-doc-tct">Clean TCT / OCT Number</label>
+                  <input type="text" id="seller-doc-tct" class="form-control" placeholder="e.g., TCT No. 142-2026001234" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="seller-doc-tax">Updated Tax Declaration No.</label>
+                  <input type="text" id="seller-doc-tax" class="form-control" placeholder="e.g., TD-2026-PANABO-0412" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="seller-doc-id">Owner Valid ID / Deed Ref.</label>
+                  <input type="text" id="seller-doc-id" class="form-control" placeholder="e.g., Gov ID &amp; Deed Matched" />
+                </div>
+              </div>
+            </div>
+
             <div class="form-group">
               <label class="form-label" for="seller-desc">Property Description &amp; Title Notes</label>
               <textarea id="seller-desc" class="form-textarea" placeholder="Describe nearby landmarks, clean TCT status, updated Real Property Tax, and suitability for residential or commercial use."></textarea>
@@ -310,62 +342,56 @@
         </div>
       </div>
 
-      <!-- PANEL 4: LUCKY SEVEN LAND VERIFIER PORTAL (Branded Royal Navy & Gold Interface) -->
-      <div id="panel-agency" class="tab-panel hidden">
+      <!-- PANEL 4: LUCKY SEVEN LAND VERIFIER PORTAL (Strictly Legitimate Land Document Verification Only) -->
+      <div id="panel-agency" class="tab-panel hidden anim-tab-enter" data-anim="ytTabEnter">
         <!-- Official Lucky Seven Partner Header Banner with Logo -->
         <div class="lucky-partner-banner">
           <img src="assets/lucky-seven-logo.jpg" alt="Lucky Seven Property Management Solutions, Inc." class="lucky-banner-logo" />
           <div class="lucky-banner-body">
-            <div class="lucky-banner-eyebrow">Official Title &amp; Transfer Verification Partner &middot; Panabo City</div>
+            <div class="lucky-banner-eyebrow">Official Land Document Verification Partner &middot; Panabo City</div>
             <h1 class="lucky-banner-title">Lucky Seven Property Management Solutions, Inc.</h1>
             <p class="lucky-banner-desc">
-              Authorized Land Verifier Desk for Transfer Certificate of Title (TCT) screening, Real Property Tax clearance, DAR/Zoning audit, and 5-stage buyer transfer milestones.
+              Strict Verification Policy: Lucky Seven can <strong>only verify</strong> a land listing or land property when all 3 legitimate legal documents (Clean TCT/OCT, Updated Real Property Tax Clearance, and Owner ID/Deed) are submitted and authenticated.
             </p>
           </div>
-          <span class="badge badge-lucky-gold">Verified Agency Partner</span>
+          <span class="badge badge-lucky-gold">Document Verification Only</span>
         </div>
 
         <div class="kpi-grid-4">
-          <div class="kpi-box">
-            <span class="kpi-label">Active Transfers</span>
-            <strong class="kpi-value" id="stat-active">1</strong>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Total Land Listings</span>
+            <strong class="kpi-value" id="lucky-stat-total">6</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">In Verification</span>
-            <strong class="kpi-value" id="stat-pending">1</strong>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Verified by Lucky Seven</span>
+            <strong class="kpi-value" id="lucky-stat-verified">2</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">Completed</span>
-            <strong class="kpi-value" id="stat-completed">0</strong>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Eligible (All Docs Legit)</span>
+            <strong class="kpi-value" id="lucky-stat-eligible">2</strong>
           </div>
-          <div class="kpi-box">
-            <span class="kpi-label">Escrow Hold</span>
-            <strong class="kpi-value" id="stat-escrow">₱25,000</strong>
+          <div class="kpi-box anim-card" data-anim="hover-lift">
+            <span class="kpi-label">Blocked (Missing Docs)</span>
+            <strong class="kpi-value" id="lucky-stat-blocked">2</strong>
           </div>
         </div>
 
-        <div class="workspace-eyebrow">Active Title Verification &amp; Transfer Queue</div>
-        <h2 class="section-title mb-2">Buyer Reservations Awaiting Lucky Seven Sign-Off</h2>
+        <div class="workspace-eyebrow">Panabo City Land Listings &middot; Legitimate Document Screening</div>
+        <h2 class="section-title mb-2">Verify Land Listings with Legitimate Documents</h2>
+        <div id="lucky-property-verification-list" class="mb-4">
+          <!-- Populated dynamically via js/app.js?v=8 -->
+        </div>
+
+        <div class="workspace-eyebrow">Active Reservations &middot; Transfer Verification</div>
+        <h2 class="section-title mb-2">Buyer Reservation Milestone Verification</h2>
         <div id="agency-queue-list">
-          <!-- Populated dynamically via js/app.js?v=7 -->
-        </div>
-      </div>
-
-      <!-- PANEL 5: SITE VISITS & INQUIRIES -->
-      <div id="panel-inquiries" class="tab-panel hidden">
-        <div class="workspace-eyebrow">Inspection &amp; Client Requests</div>
-        <h1 class="workspace-title">Site Visits &amp; Inquiries</h1>
-        <p class="workspace-subtitle" id="inquiries-role-banner">
-          Review and schedule buyer site visit requests across Panabo City barangays.
-        </p>
-        <div id="inquiries-list">
-          <!-- Populated dynamically via js/app.js?v=7 -->
+          <!-- Populated dynamically via js/app.js?v=8 -->
         </div>
       </div>
     </main>
   </div>
 
-  <script src="js/data.js?v=7"></script>
-  <script src="js/app.js?v=7"></script>
+  <script src="js/data.js?v=8"></script>
+  <script src="js/app.js?v=8"></script>
 </body>
 </html>

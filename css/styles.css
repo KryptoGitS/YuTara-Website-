@@ -18,6 +18,7 @@
    13. MVP Workflows Hub (Tracker, Seller Intake, Agency Desk)
    14. Footer & Toast Notifications
    15. Responsive Media Queries (1366px, 960px, 720px, 360px)
+   16. Easy-to-Debug Animations & Logout Confirmation Modal
    ========================================================================== */
 
 /* 1. BRAND COLOR & TYPOGRAPHY VARIABLES */
@@ -58,6 +59,12 @@
   --shadow-md: 0 12px 28px rgba(28, 36, 24, 0.1);
   --shadow-lg: 0 20px 40px rgba(28, 36, 24, 0.16);
   --container-width: 1200px;
+
+  /* Easy-to-Debug Animation Tokens (override via body.anim-debug-slow or body.anim-debug-off) */
+  --anim-duration-fast: 180ms;
+  --anim-duration-base: 260ms;
+  --anim-duration-slow: 360ms;
+  --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* 2. BASE RESET & ELEMENT DEFAULTS */
@@ -2870,5 +2877,283 @@ h1, h2, h3, h4 {
   }
   .step-indicator {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 16. LUCKY SEVEN DOCUMENT CHECKLIST, ACCOUNT EDITOR, LOGOUT MODAL & EASY-TO-DEBUG ANIMATIONS */
+
+/* Lucky Seven Legitimate Document Verification Cards */
+.doc-verify-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 14px 0 16px;
+}
+
+.doc-check-item {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  background-color: var(--soft-off-white);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color var(--anim-duration-fast) var(--anim-ease),
+    background-color var(--anim-duration-fast) var(--anim-ease),
+    transform var(--anim-duration-fast) var(--anim-ease);
+}
+
+.doc-check-item.doc-valid {
+  background-color: #EDF3FF;
+  border-color: #9FB9F2;
+}
+
+.doc-check-item.doc-missing {
+  background-color: var(--status-error-bg);
+  border-color: var(--status-error-border);
+}
+
+.doc-check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.doc-check-label input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: #0F256E;
+}
+
+.doc-check-ref {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding-left: 24px;
+}
+
+.doc-check-item.doc-missing .doc-check-ref {
+  color: var(--status-error-text);
+  font-weight: 600;
+}
+
+.doc-gate-notice {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.doc-gate-notice.gate-ready {
+  background-color: #ECFDF3;
+  border-color: #ABEFC6;
+  color: #067647;
+}
+
+.doc-gate-notice.gate-blocked {
+  background-color: var(--status-error-bg);
+  border-color: var(--status-error-border);
+  color: var(--status-error-text);
+}
+
+.seller-docs-box {
+  background-color: var(--soft-off-white);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin: 14px 0 18px;
+}
+
+.seller-docs-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--forest-green);
+  margin-bottom: 4px;
+}
+
+.account-inline-select {
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background-color: var(--white);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-danger-outline {
+  background-color: var(--white);
+  color: var(--status-error-text);
+  border: 1px solid var(--status-error-border);
+}
+
+.btn-danger-outline:hover {
+  background-color: var(--status-error-bg);
+  border-color: #DC2626;
+}
+
+/* Logout Confirmation Modal ("Are you sure you want to log out?") */
+.logout-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(18, 26, 20, 0.56);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 400;
+  animation: ytOverlayFade var(--anim-duration-fast) var(--anim-ease) both;
+}
+
+.logout-modal-overlay.hidden {
+  display: none;
+}
+
+.logout-modal-box {
+  background-color: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  max-width: 420px;
+  width: 100%;
+  padding: 26px 24px 22px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: ytModalPop var(--anim-duration-base) var(--anim-ease) both;
+}
+
+.logout-modal-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  background-color: var(--brown-tint);
+  border: 1px solid var(--brown-border);
+  color: var(--earth-brown);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-modal-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.logout-modal-message {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.logout-modal-account {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.logout-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Easy-to-Debug Named Keyframes & Utility Classes
+   Inspect any animated element via its [data-anim] attribute in DevTools,
+   or toggle timing live in Console with YuTaraAnimDebug.slow() / .off() / .normal() */
+@keyframes ytFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ytTabEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ytModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes ytOverlayFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.anim-fade-up {
+  animation: ytFadeInUp var(--anim-duration-base) var(--anim-ease) both;
+}
+
+.anim-tab-enter {
+  animation: ytTabEnter var(--anim-duration-base) var(--anim-ease) both;
+}
+
+.anim-card {
+  transition: transform var(--anim-duration-fast) var(--anim-ease),
+    box-shadow var(--anim-duration-fast) var(--anim-ease),
+    border-color var(--anim-duration-fast) var(--anim-ease);
+}
+
+.anim-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Global Animation Debug Modes (Controlled via YuTaraAnimDebug in js/app.js) */
+body.anim-debug-slow {
+  --anim-duration-fast: 900ms;
+  --anim-duration-base: 1400ms;
+  --anim-duration-slow: 2000ms;
+}
+
+body.anim-debug-off {
+  --anim-duration-fast: 1ms;
+  --anim-duration-base: 1ms;
+  --anim-duration-slow: 1ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --anim-duration-fast: 1ms;
+    --anim-duration-base: 1ms;
+    --anim-duration-slow: 1ms;
+  }
+}
+
+@media (max-width: 960px) {
+  .doc-verify-grid {
+    grid-template-columns: 1fr;
   }
 }

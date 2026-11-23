@@ -41,13 +41,20 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Negotiable for serious buyers",
     area: 229,
     roadAccess: "Accessible Paved Road with Wide Frontage",
-    badgeText: "Clean Title",
+    badgeText: "Lucky Seven Verified",
     badgeStyle: "badge-green",
+    verificationStatus: "Verified by Lucky Seven",
     promoted: true,
-    seller: "Verified Panabo Owner",
+    seller: "Juan Dela Cruz",
+    ownerEmail: "user@yutara.ph",
     latitude: "7.3008",
     longitude: "125.6876",
     image: "assets/panabo-lot-1.jpg",
+    documents: {
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2023004819", submitted: true, legitimate: true },
+      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-GREDU-0192", submitted: true, legitimate: true },
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner ID & Registry Matched", submitted: true, legitimate: true }
+    },
     cardTags: ["Existing House", "Near School", "Business Frontage"],
     highlights: [
       "229 SQM Lot Area",
@@ -74,13 +81,20 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Markdown Selling Price",
     area: 200,
     roadAccess: "Accessible Residential Street with Parking Space",
-    badgeText: "Markdown Price",
+    badgeText: "Docs Submitted (Pending Review)",
     badgeStyle: "badge-warning",
+    verificationStatus: "Pending Lucky Seven Review",
     promoted: true,
-    seller: "Verified Panabo Owner",
+    seller: "Juan Dela Cruz",
+    ownerEmail: "user@yutara.ph",
     latitude: "7.3148",
     longitude: "125.6792",
     image: "assets/panabo-lot-2.jpg",
+    documents: {
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2024001154", submitted: true, legitimate: true },
+      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-NPANDAN-0842", submitted: true, legitimate: true },
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID & Authority to Sell", submitted: true, legitimate: true }
+    },
     cardTags: ["Updated Tax", "2 Rooms & Fence", "Near Agriya"],
     highlights: [
       "₱1.6M Selling Price (Markdown)",
@@ -107,13 +121,20 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 200,
     roadAccess: "Accessible from Barangay Road",
-    badgeText: "Clean Title",
+    badgeText: "Docs Submitted (Pending Review)",
     badgeStyle: "badge-green",
+    verificationStatus: "Pending Lucky Seven Review",
     promoted: true,
     seller: "Maya Santos",
+    ownerEmail: "maya.santos@yutara.ph",
     latitude: "7.3080",
     longitude: "125.6840",
     image: "assets/prop-1.jpg",
+    documents: {
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2022007721", submitted: true, legitimate: true },
+      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-SVIC-0311", submitted: true, legitimate: true },
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Verified", submitted: true, legitimate: true }
+    },
     cardTags: ["Clean Title", "Barangay Road", "Near City Center"],
     highlights: [
       "200 SQM Residential Lot",
@@ -136,19 +157,26 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 1800,
     roadAccess: "Accessible from National Road",
-    badgeText: "Agricultural",
-    badgeStyle: "badge-green",
+    badgeText: "Incomplete Documents",
+    badgeStyle: "badge-warning",
+    verificationStatus: "Incomplete Documents",
     promoted: false,
     seller: "Lio Navarro",
+    ownerEmail: "lio.navarro@yutara.ph",
     latitude: "7.3310",
     longitude: "125.6760",
     image: "assets/prop-2.jpg",
-    cardTags: ["National Road", "Coconut Farm", "Tax Dec Ready"],
+    documents: {
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "Missing — TCT Copy Not Uploaded", submitted: false, legitimate: false },
+      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-CAG-0518", submitted: true, legitimate: true },
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Submitted", submitted: true, legitimate: true }
+    },
+    cardTags: ["National Road", "Coconut Farm", "Awaiting TCT"],
     highlights: [
       "1,800 SQM Agricultural Lot",
       "Accessible from National Road",
       "Productive coconut trees on site",
-      "Tax declaration available for review"
+      "Tax declaration available; awaiting Clean TCT copy"
     ],
     description:
       "Productive agricultural land with direct road access and a calm rural setting in Brgy. Cagangohan, Panabo City."
@@ -165,19 +193,26 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 2500,
     roadAccess: "Accessible from Barangay Road",
-    badgeText: "Farm Lot",
-    badgeStyle: "badge-green",
+    badgeText: "Incomplete Documents",
+    badgeStyle: "badge-warning",
+    verificationStatus: "Incomplete Documents",
     promoted: false,
     seller: "Rina Dela Cruz",
+    ownerEmail: "rina.delacruz@yutara.ph",
     latitude: "7.3220",
     longitude: "125.6650",
     image: "assets/prop-5.jpg",
-    cardTags: ["Creek Access", "2,500 SQM", "Mixed Crops"],
+    documents: {
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "Missing — Unverified Title", submitted: false, legitimate: false },
+      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "Missing — Outdated 2021 Tax Receipt", submitted: false, legitimate: false },
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Submitted", submitted: true, legitimate: true }
+    },
+    cardTags: ["Creek Access", "2,500 SQM", "Needs Legal Docs"],
     highlights: [
       "2,500 SQM Open Farm Land",
       "Natural creek water access",
       "Accessible from Barangay Road",
-      "Ideal for mixed crops or agri-business"
+      "Awaiting updated TCT and Real Property Tax Clearance"
     ],
     description:
       "Open, practical agricultural land with creek water access and ample room for mixed farm development in Brgy. Kasilak."
@@ -194,19 +229,26 @@ const DEFAULT_PROPERTIES = [
     priceNote: "Open for offers",
     area: 900,
     roadAccess: "Accessible from National Road",
-    badgeText: "Industrial",
+    badgeText: "Lucky Seven Verified",
     badgeStyle: "badge-green",
+    verificationStatus: "Verified by Lucky Seven",
     promoted: false,
     seller: "Eli Mercado",
+    ownerEmail: "eli.mercado@yutara.ph",
     latitude: "7.2950",
     longitude: "125.6920",
     image: "assets/prop-6.jpg",
+    documents: {
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2025003910", submitted: true, legitimate: true },
+      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-AOF-0619", submitted: true, legitimate: true },
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Corporate SPA & Owner ID Matched", submitted: true, legitimate: true }
+    },
     cardTags: ["Highway Access", "Logistics Ready", "900 SQM"],
     highlights: [
       "900 SQM Industrial Parcel",
       "National Highway vehicle access",
       "Suitable for storage or logistics",
-      "Title & tax papers ready for screening"
+      "Title & tax papers verified by Lucky Seven"
     ],
     description:
       "Strategically located Panabo City parcel with heavy-vehicle road access suited for logistics, storage, or light industrial operations."
@@ -220,8 +262,8 @@ const DEMO_ACCOUNTS = [
     email: "admin@yutara.ph",
     password: "admin123",
     role: "Admin",
-    title: "Platform Administrator (Full Property & System CRUD)",
-    defaultTab: "panel-seller"
+    title: "Account Modification & Property Edit/Delete Admin",
+    defaultTab: "panel-accounts"
   },
   {
     key: "user",
@@ -229,7 +271,7 @@ const DEMO_ACCOUNTS = [
     email: "user@yutara.ph",
     password: "user123",
     role: "User",
-    title: "Verified Panabo Buyer & Landowner",
+    title: "Marketplace Viewer & Account Landowner",
     defaultTab: "panel-buyer"
   },
   {
@@ -238,7 +280,7 @@ const DEMO_ACCOUNTS = [
     email: "luckyseven@yutara.ph",
     password: "lucky777",
     role: "Lucky Seven Land Verifier",
-    title: "Official Partner Land Verification Agency",
+    title: "Legitimate Land Document Verification Partner",
     defaultTab: "panel-agency"
   }
 ];
