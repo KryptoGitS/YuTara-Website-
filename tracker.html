@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YuTara | Workspace</title>
   <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
-  <link rel="stylesheet" href="css/styles.css?v=8" />
+  <link rel="stylesheet" href="css/styles.css?v=9" />
 </head>
 <body>
 
@@ -14,7 +14,7 @@
     <aside class="workspace-sidebar">
       <div>
         <div class="sidebar-brand-box">
-          <a href="index.html">
+          <a href="marketplace.html" id="sidebar-brand-link">
             <img src="assets/yutara-logo.png" alt="Logo" id="sidebar-logo-img" class="sidebar-logo-img" />
             <div class="sidebar-brand-sub" id="sidebar-brand-sub">Yuta ba? YuTara!</div>
           </a>
@@ -22,10 +22,10 @@
 
         <div class="sidebar-group-title" id="sidebar-group-title">Navigation</div>
         <ul class="sidebar-nav-list" id="workflow-tabs">
-          <li>
+          <li id="nav-item-home" class="hidden">
             <a href="index.html" class="sidebar-nav-btn">Home</a>
           </li>
-          <li>
+          <li id="nav-item-marketplace">
             <a href="marketplace.html" class="sidebar-nav-btn">Marketplace</a>
           </li>
           <!-- Admin Links (Strictly Modify Accounts + Edit/Delete Properties) -->
@@ -106,7 +106,7 @@
             </div>
           </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=8 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=9 -->
           </div>
         </div>
 
@@ -114,7 +114,7 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=8 -->
+            <!-- Populated dynamically via js/app.js?v=9 -->
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=8 -->
+              <!-- Populated dynamically via js/app.js?v=9 -->
             </tbody>
           </table>
         </div>
@@ -228,7 +228,7 @@
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=8 -->
+              <!-- Populated dynamically via js/app.js?v=9 -->
             </tbody>
           </table>
         </div>
@@ -249,7 +249,7 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=8 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=9 for Admin role only -->
           </div>
         </div>
 
@@ -379,19 +379,19 @@
         <div class="workspace-eyebrow">Panabo City Land Listings &middot; Legitimate Document Screening</div>
         <h2 class="section-title mb-2">Verify Land Listings with Legitimate Documents</h2>
         <div id="lucky-property-verification-list" class="mb-4">
-          <!-- Populated dynamically via js/app.js?v=8 -->
+          <!-- Populated dynamically via js/app.js?v=9 -->
         </div>
 
         <div class="workspace-eyebrow">Active Reservations &middot; Transfer Verification</div>
         <h2 class="section-title mb-2">Buyer Reservation Milestone Verification</h2>
         <div id="agency-queue-list">
-          <!-- Populated dynamically via js/app.js?v=8 -->
+          <!-- Populated dynamically via js/app.js?v=9 -->
         </div>
       </div>
     </main>
   </div>
 
-  <script src="js/data.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
+  <script src="js/data.js?v=9"></script>
+  <script src="js/app.js?v=9"></script>
 </body>
 </html>

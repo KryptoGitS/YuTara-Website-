@@ -487,43 +487,70 @@ function initNavbar() {
 
   const navActions = document.getElementById("nav-actions");
   const session = getSession();
-  if (navActions && session) {
-    const workspaceLabel =
-      session.role === "Admin"
-        ? "Admin Workspace"
-        : session.role === "Lucky Seven Land Verifier"
-        ? "Lucky Seven Portal"
-        : "My Account Listings";
-    navActions.innerHTML =
-      '<a href="tracker.html" class="btn btn-primary btn-sm">' +
-      escapeHtml(workspaceLabel) +
-      "</a>" +
-      '<button type="button" class="btn btn-outline btn-sm" id="logout-btn">Log Out</button>';
+  if (session) {
+    const isAdminSession = session.role === "Admin";
+    const isVerifierSession =
+      session.role === "Lucky Seven Land Verifier" || session.role === "Agency";
+    const pathLower = (window.location.pathname || "").toLowerCase();
+    const pageFile = pathLower.split("/").pop() || "index.html";
 
-    const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", requestLogoutConfirmation);
-    }
-
-    // After logging in: remove Services, About Us, and Contact Us from the navbar
-    document.querySelectorAll(".nav-links a").forEach(function (link) {
-      const href = (link.getAttribute("href") || "").toLowerCase();
-      if (
-        href.indexOf("services.html") >= 0 ||
-        href.indexOf("about.html") >= 0 ||
-        href.indexOf("contact.html") >= 0
-      ) {
-        link.remove();
+    // Admin & Lucky Seven Verifier go STRAIGHT to their dedicated Dashboard (no separate Home or Marketplace)
+    if (isAdminSession || isVerifierSession) {
+      const restrictedPublicPages = [
+        "",
+        "index.html",
+        "marketplace.html",
+        "services.html",
+        "about.html",
+        "contact.html"
+      ];
+      if (restrictedPublicPages.indexOf(pageFile) >= 0) {
+        window.location.replace(getPostLoginDestination(session.role));
+        return;
       }
-    });
 
-    // Only Standard Users submit new land listings; hide "+ Submit New Listing" CTA on Marketplace for Admin & Lucky Seven
-    if (session.role === "Admin" || session.role === "Lucky Seven Land Verifier") {
-      document.querySelectorAll('a[href="tracker.html"]').forEach(function (cta) {
-        if (cta.textContent.indexOf("Submit New Listing") >= 0) {
-          cta.classList.add("hidden");
+      // On detail inspection pages (e.g., property.html), remove Home & Marketplace links so only Dashboard + Log Out remain
+      document.querySelectorAll(".nav-links a").forEach(function (link) {
+        link.remove();
+      });
+      const brandLink = document.querySelector(".brand");
+      if (brandLink) {
+        brandLink.setAttribute("href", getPostLoginDestination(session.role));
+      }
+    } else {
+      // Standard User: after logging in, remove Services, About Us, and Contact Us from the navbar
+      document.querySelectorAll(".nav-links a").forEach(function (link) {
+        const href = (link.getAttribute("href") || "").toLowerCase();
+        if (
+          href.indexOf("services.html") >= 0 ||
+          href.indexOf("about.html") >= 0 ||
+          href.indexOf("contact.html") >= 0
+        ) {
+          link.remove();
         }
       });
+    }
+
+    if (navActions) {
+      const workspaceLabel = isAdminSession
+        ? "← Back to Admin Dashboard"
+        : isVerifierSession
+        ? "← Back to Lucky Seven Dashboard"
+        : "My Account Listings";
+      navActions.innerHTML =
+        '<a href="' +
+        (isAdminSession || isVerifierSession
+          ? escapeHtml(getPostLoginDestination(session.role))
+          : "tracker.html") +
+        '" class="btn btn-primary btn-sm">' +
+        escapeHtml(workspaceLabel) +
+        "</a>" +
+        '<button type="button" class="btn btn-outline btn-sm" id="logout-btn">Log Out</button>';
+
+      const logoutBtn = document.getElementById("logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", requestLogoutConfirmation);
+      }
     }
   }
 
@@ -1581,6 +1608,7 @@ function initTrackerPage() {
 
   function applyRolePermissionsToUI() {
     const workspaceShell = document.getElementById("workspace-shell");
+    const sidebarBrandLink = document.getElementById("sidebar-brand-link");
     const sidebarLogoImg = document.getElementById("sidebar-logo-img");
     const brandSub = document.getElementById("sidebar-brand-sub");
     const groupTitle = document.getElementById("sidebar-group-title");
@@ -1588,6 +1616,8 @@ function initTrackerPage() {
     const displayEl = document.getElementById("active-account-display");
     const emailEl = document.getElementById("sidebar-profile-email");
 
+    const navHome = document.getElementById("nav-item-home");
+    const navMarketplace = document.getElementById("nav-item-marketplace");
     const navUserProps = document.getElementById("nav-item-user-props");
     const navUserSell = document.getElementById("nav-item-user-sell");
     const navAdminAccounts = document.getElementById("nav-item-admin-accounts");
@@ -1606,13 +1636,16 @@ function initTrackerPage() {
 
     if (isAdmin) {
       if (workspaceShell) workspaceShell.classList.remove("theme-lucky-seven");
+      if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "tracker.html?tab=panel-accounts");
       if (sidebarLogoImg) {
         sidebarLogoImg.src = "assets/yutara-logo.png";
         sidebarLogoImg.alt = "YuTara Logo";
         sidebarLogoImg.className = "sidebar-logo-img";
       }
-      if (brandSub) brandSub.textContent = "Admin Workspace";
+      if (brandSub) brandSub.textContent = "Admin Dashboard";
       if (groupTitle) groupTitle.textContent = "Admin Controls";
+      if (navHome) navHome.classList.add("hidden");
+      if (navMarketplace) navMarketplace.classList.add("hidden");
       if (navUserProps) navUserProps.classList.add("hidden");
       if (navAdminAccounts) navAdminAccounts.classList.remove("hidden");
       if (navUserSell) navUserSell.classList.remove("hidden");
@@ -1623,6 +1656,7 @@ function initTrackerPage() {
       if (sellerDocsSection) sellerDocsSection.classList.add("hidden");
     } else if (isVerifier) {
       if (workspaceShell) workspaceShell.classList.add("theme-lucky-seven");
+      if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "tracker.html?tab=panel-agency");
       if (sidebarLogoImg) {
         sidebarLogoImg.src = "assets/lucky-seven-logo.jpg";
         sidebarLogoImg.alt = "Lucky Seven Property Management Solutions, Inc.";
@@ -1630,6 +1664,8 @@ function initTrackerPage() {
       }
       if (brandSub) brandSub.textContent = "Property Management Solutions, Inc.";
       if (groupTitle) groupTitle.textContent = "Lucky Seven Verification";
+      if (navHome) navHome.classList.add("hidden");
+      if (navMarketplace) navMarketplace.classList.add("hidden");
       if (navUserProps) navUserProps.classList.add("hidden");
       if (navUserSell) navUserSell.classList.add("hidden");
       if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
@@ -1641,6 +1677,7 @@ function initTrackerPage() {
     } else {
       // Standard User: Marketplace + My Account Listings only
       if (workspaceShell) workspaceShell.classList.remove("theme-lucky-seven");
+      if (sidebarBrandLink) sidebarBrandLink.setAttribute("href", "marketplace.html");
       if (sidebarLogoImg) {
         sidebarLogoImg.src = "assets/yutara-logo.png";
         sidebarLogoImg.alt = "YuTara Logo";
@@ -1649,6 +1686,8 @@ function initTrackerPage() {
       if (brandSub) brandSub.textContent = "Yuta ba? YuTara!";
       if (groupTitle) groupTitle.textContent = "User Navigation";
       if (heading) heading.textContent = "Welcome back, " + currentName + "!";
+      if (navHome) navHome.classList.add("hidden");
+      if (navMarketplace) navMarketplace.classList.remove("hidden");
       if (navUserProps) navUserProps.classList.remove("hidden");
       if (navUserSell) navUserSell.classList.remove("hidden");
       if (navAdminAccounts) navAdminAccounts.classList.add("hidden");
