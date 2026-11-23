@@ -5787,3 +5787,79 @@ body.anim-debug-off {
 .tab-panel.hidden {
   display: none;
 }
+
+/* ===== Buyer-Seller Message Thread ===== */
+.msg-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.msg-bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.msg-bubble.msg-mine {
+  align-self: flex-end;
+  background: #e3f2fd;
+  border-bottom-right-radius: 2px;
+  color: #0d47a1;
+}
+
+.msg-bubble.msg-theirs {
+  align-self: flex-start;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 2px;
+  color: #334155;
+}
+
+.msg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.msg-time {
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.msg-body {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.msg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg-form .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+@media (max-width: 720px) {
+  .msg-bubble {
+    max-width: 85%;
+  }
+}

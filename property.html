@@ -116,6 +116,35 @@
         </div>
       </div>
 
+      <!-- Buyer-Seller Communication Thread -->
+      <div class="mt-4">
+        <div class="section-header-row">
+          <div>
+            <span class="section-tag">Direct Message</span>
+            <h2 class="section-title">Message <span id="msg-with-party">Seller</span></h2>
+          </div>
+        </div>
+        <div class="card">
+          <div id="msg-thread" class="msg-thread">
+            <!-- Messages populated dynamically -->
+          </div>
+          <div id="msg-login-prompt" class="card-soft mb-3 hidden">
+            <p class="mb-2">Sign in to send a message to the property owner.</p>
+            <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+          </div>
+          <form id="msg-form" class="msg-form">
+            <div id="msg-status" class="alert hidden"></div>
+            <div class="grid grid-2">
+              <div class="form-group">
+                <label class="form-label" for="msg-text">Your Message</label>
+                <textarea id="msg-text" class="form-textarea" rows="3" placeholder="Ask about lot size, price, site visit, or documents..." required></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" id="msg-send-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+
       <!-- More Panabo City Properties Section -->
       <div class="mt-4">
         <div class="section-header-row">
