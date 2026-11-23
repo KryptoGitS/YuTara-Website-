@@ -1610,6 +1610,8 @@ function initTrackerPage() {
     const workspaceShell = document.getElementById("workspace-shell");
     const sidebarBrandLink = document.getElementById("sidebar-brand-link");
     const sidebarLogoImg = document.getElementById("sidebar-logo-img");
+    const mobileTopbarLogo = document.getElementById("mobile-topbar-logo");
+    const mobileTopbarTitle = document.getElementById("mobile-topbar-title");
     const brandSub = document.getElementById("sidebar-brand-sub");
     const groupTitle = document.getElementById("sidebar-group-title");
     const avatarEl = document.getElementById("sidebar-avatar");
@@ -1628,6 +1630,7 @@ function initTrackerPage() {
     const adminEditOnlyNotice = document.getElementById("admin-edit-only-notice");
     const sellerDocsSection = document.getElementById("seller-docs-section");
     const tabBtnSeller = document.getElementById("tab-btn-seller");
+    const tabBtnSellerLabel = document.getElementById("tab-btn-seller-label");
     const tabBtnAgency = document.getElementById("tab-btn-agency");
 
     if (avatarEl) avatarEl.textContent = getInitials(currentName);
@@ -1642,6 +1645,8 @@ function initTrackerPage() {
         sidebarLogoImg.alt = "YuTara Logo";
         sidebarLogoImg.className = "sidebar-logo-img";
       }
+      if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/yutara-logo.png";
+      if (mobileTopbarTitle) mobileTopbarTitle.textContent = "Admin Portal";
       if (brandSub) brandSub.textContent = "Admin Dashboard";
       if (groupTitle) groupTitle.textContent = "Admin Controls";
       if (navHome) navHome.classList.add("hidden");
@@ -1649,7 +1654,8 @@ function initTrackerPage() {
       if (navUserProps) navUserProps.classList.add("hidden");
       if (navAdminAccounts) navAdminAccounts.classList.remove("hidden");
       if (navUserSell) navUserSell.classList.remove("hidden");
-      if (tabBtnSeller) tabBtnSeller.innerHTML = "<span>Edit / Delete Properties</span>";
+      if (tabBtnSellerLabel) tabBtnSellerLabel.textContent = "Edit / Delete Properties";
+      if (tabBtnSeller) tabBtnSeller.setAttribute("title", "Edit / Delete Properties");
       if (navVerifierDesk) navVerifierDesk.classList.add("hidden");
       if (adminCrudCard) adminCrudCard.classList.remove("hidden");
       if (adminEditOnlyNotice) adminEditOnlyNotice.classList.remove("hidden");
@@ -1662,8 +1668,10 @@ function initTrackerPage() {
         sidebarLogoImg.alt = "Lucky Seven Property Management Solutions, Inc.";
         sidebarLogoImg.className = "sidebar-lucky-logo";
       }
+      if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/lucky-seven-logo.jpg";
+      if (mobileTopbarTitle) mobileTopbarTitle.textContent = "Lucky Seven Verification";
       if (brandSub) brandSub.textContent = "Property Management Solutions, Inc.";
-      if (groupTitle) groupTitle.textContent = "Lucky Seven Verification";
+      if (groupTitle) groupTitle.textContent = "Verification Desk";
       if (navHome) navHome.classList.add("hidden");
       if (navMarketplace) navMarketplace.classList.add("hidden");
       if (navUserProps) navUserProps.classList.add("hidden");
@@ -1683,6 +1691,8 @@ function initTrackerPage() {
         sidebarLogoImg.alt = "YuTara Logo";
         sidebarLogoImg.className = "sidebar-logo-img";
       }
+      if (mobileTopbarLogo) mobileTopbarLogo.src = "assets/yutara-logo.png";
+      if (mobileTopbarTitle) mobileTopbarTitle.textContent = "My Account Listings";
       if (brandSub) brandSub.textContent = "Yuta ba? YuTara!";
       if (groupTitle) groupTitle.textContent = "User Navigation";
       if (heading) heading.textContent = "Welcome back, " + currentName + "!";
@@ -1697,6 +1707,38 @@ function initTrackerPage() {
       if (sellerDocsSection) sellerDocsSection.classList.remove("hidden");
       if (tabBtnAgency) tabBtnAgency.classList.add("hidden");
     }
+  }
+
+  // Desktop Collapsible Sidebar & Mobile Drawer Controls
+  const workspaceShellEl = document.getElementById("workspace-shell");
+  const collapseBtn = document.getElementById("sidebar-collapse-btn");
+  const mobileDrawerBtn = document.getElementById("mobile-sidebar-btn");
+  const mobileBackdrop = document.getElementById("sidebar-mobile-backdrop");
+  const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
+
+  if (collapseBtn && workspaceShellEl) {
+    collapseBtn.addEventListener("click", function () {
+      const collapsed = workspaceShellEl.classList.toggle("sidebar-collapsed");
+      collapseBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    });
+  }
+
+  function closeMobileDrawer() {
+    if (workspaceShellEl) workspaceShellEl.classList.remove("drawer-open");
+  }
+
+  if (mobileDrawerBtn && workspaceShellEl) {
+    mobileDrawerBtn.addEventListener("click", function () {
+      workspaceShellEl.classList.toggle("drawer-open");
+    });
+  }
+
+  if (mobileBackdrop) {
+    mobileBackdrop.addEventListener("click", closeMobileDrawer);
+  }
+
+  if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener("click", requestLogoutConfirmation);
   }
 
   function activateTab(targetId) {
@@ -1726,6 +1768,7 @@ function initTrackerPage() {
   tabBtns.forEach(function (btn) {
     btn.addEventListener("click", function () {
       if (rbacAlert) rbacAlert.classList.add("hidden");
+      closeMobileDrawer();
       activateTab(btn.getAttribute("data-tab"));
     });
   });
@@ -1933,8 +1976,611 @@ function initTrackerPage() {
   }
 
   /* ------------------------------------------------------------------------
-     LUCKY SEVEN EXCLUSIVE DESK: Verify Land Listings ONLY With Legitimate Docs
+     LUCKY SEVEN EXCLUSIVE DESK — REDESIGNED DOCUMENT VERIFICATION PORTAL
+     Preserves exact 3-document legitimate verification criteria (hasAllLegitimateDocs)
      ------------------------------------------------------------------------ */
+  const LS_ICONS = {
+    mapPin:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+    user:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+    fileText:
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>',
+    receipt:
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 17.5v-11"></path></svg>',
+    idCard:
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><circle cx="8" cy="10" r="2"></circle><path d="M14 9h4"></path><path d="M14 13h4"></path><path d="M6 16c.6-1.5 1.8-2 2-2s1.4.5 2 2"></path></svg>',
+    checkCircle:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+    clock:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+    shieldAlert:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
+    eye:
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+    externalLink:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>',
+    shieldCheck:
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>',
+    shieldOff:
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.69 14a6.9 6.9 0 0 0 .31-2V5l-8-3-3.16 1.18"></path><path d="M4.73 4.73 4 5v7c0 6 8 10 8 10a20.29 20.29 0 0 0 5.62-4.38"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+  };
+
+  const LS_DOC_META = {
+    tct: { shortTitle: "Clean Title (TCT / OCT)", icon: LS_ICONS.fileText, category: "Land Title Registry" },
+    taxDec: { shortTitle: "Tax Declaration & Clearance", icon: LS_ICONS.receipt, category: "Panabo City Assessor" },
+    ownerId: { shortTitle: "Owner ID & Deed / Authority", icon: LS_ICONS.idCard, category: "Owner Identity Proof" }
+  };
+
+  const lsSearchInput = document.getElementById("ls-search-input");
+  const lsBarangayFilter = document.getElementById("ls-filter-barangay");
+  const lsStatusFilter = document.getElementById("ls-filter-status");
+  const lsCompletenessFilter = document.getElementById("ls-filter-completeness");
+  const lsResetFilterBtn = document.getElementById("ls-filter-reset");
+  const lsResultsSummary = document.getElementById("ls-results-summary");
+
+  if (lsBarangayFilter && lsBarangayFilter.options.length <= 1) {
+    lsBarangayFilter.innerHTML =
+      '<option value="">All Barangays</option>' +
+      PANABO_BARANGAYS.map(function (b) {
+        return '<option value="' + escapeHtml(b) + '">Brgy. ' + escapeHtml(b) + "</option>";
+      }).join("");
+  }
+
+  function getPropertyVerificationState(prop) {
+    const docs = ensurePropertyDocuments(prop);
+    const docList = [docs.tct, docs.taxDec, docs.ownerId];
+    const missingCount = docList.filter(function (d) { return !d.submitted; }).length;
+    const validCount = docList.filter(function (d) { return d.submitted && d.legitimate; }).length;
+    const allDocsLegit = hasAllLegitimateDocs(prop);
+    const isVerified = prop.verificationStatus === "Verified by Lucky Seven" && allDocsLegit;
+
+    if (isVerified) {
+      return {
+        key: "Verified",
+        label: "Verified",
+        pillClass: "status-verified",
+        pillIcon: LS_ICONS.checkCircle,
+        summaryClass: "sum-verified",
+        summaryText: "Verified by Lucky Seven: All 3 required legal documents (TCT/OCT, Tax Clearance, Owner ID) are authenticated.",
+        allDocsLegit: true,
+        isVerified: true,
+        missingCount: 0,
+        validCount: 3
+      };
+    }
+    if (allDocsLegit) {
+      return {
+        key: "Pending Review",
+        label: "Pending Review",
+        pillClass: "status-pending",
+        pillIcon: LS_ICONS.clock,
+        summaryClass: "sum-ready",
+        summaryText: "3/3 submitted documents authenticated — Eligible for final Lucky Seven verification approval.",
+        allDocsLegit: true,
+        isVerified: false,
+        missingCount: 0,
+        validCount: 3
+      };
+    }
+    if (missingCount > 0) {
+      return {
+        key: "Blocked",
+        label: "Blocked",
+        pillClass: "status-blocked",
+        pillIcon: LS_ICONS.shieldAlert,
+        summaryClass: "sum-blocked",
+        summaryText:
+          "Blocked: Missing " +
+          missingCount +
+          " required legal " +
+          (missingCount === 1 ? "document" : "documents") +
+          ". Cannot verify until all 3 legitimate documents are submitted.",
+        allDocsLegit: false,
+        isVerified: false,
+        missingCount: missingCount,
+        validCount: validCount
+      };
+    }
+    return {
+      key: "Incomplete Documents",
+      label: "Incomplete Documents",
+      pillClass: "status-pending",
+      pillIcon: LS_ICONS.clock,
+      summaryClass: "sum-blocked",
+      summaryText:
+        validCount +
+        "/3 submitted documents authenticated — Review and verify all remaining documents before approval.",
+      allDocsLegit: false,
+      isVerified: false,
+      missingCount: 0,
+      validCount: validCount
+    };
+  }
+
+  function buildLuckyDocumentPanelHTML(prop, docKey, doc) {
+    const meta = LS_DOC_META[docKey] || { shortTitle: doc.label, icon: LS_ICONS.fileText };
+    const stateClass = !doc.submitted
+      ? "doc-state-missing"
+      : doc.legitimate
+      ? "doc-state-valid"
+      : "doc-state-pending";
+    const badgeClass = !doc.submitted
+      ? "badge-missing"
+      : doc.legitimate
+      ? "badge-valid"
+      : "badge-pending";
+    const badgeLabel = !doc.submitted ? "Missing" : doc.legitimate ? "Legitimate" : "Pending";
+    const checkText = !doc.submitted
+      ? "File not submitted"
+      : doc.legitimate
+      ? "Checked authentic"
+      : "Confirm authentic";
+
+    return (
+      '<div class="ls-doc-panel ' +
+      stateClass +
+      '">' +
+      '  <div class="ls-doc-top">' +
+      '    <div class="ls-doc-title-wrap">' +
+      '      <span class="ls-doc-icon-badge">' +
+      meta.icon +
+      "</span>" +
+      '      <div class="ls-doc-short-title">' +
+      escapeHtml(meta.shortTitle) +
+      "</div>" +
+      "    </div>" +
+      '    <span class="ls-doc-badge ' +
+      badgeClass +
+      '">' +
+      badgeLabel +
+      "</span>" +
+      "  </div>" +
+      '  <div class="ls-doc-ref">' +
+      escapeHtml(doc.refNo || "No reference number") +
+      "</div>" +
+      '  <div class="ls-doc-bottom">' +
+      '    <label class="ls-doc-check-toggle" title="' +
+      escapeHtml(checkText) +
+      '">' +
+      '      <input type="checkbox" data-doc-prop-id="' +
+      prop.id +
+      '" data-doc-key="' +
+      docKey +
+      '" ' +
+      (doc.submitted && doc.legitimate ? "checked " : "") +
+      (!doc.submitted ? "disabled " : "") +
+      "/>" +
+      "      <span>" +
+      escapeHtml(checkText) +
+      "</span>" +
+      "    </label>" +
+      '    <button type="button" class="ls-doc-inspect-link" data-open-doc-prop-id="' +
+      prop.id +
+      '" data-open-doc-key="' +
+      docKey +
+      '">Inspect</button>' +
+      "  </div>" +
+      "</div>"
+    );
+  }
+
+  function buildLuckyPropertyCardHTML(prop) {
+    const docs = ensurePropertyDocuments(prop);
+    const state = getPropertyVerificationState(prop);
+    const docPanelsHtml = ["tct", "taxDec", "ownerId"]
+      .map(function (key) {
+        return buildLuckyDocumentPanelHTML(prop, key, docs[key]);
+      })
+      .join("");
+
+    const primaryAdminBtn = state.isVerified
+      ? '<button type="button" class="btn btn-ls-danger btn-sm" data-open-revoke-prop-id="' +
+        prop.id +
+        '">' +
+        LS_ICONS.shieldOff +
+        " <span>Revoke Verification</span></button>"
+      : '<button type="button" class="btn btn-ls-verify btn-sm" data-verify-prop-id="' +
+        prop.id +
+        '" ' +
+        (!state.allDocsLegit ? "disabled" : "") +
+        ' title="' +
+        (state.allDocsLegit
+          ? "Approve and verify this property"
+          : "Blocked: All 3 legitimate documents are required") +
+        '">' +
+        LS_ICONS.shieldCheck +
+        " <span>" +
+        (state.allDocsLegit ? "Verify Land Property" : "Blocked (Missing Docs)") +
+        "</span></button>";
+
+    return (
+      '<article class="ls-prop-card anim-fade-up" data-anim="ytFadeInUp">' +
+      '  <div class="ls-prop-header">' +
+      '    <div class="ls-prop-identity">' +
+      '      <img src="' +
+      escapeHtml(prop.image) +
+      '" alt="' +
+      escapeHtml(prop.title) +
+      '" class="ls-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
+      "      <div>" +
+      '        <h3 class="ls-prop-title">#' +
+      prop.id +
+      " &mdash; " +
+      escapeHtml(prop.title) +
+      "</h3>" +
+      '        <div class="ls-prop-meta-row">' +
+      '          <span class="ls-meta-chip">' +
+      LS_ICONS.mapPin +
+      " Brgy. " +
+      escapeHtml(prop.barangay) +
+      ", Panabo City</span>" +
+      '          <span class="ls-meta-chip">' +
+      LS_ICONS.user +
+      " Owner: <strong>" +
+      escapeHtml(prop.seller || "Panabo Landowner") +
+      "</strong></span>" +
+      '          <span class="ls-meta-chip">' +
+      escapeHtml(prop.type) +
+      " &bull; " +
+      Number(prop.area || 0).toLocaleString() +
+      " sqm</span>" +
+      "        </div>" +
+      "      </div>" +
+      "    </div>" +
+      '    <div class="ls-prop-badges">' +
+      '      <span class="ls-listing-pill">Open &bull; ' +
+      escapeHtml(formatPropertyPrice(prop)) +
+      "</span>" +
+      '      <span class="ls-status-pill ' +
+      state.pillClass +
+      '">' +
+      state.pillIcon +
+      " " +
+      escapeHtml(state.label) +
+      "</span>" +
+      "    </div>" +
+      "  </div>" +
+      '  <div class="ls-doc-grid">' +
+      docPanelsHtml +
+      "  </div>" +
+      '  <div class="ls-summary-bar ' +
+      state.summaryClass +
+      '">' +
+      state.pillIcon +
+      " <span>" +
+      escapeHtml(state.summaryText) +
+      "</span></div>" +
+      '  <div class="ls-card-footer">' +
+      '    <div class="ls-action-group">' +
+      '      <button type="button" class="btn btn-ls-navy btn-sm" data-open-doc-prop-id="' +
+      prop.id +
+      '" data-open-doc-key="tct">' +
+      LS_ICONS.eye +
+      " <span>View Documents</span></button>" +
+      '      <a href="property.html?id=' +
+      prop.id +
+      '" class="btn btn-ls-outline btn-sm">' +
+      LS_ICONS.externalLink +
+      " <span>Inspect Lot</span></a>" +
+      "    </div>" +
+      '    <div class="ls-action-group">' +
+      primaryAdminBtn +
+      "    </div>" +
+      "  </div>" +
+      "</article>"
+    );
+  }
+
+  /* Dedicated Document Inspection & Review Modal Controller */
+  let activeDocViewerPropId = null;
+  let activeDocViewerKey = "tct";
+  const docViewerModal = document.getElementById("ls-doc-viewer-modal");
+  const docViewerCloseBtn = document.getElementById("ls-doc-modal-close");
+
+  function closeDocumentViewerModal() {
+    if (docViewerModal) docViewerModal.classList.add("hidden");
+    activeDocViewerPropId = null;
+  }
+
+  function renderDocumentViewerContent() {
+    if (!docViewerModal || !activeDocViewerPropId) return;
+    const prop = getProperties().find(function (p) {
+      return p.id === Number(activeDocViewerPropId);
+    });
+    if (!prop) {
+      closeDocumentViewerModal();
+      return;
+    }
+
+    const docs = ensurePropertyDocuments(prop);
+    const activeDoc = docs[activeDocViewerKey] || docs.tct;
+    const meta = LS_DOC_META[activeDocViewerKey] || LS_DOC_META.tct;
+
+    const titleEl = document.getElementById("ls-doc-modal-title");
+    const subEl = document.getElementById("ls-doc-modal-sub");
+    const tabsEl = document.getElementById("ls-doc-tabs");
+    const previewEl = document.getElementById("ls-doc-preview-pane");
+    const statusWrap = document.getElementById("ls-doc-status-badge-wrap");
+    const notesEl = document.getElementById("ls-doc-notes-input");
+    const actionsEl = document.getElementById("ls-doc-review-actions");
+
+    if (titleEl) titleEl.textContent = "#" + prop.id + " — " + prop.title;
+    if (subEl) {
+      subEl.textContent =
+        "Brgy. " +
+        prop.barangay +
+        ", Panabo City • Owner: " +
+        (prop.seller || "Panabo Landowner") +
+        " • " +
+        Number(prop.area || 0).toLocaleString() +
+        " sqm";
+    }
+
+    if (tabsEl) {
+      tabsEl.innerHTML = ["tct", "taxDec", "ownerId"]
+        .map(function (key) {
+          const d = docs[key];
+          const m = LS_DOC_META[key];
+          const dot = !d.submitted ? "● Missing" : d.legitimate ? "✓ Legit" : "• Pending";
+          return (
+            '<button type="button" class="ls-doc-tab-btn ' +
+            (key === activeDocViewerKey ? "active" : "") +
+            '" data-modal-doc-tab="' +
+            key +
+            '">' +
+            m.icon +
+            " <span>" +
+            escapeHtml(m.shortTitle) +
+            " (" +
+            dot +
+            ")</span></button>"
+          );
+        })
+        .join("");
+
+      tabsEl.querySelectorAll("[data-modal-doc-tab]").forEach(function (tBtn) {
+        tBtn.addEventListener("click", function () {
+          activeDocViewerKey = tBtn.getAttribute("data-modal-doc-tab");
+          renderDocumentViewerContent();
+        });
+      });
+    }
+
+    if (previewEl) {
+      if (!activeDoc.submitted) {
+        previewEl.innerHTML =
+          '<div class="ls-doc-preview-sheet preview-missing">' +
+          '  <span class="ls-status-pill status-blocked">' +
+          LS_ICONS.shieldAlert +
+          " Document File Missing</span>" +
+          "  <h3>No Document Submitted</h3>" +
+          '  <p class="text-muted">' +
+          escapeHtml(activeDoc.refNo || "The property owner has not uploaded this required legal document.") +
+          "</p>" +
+          '  <p class="text-muted">Lucky Seven cannot approve or mark a missing document legitimate under Panabo verification policy.</p>' +
+          "</div>";
+      } else {
+        previewEl.innerHTML =
+          '<div class="ls-doc-preview-sheet">' +
+          "  <div>" +
+          '    <div class="ls-preview-seal">' +
+          LS_ICONS.shieldCheck +
+          " " +
+          escapeHtml(meta.category) +
+          "</div>" +
+          "    <h3>" +
+          escapeHtml(activeDoc.label) +
+          "</h3>" +
+          '    <table class="ls-preview-meta-table">' +
+          "      <tr><td>Reference No.</td><td>" +
+          escapeHtml(activeDoc.refNo) +
+          "</td></tr>" +
+          "      <tr><td>Registered Owner</td><td>" +
+          escapeHtml(prop.seller || "Panabo Landowner") +
+          "</td></tr>" +
+          "      <tr><td>Location</td><td>Brgy. " +
+          escapeHtml(prop.barangay) +
+          ", Panabo City</td></tr>" +
+          "      <tr><td>Parcel Size</td><td>" +
+          Number(prop.area || 0).toLocaleString() +
+          " sqm (" +
+          escapeHtml(prop.type) +
+          ")</td></tr>" +
+          "      <tr><td>Submission State</td><td>Submitted by Property Owner</td></tr>" +
+          "    </table>" +
+          "  </div>" +
+          '  <div class="text-muted mt-2">Access restricted to authorized Lucky Seven Land Verifiers.</div>' +
+          "</div>";
+      }
+    }
+
+    if (statusWrap) {
+      const badgeClass = !activeDoc.submitted
+        ? "status-blocked"
+        : activeDoc.legitimate
+        ? "status-verified"
+        : "status-pending";
+      const badgeIcon = !activeDoc.submitted
+        ? LS_ICONS.shieldAlert
+        : activeDoc.legitimate
+        ? LS_ICONS.checkCircle
+        : LS_ICONS.clock;
+      const badgeText = !activeDoc.submitted
+        ? "Missing Document — Cannot Verify"
+        : activeDoc.legitimate
+        ? "Authenticated & Legitimate"
+        : "Submitted — Pending Authenticity Check";
+
+      statusWrap.innerHTML =
+        '<span class="ls-status-pill ' +
+        badgeClass +
+        '">' +
+        badgeIcon +
+        " " +
+        badgeText +
+        "</span>";
+    }
+
+    if (notesEl) {
+      notesEl.value = activeDoc.notes || "";
+    }
+
+    if (actionsEl) {
+      const toggleLegitBtn = !activeDoc.submitted
+        ? '<button type="button" class="btn btn-ls-verify btn-sm" disabled>Cannot Mark Missing Doc Legitimate</button>'
+        : activeDoc.legitimate
+        ? '<button type="button" class="btn btn-ls-danger btn-sm" id="ls-modal-unmark-legit-btn">Mark Pending / Unverified</button>'
+        : '<button type="button" class="btn btn-ls-verify btn-sm" id="ls-modal-mark-legit-btn">Mark Document Legitimate &checkmark;</button>';
+
+      actionsEl.innerHTML =
+        toggleLegitBtn +
+        '<button type="button" class="btn btn-ls-navy btn-sm" id="ls-modal-save-notes-btn">Save Verification Notes</button>';
+
+      const markBtn = document.getElementById("ls-modal-mark-legit-btn");
+      const unmarkBtn = document.getElementById("ls-modal-unmark-legit-btn");
+      const saveNotesBtn = document.getElementById("ls-modal-save-notes-btn");
+
+      function updateCurrentDoc(mutator, toastMsg) {
+        if (!isVerifier) return;
+        const list = getProperties();
+        const target = list.find(function (p) {
+          return p.id === Number(activeDocViewerPropId);
+        });
+        if (!target) return;
+        target.documents = ensurePropertyDocuments(target);
+        const docObj = target.documents[activeDocViewerKey];
+        if (!docObj) return;
+        mutator(target, docObj);
+        if (!hasAllLegitimateDocs(target) && target.verificationStatus === "Verified by Lucky Seven") {
+          target.verificationStatus = "Incomplete Documents";
+          target.badgeText = "Incomplete Documents";
+          target.badgeStyle = "badge-warning";
+        }
+        saveProperties(list);
+        renderLuckyPropertyVerificationDesk();
+        renderWorkflows();
+        renderDocumentViewerContent();
+        showToast(toastMsg);
+      }
+
+      if (markBtn) {
+        markBtn.addEventListener("click", function () {
+          updateCurrentDoc(function (_t, d) {
+            if (d.submitted) d.legitimate = true;
+            if (notesEl) d.notes = notesEl.value.trim();
+          }, "Marked document as Legitimate ✓");
+        });
+      }
+      if (unmarkBtn) {
+        unmarkBtn.addEventListener("click", function () {
+          updateCurrentDoc(function (_t, d) {
+            d.legitimate = false;
+            if (notesEl) d.notes = notesEl.value.trim();
+          }, "Marked document as Pending Check");
+        });
+      }
+      if (saveNotesBtn) {
+        saveNotesBtn.addEventListener("click", function () {
+          updateCurrentDoc(function (_t, d) {
+            if (notesEl) d.notes = notesEl.value.trim();
+          }, "Saved Lucky Seven verification notes");
+        });
+      }
+    }
+  }
+
+  function openDocumentViewerModal(propId, initialDocKey) {
+    if (!isVerifier || !docViewerModal) return;
+    activeDocViewerPropId = Number(propId);
+    activeDocViewerKey = initialDocKey || "tct";
+    renderDocumentViewerContent();
+    docViewerModal.classList.remove("hidden");
+  }
+
+  if (docViewerCloseBtn) {
+    docViewerCloseBtn.addEventListener("click", closeDocumentViewerModal);
+  }
+  if (docViewerModal) {
+    docViewerModal.addEventListener("click", function (event) {
+      if (event.target === docViewerModal) closeDocumentViewerModal();
+    });
+  }
+
+  /* Revoke Verification Confirmation Modal Controller */
+  let pendingRevokePropId = null;
+  const revokeModal = document.getElementById("ls-revoke-modal");
+  const revokeCloseBtn = document.getElementById("ls-revoke-modal-close");
+  const revokeCancelBtn = document.getElementById("ls-revoke-cancel-btn");
+  const revokeConfirmBtn = document.getElementById("ls-revoke-confirm-btn");
+
+  function closeRevokeModal() {
+    if (revokeModal) revokeModal.classList.add("hidden");
+    pendingRevokePropId = null;
+    const reasonEl = document.getElementById("ls-revoke-reason");
+    if (reasonEl) reasonEl.value = "";
+  }
+
+  function openRevokeConfirmModal(propId) {
+    if (!isVerifier || !revokeModal) return;
+    const prop = getProperties().find(function (p) {
+      return p.id === Number(propId);
+    });
+    if (!prop) return;
+    pendingRevokePropId = prop.id;
+    const msgEl = document.getElementById("ls-revoke-modal-msg");
+    if (msgEl) {
+      msgEl.innerHTML =
+        "Are you sure you want to revoke Lucky Seven verification for <strong>#" +
+        prop.id +
+        " — " +
+        escapeHtml(prop.title) +
+        "</strong>? Its public Marketplace badge will revert to Pending Review.";
+    }
+    revokeModal.classList.remove("hidden");
+  }
+
+  if (revokeCloseBtn) revokeCloseBtn.addEventListener("click", closeRevokeModal);
+  if (revokeCancelBtn) revokeCancelBtn.addEventListener("click", closeRevokeModal);
+  if (revokeModal) {
+    revokeModal.addEventListener("click", function (event) {
+      if (event.target === revokeModal) closeRevokeModal();
+    });
+  }
+  if (revokeConfirmBtn) {
+    revokeConfirmBtn.addEventListener("click", function () {
+      if (!isVerifier || !pendingRevokePropId) return;
+      const reasonEl = document.getElementById("ls-revoke-reason");
+      const reason = reasonEl ? reasonEl.value.trim() : "";
+      const list = getProperties();
+      const target = list.find(function (p) {
+        return p.id === Number(pendingRevokePropId);
+      });
+      if (target) {
+        target.verificationStatus = "Pending Lucky Seven Review";
+        target.badgeText = "Docs Submitted (Pending Review)";
+        target.badgeStyle = "badge-warning";
+        if (reason) target.revokeNote = reason;
+        saveProperties(list);
+        showToast("Revoked verification for Property #" + target.id);
+      }
+      closeRevokeModal();
+      renderLuckyPropertyVerificationDesk();
+      renderWorkflows();
+    });
+  }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      if (docViewerModal && !docViewerModal.classList.contains("hidden")) {
+        closeDocumentViewerModal();
+      }
+      if (revokeModal && !revokeModal.classList.contains("hidden")) {
+        closeRevokeModal();
+      }
+    }
+  });
+
   function renderLuckyPropertyVerificationDesk() {
     const listEl = document.getElementById("lucky-property-verification-list");
     if (!listEl) return;
@@ -1946,14 +2592,17 @@ function initTrackerPage() {
     }
 
     const properties = getProperties();
+
+    // Always compute KPI statistics from actual full dataset
     const verifiedCount = properties.filter(function (p) {
-      return p.verificationStatus === "Verified by Lucky Seven";
+      return getPropertyVerificationState(p).key === "Verified";
     }).length;
     const eligibleCount = properties.filter(function (p) {
-      return p.verificationStatus !== "Verified by Lucky Seven" && hasAllLegitimateDocs(p);
+      return getPropertyVerificationState(p).key === "Pending Review";
     }).length;
     const blockedCount = properties.filter(function (p) {
-      return !hasAllLegitimateDocs(p);
+      const k = getPropertyVerificationState(p).key;
+      return k === "Blocked" || k === "Incomplete Documents";
     }).length;
 
     const totalEl = document.getElementById("lucky-stat-total");
@@ -1966,121 +2615,60 @@ function initTrackerPage() {
     if (eligEl) eligEl.textContent = eligibleCount;
     if (blkEl) blkEl.textContent = blockedCount;
 
-    listEl.innerHTML = properties
-      .map(function (prop) {
-        const docs = ensurePropertyDocuments(prop);
-        const allDocsLegit = hasAllLegitimateDocs(prop);
-        const isAlreadyVerified = prop.verificationStatus === "Verified by Lucky Seven" && allDocsLegit;
-        const docKeys = ["tct", "taxDec", "ownerId"];
+    // Apply Search & Filter Toolbar criteria
+    const query = lsSearchInput ? lsSearchInput.value.trim().toLowerCase() : "";
+    const brgyFilter = lsBarangayFilter ? lsBarangayFilter.value.trim().toLowerCase() : "";
+    const statusFilter = lsStatusFilter ? lsStatusFilter.value : "";
+    const completenessFilter = lsCompletenessFilter ? lsCompletenessFilter.value : "";
 
-        const docsGridHtml = docKeys
-          .map(function (key) {
-            const doc = docs[key];
-            const itemClass = !doc.submitted
-              ? "doc-missing"
-              : doc.legitimate
-              ? "doc-valid"
-              : "";
-            return (
-              '<div class="doc-check-item ' +
-              itemClass +
-              '">' +
-              '  <label class="doc-check-label">' +
-              '    <input type="checkbox" data-doc-prop-id="' +
-              prop.id +
-              '" data-doc-key="' +
-              key +
-              '" ' +
-              (doc.submitted && doc.legitimate ? "checked " : "") +
-              (!doc.submitted ? "disabled " : "") +
-              "/>" +
-              "    <span>" +
-              escapeHtml(doc.label) +
-              "</span>" +
-              "  </label>" +
-              '  <div class="doc-check-ref">' +
-              (doc.submitted
-                ? escapeHtml(doc.refNo) + (doc.legitimate ? " • Legitimate" : " • Needs Authenticity Check")
-                : "Missing Document: " + escapeHtml(doc.refNo)) +
-              "  </div>" +
-              "</div>"
-            );
-          })
-          .join("");
+    const filtered = properties.filter(function (prop) {
+      const state = getPropertyVerificationState(prop);
+      const docs = ensurePropertyDocuments(prop);
+      const searchable = [
+        prop.title,
+        prop.barangay,
+        prop.seller,
+        prop.type,
+        docs.tct.refNo,
+        docs.taxDec.refNo,
+        docs.ownerId.refNo
+      ]
+        .join(" ")
+        .toLowerCase();
 
-        const gateNoticeHtml = isAlreadyVerified
-          ? '<div class="doc-gate-notice gate-ready">Verified by Lucky Seven: All 3 legitimate legal documents (TCT/OCT, Updated Tax Clearance, Owner ID/Deed) are authenticated.</div>'
-          : allDocsLegit
-          ? '<div class="doc-gate-notice gate-ready">All 3 Legitimate Documents Present &amp; Checked — Eligible for Lucky Seven Verification.</div>'
-          : '<div class="doc-gate-notice gate-blocked">Verification Blocked: Lucky Seven can only verify a land property when all 3 legitimate documents are submitted and checked as authentic.</div>';
+      const matchQuery = !query || searchable.indexOf(query) >= 0;
+      const matchBrgy = !brgyFilter || String(prop.barangay || "").toLowerCase() === brgyFilter;
+      const matchStatus = !statusFilter || state.key === statusFilter;
+      const matchComplete =
+        !completenessFilter ||
+        (completenessFilter === "complete" && state.allDocsLegit) ||
+        (completenessFilter === "incomplete" && !state.allDocsLegit);
 
-        const statusBadgeHtml = isAlreadyVerified
-          ? '<span class="badge badge-lucky-navy">Verified by Lucky Seven ✓</span>'
-          : allDocsLegit
-          ? '<span class="badge badge-lucky-gold">Ready for Verification</span>'
-          : '<span class="badge badge-brown-soft">Incomplete / Unverified Docs</span>';
+      return matchQuery && matchBrgy && matchStatus && matchComplete;
+    });
 
-        const actionBtnsHtml = isAlreadyVerified
-          ? '<button type="button" class="btn btn-outline btn-sm" data-unverify-prop-id="' +
-            prop.id +
-            '">Revoke Verification</button>'
-          : '<button type="button" class="btn btn-primary btn-sm" data-verify-prop-id="' +
-            prop.id +
-            '" ' +
-            (!allDocsLegit ? "disabled" : "") +
-            ">" +
-            (allDocsLegit
-              ? "Verify Land Property &checkmark;"
-              : "Cannot Verify (Missing Legitimate Docs)") +
-            "</button>";
+    if (lsResultsSummary) {
+      lsResultsSummary.textContent =
+        "Showing " + filtered.length + " of " + properties.length + " land properties";
+    }
 
-        return (
-          '<div class="card mb-2 anim-fade-up" data-anim="ytFadeInUp">' +
-          '  <div class="tx-card-header">' +
-          '    <div class="table-prop-cell">' +
-          '      <img src="' +
-          escapeHtml(prop.image) +
-          '" alt="' +
-          escapeHtml(prop.title) +
-          '" class="table-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
-          "      <div>" +
-          "        <h3>#" +
-          prop.id +
-          " &mdash; " +
-          escapeHtml(prop.title) +
-          "</h3>" +
-          '        <p class="text-no-margin">Brgy. ' +
-          escapeHtml(prop.barangay) +
-          ", Panabo City &bull; Owner: <strong>" +
-          escapeHtml(prop.seller || "Panabo Landowner") +
-          "</strong> &bull; " +
-          escapeHtml(formatPropertyPrice(prop)) +
-          "</p>" +
-          "      </div>" +
-          "    </div>" +
-          '    <div class="flex-wrap-gap">' +
-          statusBadgeHtml +
-          '      <a href="property.html?id=' +
-          prop.id +
-          '" class="btn btn-outline btn-sm">Inspect Lot</a>' +
-          "    </div>" +
-          "  </div>" +
-          '  <div class="doc-verify-grid">' +
-          docsGridHtml +
-          "  </div>" +
-          gateNoticeHtml +
-          '  <div class="agency-card-row">' +
-          '    <span class="text-muted">Lucky Seven Document Screening Policy &middot; Panabo City Registry Check</span>' +
-          '    <div class="flex-wrap-gap">' +
-          actionBtnsHtml +
-          "    </div>" +
-          "  </div>" +
-          "</div>"
-        );
-      })
-      .join("");
+    if (filtered.length === 0) {
+      listEl.innerHTML =
+        '<div class="ls-empty-state">' +
+        "  <h3>No matching properties found</h3>" +
+        '  <p class="text-muted mb-2">Adjust your search keyword, barangay, or document status filter to view more land listings.</p>' +
+        '  <button type="button" class="btn btn-ls-navy btn-sm" id="ls-empty-clear-btn">Clear All Filters</button>' +
+        "</div>";
+      const clearBtn = document.getElementById("ls-empty-clear-btn");
+      if (clearBtn) {
+        clearBtn.addEventListener("click", resetLuckyFilters);
+      }
+      return;
+    }
 
-    // Toggle legitimacy check on submitted documents
+    listEl.innerHTML = filtered.map(buildLuckyPropertyCardHTML).join("");
+
+    // Bind inline document authenticity checkboxes (strictly blocked for missing files)
     listEl.querySelectorAll("[data-doc-prop-id]").forEach(function (checkbox) {
       checkbox.addEventListener("change", function () {
         if (!isVerifier) return;
@@ -2098,7 +2686,6 @@ function initTrackerPage() {
           return;
         }
         target.documents[docKey].legitimate = checkbox.checked;
-        // If a required document is marked illegitimate, automatically revoke verified status
         if (!hasAllLegitimateDocs(target) && target.verificationStatus === "Verified by Lucky Seven") {
           target.verificationStatus = "Incomplete Documents";
           target.badgeText = "Incomplete Documents";
@@ -2110,7 +2697,17 @@ function initTrackerPage() {
       });
     });
 
-    // Verify Land Property (Strictly requires all 3 legitimate documents)
+    // Bind View Documents / Inspect Document buttons
+    listEl.querySelectorAll("[data-open-doc-prop-id]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        openDocumentViewerModal(
+          btn.getAttribute("data-open-doc-prop-id"),
+          btn.getAttribute("data-open-doc-key") || "tct"
+        );
+      });
+    });
+
+    // Bind Verify Land Property (strictly enforces hasAllLegitimateDocs)
     listEl.querySelectorAll("[data-verify-prop-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (!isVerifier) return;
@@ -2138,26 +2735,47 @@ function initTrackerPage() {
       });
     });
 
-    // Revoke Verification
-    listEl.querySelectorAll("[data-unverify-prop-id]").forEach(function (btn) {
+    // Bind Revoke Verification (opens confirmation dialog to prevent accidental actions)
+    listEl.querySelectorAll("[data-open-revoke-prop-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        if (!isVerifier) return;
-        const propId = Number(btn.getAttribute("data-unverify-prop-id"));
-        const list = getProperties();
-        const target = list.find(function (p) {
-          return p.id === propId;
-        });
-        if (!target) return;
-        target.verificationStatus = "Pending Lucky Seven Review";
-        target.badgeText = "Docs Submitted (Pending Review)";
-        target.badgeStyle = "badge-warning";
-        saveProperties(list);
-        renderLuckyPropertyVerificationDesk();
-        renderWorkflows();
-        showToast("Marked Property #" + propId + " as Pending Review");
+        openRevokeConfirmModal(btn.getAttribute("data-open-revoke-prop-id"));
       });
     });
   }
+
+  function resetLuckyFilters() {
+    if (lsSearchInput) lsSearchInput.value = "";
+    if (lsBarangayFilter) lsBarangayFilter.value = "";
+    if (lsStatusFilter) lsStatusFilter.value = "";
+    if (lsCompletenessFilter) lsCompletenessFilter.value = "";
+    renderLuckyPropertyVerificationDesk();
+  }
+
+  [lsSearchInput, lsBarangayFilter, lsStatusFilter, lsCompletenessFilter].forEach(function (ctrl) {
+    if (!ctrl) return;
+    ctrl.addEventListener("input", renderLuckyPropertyVerificationDesk);
+    ctrl.addEventListener("change", renderLuckyPropertyVerificationDesk);
+  });
+
+  if (lsResetFilterBtn) {
+    lsResetFilterBtn.addEventListener("click", function () {
+      resetLuckyFilters();
+      showToast("Verification filters reset");
+    });
+  }
+
+  // Clickable KPI Cards act as quick filters
+  document.querySelectorAll("[data-ls-kpi-filter]").forEach(function (kpiBtn) {
+    kpiBtn.addEventListener("click", function () {
+      if (!isVerifier) return;
+      const filterType = kpiBtn.getAttribute("data-ls-kpi-filter");
+      resetLuckyFilters();
+      if (filterType !== "all" && lsStatusFilter) {
+        lsStatusFilter.value = filterType;
+      }
+      renderLuckyPropertyVerificationDesk();
+    });
+  });
 
   function renderWorkflows() {
     const transactions = getTransactions();
