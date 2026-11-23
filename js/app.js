@@ -1332,6 +1332,19 @@ function initLoginPage() {
   if (!form) return;
 
   const statusBox = document.getElementById("login-status");
+  const emailInput = document.getElementById("login-email");
+  const rememberCheck = document.getElementById("login-remember");
+
+  // Restore remembered email if previously checked
+  try {
+    const rememberedEmail = localStorage.getItem("yutara_remember_email");
+    if (rememberedEmail && emailInput) {
+      emailInput.value = rememberedEmail;
+      if (rememberCheck) rememberCheck.checked = true;
+    }
+  } catch (err) {
+    reportDiagnostic("AuthUI", "LoginPage", "restoreRememberedEmail", err);
+  }
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -1344,9 +1357,19 @@ function initLoginPage() {
 
     if (!email || password.length < 4) {
       statusBox.className = "alert alert-error";
-      statusBox.textContent = "Enter a valid email and a password of at least 4 characters.";
+      statusBox.textContent = "Please enter a valid email address and password (at least 4 characters).";
       statusBox.classList.remove("hidden");
       return;
+    }
+
+    try {
+      if (rememberCheck && rememberCheck.checked) {
+        localStorage.setItem("yutara_remember_email", email);
+      } else {
+        localStorage.removeItem("yutara_remember_email");
+      }
+    } catch (err) {
+      reportDiagnostic("AuthUI", "LoginPage", "saveRememberedEmail", err);
     }
 
     const allAccounts = getAllAccounts();
@@ -1367,9 +1390,7 @@ function initLoginPage() {
       if (password !== matchedAccount.password) {
         statusBox.className = "alert alert-error";
         statusBox.textContent =
-          "Incorrect password for " +
-          matchedAccount.name +
-          (matchedAccount.builtIn ? ". Demo password: " + matchedAccount.password : ".");
+          "Incorrect email or password. Please check your credentials and try again.";
         statusBox.classList.remove("hidden");
         return;
       }
