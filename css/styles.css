@@ -3258,16 +3258,18 @@ h1, h2, h3, h4 {
 .ls-yutara-lockup {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--ls-gold);
+  border-radius: 9px;
+  padding: 5px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.ls-yutara-word {
-  font-family: var(--font-display);
-  font-size: 1.32rem;
-  font-weight: 800;
-  color: #8FD455;
-  letter-spacing: -0.02em;
-  line-height: 1;
+.ls-yutara-logo {
+  height: 28px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .ls-cobrand-actions {
