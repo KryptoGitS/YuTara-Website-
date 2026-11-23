@@ -19,7 +19,7 @@
    1. STORAGE KEYS, DIAGNOSTIC REPORTER & HELPER UTILITIES
    -------------------------------------------------------------------------- */
 const STORAGE_KEYS = {
-  properties: "yutara_v6_properties",
+  properties: "yutara_v7_properties",
   saved: "yutara_v6_saved",
   transactions: "yutara_v6_transactions",
   inquiries: "yutara_v6_inquiries",
@@ -621,6 +621,7 @@ function requireLoginForAction(actionDescription, nextUrl) {
 
 function resetDemoData() {
   localStorage.removeItem(STORAGE_KEYS.properties);
+  localStorage.removeItem("yutara_v6_properties");
   localStorage.removeItem(STORAGE_KEYS.saved);
   localStorage.removeItem(STORAGE_KEYS.transactions);
   localStorage.removeItem(STORAGE_KEYS.inquiries);
@@ -812,7 +813,7 @@ function createPropertyCardHTML(prop) {
   return (
     '<article class="property-card anim-fade-up anim-card" data-anim="ytFadeInUp">' +
     '  <div class="property-thumb">' +
-    '    <img src="' + escapeHtml(prop.image) + '" alt="' + escapeHtml(prop.title) + '" onerror="this.src=\'assets/property-hero.png\'" />' +
+    '    <img src="' + escapeHtml(prop.image) + '" alt="' + escapeHtml(prop.title) + '" onerror="this.src=\'assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg\'" />' +
     '    <div class="thumb-badges">' + promotedBadge + statusBadge + "</div>" +
     '    <button type="button" class="save-icon-btn ' + (isSaved ? "saved" : "") + '" data-save-id="' + prop.id + '" title="Save property">' +
     (isSaved ? "&#9829;" : "&#9825;") +
@@ -2156,7 +2157,7 @@ function initTrackerPage() {
       const file = sellerPhotoInput.files && sellerPhotoInput.files[0];
       if (!file) {
         pendingPhotoDataUrl = "";
-        if (sellerPhotoPreview) sellerPhotoPreview.src = "assets/property-hero.png";
+        if (sellerPhotoPreview) sellerPhotoPreview.src = "assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg";
         return;
       }
       const reader = new FileReader();
@@ -2185,7 +2186,7 @@ function initTrackerPage() {
     if (sellerForm) sellerForm.reset();
     if (editIdInput) editIdInput.value = "";
     pendingPhotoDataUrl = "";
-    if (sellerPhotoPreview) sellerPhotoPreview.src = "assets/property-hero.png";
+    if (sellerPhotoPreview) sellerPhotoPreview.src = "assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg";
     if (isAdmin) {
       if (formTag) formTag.textContent = "Admin Property Editor (Edit Only)";
       if (formHeading) formHeading.textContent = "Select a Property Above to Edit";
@@ -2310,7 +2311,7 @@ function initTrackerPage() {
           escapeHtml(prop.image) +
           '" alt="' +
           escapeHtml(prop.title) +
-          '" class="table-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
+          '" class="table-prop-thumb" onerror="this.src=\'assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg\'" />' +
           "      <div>" +
           "        <h3>#" +
           prop.id +
@@ -2610,7 +2611,7 @@ function initTrackerPage() {
         ownerEmail: currentEmail,
         latitude: "7.3100",
         longitude: "125.6820",
-        image: pendingPhotoDataUrl || "assets/property-hero.png",
+        image: pendingPhotoDataUrl || "assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg",
         cardTags: [type + " Lot", "Direct Owner", "Panabo City"],
         highlights: [
           Number(area).toLocaleString() + " SQM Lot Area",
@@ -2817,7 +2818,7 @@ function initTrackerPage() {
             escapeHtml(prop.image) +
             '" alt="' +
             escapeHtml(prop.title) +
-            '" class="table-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
+            '" class="table-prop-thumb" onerror="this.src=\'assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg\'" />' +
             "    <div><strong>#" +
             prop.id +
             " &mdash; " +

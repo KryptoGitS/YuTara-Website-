@@ -129,21 +129,21 @@ const DEFAULT_PROPERTIES = [
     ownerEmail: "maya.santos@yutara.ph",
     latitude: "7.3080",
     longitude: "125.6840",
-    image: "assets/prop-1.jpg",
+    image: "assets/Amiya-Lot-For-Sale-Davao-City-Lot-For-Sale-1.jpg",
     documents: {
       tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2022007721", submitted: true, legitimate: true },
       taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-SVIC-0311", submitted: true, legitimate: true },
       ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Verified", submitted: true, legitimate: true }
     },
-    cardTags: ["Clean Title", "Barangay Road", "Near City Center"],
+    cardTags: ["Clean Title", "Concrete Road", "Near City Center"],
     highlights: [
       "200 SQM Residential Lot",
-      "Clean Title screened for MVP",
-      "Accessible from Barangay Road",
+      "Clean Title ready for transfer",
+      "Accessible along concrete barangay road",
       "Close to Panabo City essentials"
     ],
     description:
-      "A gently sloping residential lot in a growing Panabo City neighborhood, close to everyday essentials and schools."
+      "Flat residential lot along a paved concrete road in Brgy. San Vicente, Panabo City, surrounded by greenery and close to everyday essentials and schools."
   },
   {
     id: 4,
@@ -158,100 +158,28 @@ const DEFAULT_PROPERTIES = [
     area: 1800,
     roadAccess: "Accessible from National Road",
     badgeText: "For Sale",
-    badgeStyle: "badge-warning",
+    badgeStyle: "badge-green",
     verificationStatus: "Active Listing",
     promoted: false,
     seller: "Lio Navarro",
     ownerEmail: "lio.navarro@yutara.ph",
     latitude: "7.3310",
     longitude: "125.6760",
-    image: "assets/prop-2.jpg",
+    image: "assets/Land-for-sale-in-Panabo.jpg",
     documents: {
-      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "Missing — TCT Copy Not Uploaded", submitted: false, legitimate: false },
+      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2024006218", submitted: true, legitimate: true },
       taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-CAG-0518", submitted: true, legitimate: true },
-      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Submitted", submitted: true, legitimate: true }
+      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Verified", submitted: true, legitimate: true }
     },
-    cardTags: ["National Road", "Coconut Farm", "Awaiting TCT"],
+    cardTags: ["Road Frontage", "Coconut Farm", "1,800 SQM"],
     highlights: [
       "1,800 SQM Agricultural Lot",
-      "Accessible from National Road",
-      "Productive coconut trees on site",
-      "Tax declaration available; awaiting Clean TCT copy"
-    ],
-    description:
-      "Productive agricultural land with direct road access and a calm rural setting in Brgy. Cagangohan, Panabo City."
-  },
-  {
-    id: 5,
-    title: "Open Farm Land with Creek Access",
-    type: "Agricultural",
-    barangay: "Kasilak",
-    city: "Panabo City",
-    province: "Davao del Norte",
-    price: 2850000,
-    priceLabel: "₱2,850,000",
-    priceNote: "Open for offers",
-    area: 2500,
-    roadAccess: "Accessible from Barangay Road",
-    badgeText: "For Sale",
-    badgeStyle: "badge-warning",
-    verificationStatus: "Active Listing",
-    promoted: false,
-    seller: "Rina Dela Cruz",
-    ownerEmail: "rina.delacruz@yutara.ph",
-    latitude: "7.3220",
-    longitude: "125.6650",
-    image: "assets/prop-5.jpg",
-    documents: {
-      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "Missing — Unverified Title", submitted: false, legitimate: false },
-      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "Missing — Outdated 2021 Tax Receipt", submitted: false, legitimate: false },
-      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Owner Gov ID Submitted", submitted: true, legitimate: true }
-    },
-    cardTags: ["Creek Access", "2,500 SQM", "Needs Legal Docs"],
-    highlights: [
-      "2,500 SQM Open Farm Land",
-      "Natural creek water access",
-      "Accessible from Barangay Road",
-      "Awaiting updated TCT and Real Property Tax Clearance"
-    ],
-    description:
-      "Open, practical agricultural land with creek water access and ample room for mixed farm development in Brgy. Kasilak."
-  },
-  {
-    id: 6,
-    title: "Warehouse-Ready Lot Near the Highway",
-    type: "Industrial",
-    barangay: "A.O. Floirendo",
-    city: "Panabo City",
-    province: "Davao del Norte",
-    price: 7600000,
-    priceLabel: "₱7,600,000",
-    priceNote: "Open for offers",
-    area: 900,
-    roadAccess: "Accessible from National Road",
-    badgeText: "Clean Title",
-    badgeStyle: "badge-green",
-    verificationStatus: "Active Listing",
-    promoted: false,
-    seller: "Eli Mercado",
-    ownerEmail: "eli.mercado@yutara.ph",
-    latitude: "7.2950",
-    longitude: "125.6920",
-    image: "assets/prop-6.jpg",
-    documents: {
-      tct: { label: "Clean Transfer Certificate of Title (TCT / OCT)", refNo: "TCT No. 142-2025003910", submitted: true, legitimate: true },
-      taxDec: { label: "Updated Real Property Tax Declaration & Clearance", refNo: "TD-2026-AOF-0619", submitted: true, legitimate: true },
-      ownerId: { label: "Verified Owner Government ID & Deed / Authority", refNo: "Corporate SPA & Owner ID Matched", submitted: true, legitimate: true }
-    },
-    cardTags: ["Highway Access", "Logistics Ready", "900 SQM"],
-    highlights: [
-      "900 SQM Industrial Parcel",
-      "National Highway vehicle access",
-      "Suitable for storage or logistics",
+      "Direct gravel & barangay road access",
+      "Productive mature coconut trees on site",
       "Clean title & updated tax declaration available"
     ],
     description:
-      "Strategically located Panabo City parcel with heavy-vehicle road access suited for logistics, storage, or light industrial operations."
+      "Productive agricultural land planted with mature coconut and fruit trees with direct road frontage in Brgy. Cagangohan, Panabo City."
   }
 ];
 
