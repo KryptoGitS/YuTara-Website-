@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace — YuTara Panabo City Land Listings</title>
+  <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Sticky Navigation Bar -->
+  <header class="site-header">
+    <div class="container navbar" id="main-navbar">
+      <a href="index.html" class="brand" aria-label="YuTara Home">
+        <img src="assets/yutara-logo.png" alt="YuTara Logo" />
+      </a>
+
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776; Menu</button>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Home</a>
+        <a href="marketplace.html" class="active">Marketplace</a>
+        <a href="tracker.html">MVP Workflows</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-register btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="section-header-row">
+        <div>
+          <span class="section-tag">Panabo City Property Directory</span>
+          <h1 class="section-title">Explore Verified Land Listings</h1>
+          <p class="section-subtitle">Filter clean-titled Panabo City parcels by barangay, property category, price range, and lot size.</p>
+        </div>
+        <a href="tracker.html" class="btn btn-secondary btn-sm">+ Submit New Listing</a>
+      </div>
+
+      <!-- Quick Barangay Filter Chips -->
+      <div class="quick-chips mb-3">
+        <span class="chip-label">Quick Barangay Filter:</span>
+        <button type="button" class="chip-btn active" data-filter-chip="">All Panabo</button>
+        <button type="button" class="chip-btn" data-filter-chip="Gredu">Brgy. Gredu</button>
+        <button type="button" class="chip-btn" data-filter-chip="New Pandan">Brgy. New Pandan</button>
+        <button type="button" class="chip-btn" data-filter-chip="San Vicente">San Vicente</button>
+        <button type="button" class="chip-btn" data-filter-chip="Cagangohan">Cagangohan</button>
+        <button type="button" class="chip-btn" data-filter-chip="Kasilak">Kasilak</button>
+        <button type="button" class="chip-btn" data-filter-chip="A.O. Floirendo">A.O. Floirendo</button>
+      </div>
+
+      <!-- Mobile Collapsible Filter Toggle Button -->
+      <button type="button" class="btn btn-outline btn-full mobile-filter-toggle" id="mobile-filter-btn" aria-expanded="false">
+        <span class="mobile-filter-label">Show Property Filters</span>
+      </button>
+
+      <!-- Desktop Sidebar + Main Property Grid Layout -->
+      <div class="marketplace-layout">
+        <!-- Left Filter Sidebar -->
+        <aside class="filter-sidebar" id="filter-sidebar" aria-label="Property Filters">
+          <div class="filter-sidebar-header">
+            <h3>Filter Properties</h3>
+            <button type="button" class="btn btn-outline btn-sm" id="reset-filters-btn">Reset</button>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label" for="filter-location">Search Keyword or Landmark</label>
+            <input type="text" id="filter-location" class="form-control" placeholder="e.g., Agriya, School, Fence" />
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label" for="filter-barangay">Panabo City Barangay</label>
+            <select id="filter-barangay" class="form-select">
+              <option value="">All Panabo Barangays</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label" for="filter-type">Property Type</label>
+            <select id="filter-type" class="form-select">
+              <option value="">All Property Types</option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Agricultural">Agricultural</option>
+              <option value="Industrial">Industrial</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label" for="filter-min">Minimum Price (₱)</label>
+            <input type="number" id="filter-min" class="form-control" placeholder="0" min="0" />
+          </div>
+
+          <div class="filter-group">
+            <label class="form-label" for="filter-max">Maximum Price (₱)</label>
+            <input type="number" id="filter-max" class="form-control" placeholder="No Limit" min="0" />
+          </div>
+
+          <div class="filter-group">
+            <label class="checkbox-row" for="filter-saved-only">
+              <input type="checkbox" id="filter-saved-only" />
+              <span>Saved Properties Only <strong id="saved-count-badge">(0)</strong></span>
+            </label>
+          </div>
+        </aside>
+
+        <!-- Right Results Area -->
+        <div>
+          <div class="marketplace-main-bar">
+            <span id="results-count" class="text-green">Loading Panabo City properties...</span>
+            <div class="sort-control">
+              <label for="filter-sort" class="form-label text-no-margin">Sort By:</label>
+              <select id="filter-sort" aria-label="Sort properties">
+                <option value="featured">Featured First</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="area-desc">Largest Lot Area</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Property Cards Grid -->
+          <div class="grid grid-2" id="marketplace-grid">
+            <!-- Populated dynamically via js/app.js -->
+          </div>
+
+          <!-- Pagination & Load All Bar -->
+          <div class="pagination-bar">
+            <span class="text-muted">Click any property card to inspect clean-title highlights, GPS coordinates, and site visit scheduling.</span>
+            <div class="page-numbers" id="pagination-controls"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Standardized 4-Column Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <img src="assets/yutara-logo.png" alt="YuTara Logo" class="footer-logo" />
+          <p>
+            YuTara is a localized digital land marketplace connecting buyers, landowners, and partner real estate agencies across Panabo City and the Davao Region.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-title">Quick Navigation</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="tracker.html">MVP Workflows</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Marketplace Categories</div>
+          <ul class="footer-links">
+            <li><a href="marketplace.html?type=Residential">Residential Lots</a></li>
+            <li><a href="marketplace.html?type=Commercial">Commercial Lots</a></li>
+            <li><a href="marketplace.html?type=Agricultural">Agricultural &amp; Farm Lots</a></li>
+            <li><a href="marketplace.html?type=Industrial">Industrial Parcels</a></li>
+            <li><a href="marketplace.html?location=Gredu">Brgy. Gredu Listings</a></li>
+            <li><a href="marketplace.html?location=New%20Pandan">Brgy. New Pandan Listings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Contact &amp; Official Channels</div>
+          <ul class="footer-links">
+            <li>Panabo City, Davao del Norte, Philippines</li>
+            <li>Email: <a href="mailto:YutaraPanabo@gmail.com">YutaraPanabo@gmail.com</a></li>
+            <li>
+              <a href="https://www.facebook.com/people/YuTara/61596442262970/" target="_blank" rel="noopener noreferrer">
+                Official YuTara Facebook Page &nearr;
+              </a>
+            </li>
+            <li>Team Cri-Ters &bull; Academic Startup Prototype</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 YuTara Land Marketplace System (Team Cri-Ters). All rights reserved.</span>
+        <button type="button" class="btn btn-outline btn-sm" id="reset-demo-btn">Reset Demo Data</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

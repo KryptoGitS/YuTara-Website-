@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — YuTara Land Marketplace</title>
+  <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Sticky Navigation Bar -->
+  <header class="site-header">
+    <div class="container navbar" id="main-navbar">
+      <a href="index.html" class="brand" aria-label="YuTara Home">
+        <img src="assets/yutara-logo.png" alt="YuTara Logo" />
+      </a>
+
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776; Menu</button>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="tracker.html">MVP Workflows</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-register btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container auth-layout">
+      <!-- Left Branding Banner -->
+      <div class="auth-banner">
+        <div>
+          <span class="hero-eyebrow">Verified PropTech Onboarding</span>
+          <h1>Create Your YuTara Account</h1>
+          <p>
+            Join YuTara's 4-step identity and role onboarding flow to browse verified Panabo City land parcels, submit clean-titled properties, or coordinate agency transactions.
+          </p>
+        </div>
+
+        <div>
+          <span class="badge badge-solid-green">4-Step Identity Verification Flow</span>
+        </div>
+      </div>
+
+      <!-- Right 4-Step Registration Card -->
+      <div class="card">
+        <span class="section-tag">Account Registration</span>
+        <h2 class="section-title mb-2">4-Step Verification Setup</h2>
+
+        <!-- Step Indicator Pills -->
+        <div class="step-indicator">
+          <div class="step-pill active" id="step-pill-1">1. Info</div>
+          <div class="step-pill" id="step-pill-2">2. Gov ID</div>
+          <div class="step-pill" id="step-pill-3">3. Face Check</div>
+          <div class="step-pill" id="step-pill-4">4. Review</div>
+        </div>
+
+        <div id="reg-feedback" class="alert hidden"></div>
+
+        <form id="register-form">
+          <!-- Step 1: Account & Role Information -->
+          <div id="reg-step-1">
+            <div class="form-group">
+              <label class="form-label" for="reg-name">Full Name</label>
+              <input type="text" id="reg-name" class="form-control" placeholder="e.g., Juan Dela Cruz" value="Juan Dela Cruz" />
+            </div>
+
+            <div class="grid grid-2">
+              <div class="form-group">
+                <label class="form-label" for="reg-email">Email Address</label>
+                <input type="email" id="reg-email" class="form-control" placeholder="you@example.com" value="juan.delacruz@yutara.demo" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="reg-phone">Mobile Number</label>
+                <input type="text" id="reg-phone" class="form-control" placeholder="09XX-XXX-XXXX" value="0917-555-0192" />
+              </div>
+            </div>
+
+            <div class="grid grid-2">
+              <div class="form-group">
+                <label class="form-label" for="reg-role">Account Role</label>
+                <select id="reg-role" class="form-select">
+                  <option value="Buyer">Land Buyer</option>
+                  <option value="Seller">Landowner / Seller</option>
+                  <option value="Agency">Partner Real Estate Agency</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="reg-password">Create Password</label>
+                <div class="password-wrapper">
+                  <input type="password" id="reg-password" class="form-control" placeholder="At least 6 characters" value="yutara2026" />
+                  <button type="button" class="password-toggle-btn" data-toggle-password="reg-password" aria-label="Show password">Show</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Government ID Upload (Simulated) -->
+          <div id="reg-step-2" class="hidden">
+            <div class="alert alert-warning">
+              <strong>Identity Screening:</strong> Select a valid Philippine government-issued ID to prevent fraudulent or anonymous property listings.
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-id-type">Government ID Type</label>
+              <select id="reg-id-type" class="form-select">
+                <option value="Philippine National ID (PhilSys)">Philippine National ID (PhilSys)</option>
+                <option value="Driver's License (LTO)">Driver's License (LTO)</option>
+                <option value="Philippine Passport">Philippine Passport</option>
+                <option value="PRC / Real Estate Broker License">PRC / Real Estate Broker License</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-id-num">ID Reference Number (Demo)</label>
+              <input type="text" id="reg-id-num" class="form-control" value="PHL-8842-2026-PANABO" />
+            </div>
+          </div>
+
+          <!-- Step 3: Face Verification Check (Simulated) -->
+          <div id="reg-step-3" class="hidden">
+            <div class="card-soft mb-2">
+              <h3 class="mb-1">Simulated Biometric Liveness Check</h3>
+              <p class="mb-2">
+                In the production system, YuTara compares your live camera selfie against your submitted Government ID before allowing land listing publication or reservation booking.
+              </p>
+              <label class="checkbox-row" for="reg-face-check">
+                <input type="checkbox" id="reg-face-check" checked />
+                <span>I confirm the simulated face verification step for this MVP prototype demo.</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Step 4: Summary Review -->
+          <div id="reg-step-4" class="hidden">
+            <div class="card-soft mb-2">
+              <h3 class="mb-2">Review Your Registration Details</h3>
+              <ul class="list-indented">
+                <li><strong>Full Name:</strong> <span id="review-name"></span></li>
+                <li><strong>Email Address:</strong> <span id="review-email"></span></li>
+                <li><strong>Mobile Number:</strong> <span id="review-phone"></span></li>
+                <li><strong>Selected Role:</strong> <span id="review-role"></span></li>
+                <li><strong>Submitted ID:</strong> <span id="review-id-type"></span></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="flex-between-wrap mt-3">
+            <button type="button" class="btn btn-outline hidden" id="reg-prev-btn">&larr; Previous Step</button>
+            <button type="button" class="btn btn-primary" id="reg-next-btn">Next Step &rarr;</button>
+            <button type="submit" class="btn btn-primary hidden" id="reg-submit-btn">Complete Registration &checkmark;</button>
+          </div>
+        </form>
+
+        <p class="mt-3 text-center">
+          Already have an account? <a href="login.html" class="text-green inline-action-link">Log In Here &rarr;</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Standardized 4-Column Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <img src="assets/yutara-logo.png" alt="YuTara Logo" class="footer-logo" />
+          <p>
+            YuTara is a localized digital land marketplace connecting buyers, landowners, and partner real estate agencies across Panabo City and the Davao Region.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-title">Quick Navigation</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="tracker.html">MVP Workflows</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Marketplace Categories</div>
+          <ul class="footer-links">
+            <li><a href="marketplace.html?type=Residential">Residential Lots</a></li>
+            <li><a href="marketplace.html?type=Commercial">Commercial Lots</a></li>
+            <li><a href="marketplace.html?type=Agricultural">Agricultural &amp; Farm Lots</a></li>
+            <li><a href="marketplace.html?type=Industrial">Industrial Parcels</a></li>
+            <li><a href="marketplace.html?location=Gredu">Brgy. Gredu Listings</a></li>
+            <li><a href="marketplace.html?location=New%20Pandan">Brgy. New Pandan Listings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Contact &amp; Official Channels</div>
+          <ul class="footer-links">
+            <li>Panabo City, Davao del Norte, Philippines</li>
+            <li>Email: <a href="mailto:YutaraPanabo@gmail.com">YutaraPanabo@gmail.com</a></li>
+            <li>
+              <a href="https://www.facebook.com/people/YuTara/61596442262970/" target="_blank" rel="noopener noreferrer">
+                Official YuTara Facebook Page &nearr;
+              </a>
+            </li>
+            <li>Team Cri-Ters &bull; Academic Startup Prototype</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 YuTara Land Marketplace System (Team Cri-Ters). All rights reserved.</span>
+        <button type="button" class="btn btn-outline btn-sm" id="reset-demo-btn">Reset Demo Data</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

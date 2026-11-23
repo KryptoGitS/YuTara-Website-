@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Property Details — YuTara Land Marketplace</title>
+  <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Sticky Navigation Bar -->
+  <header class="site-header">
+    <div class="container navbar" id="main-navbar">
+      <a href="index.html" class="brand" aria-label="YuTara Home">
+        <img src="assets/yutara-logo.png" alt="YuTara Logo" />
+      </a>
+
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776; Menu</button>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html">Home</a>
+        <a href="marketplace.html" class="active">Marketplace</a>
+        <a href="tracker.html">MVP Workflows</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-register btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section section-top-compact" id="property-detail-root">
+    <div class="container">
+      <div class="mb-2">
+        <a href="marketplace.html" class="btn btn-outline btn-sm">&larr; Back to Panabo Marketplace</a>
+      </div>
+
+      <div class="detail-layout">
+        <!-- Left Column: Property Photo & Coordinates -->
+        <div>
+          <div class="detail-image-box" id="detail-photo-trigger" title="Click to enlarge property photo">
+            <img id="detail-img" src="assets/panabo-lot-1.jpg" alt="Property preview" />
+            <span class="zoom-hint">Click to Zoom Photo</span>
+          </div>
+
+          <div class="coords-box">
+            <div>
+              <strong>Panabo City Map Reference</strong>
+              <div id="detail-coords" class="text-muted">Coordinates: 7.3008, 125.6876</div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="copy-coords-btn">Copy Coordinates</button>
+          </div>
+        </div>
+
+        <!-- Right Column: Specifications, Highlights & Action Buttons -->
+        <div class="card">
+          <div class="flex-wrap-gap mb-2">
+            <span class="badge badge-green">Clean Title Screened</span>
+            <span class="badge badge-brown-soft">Panabo City Verified</span>
+          </div>
+
+          <h1 id="detail-title" class="section-title">Property Title</h1>
+          <p id="detail-location" class="text-muted">Brgy. Gredu, Panabo City, Davao del Norte</p>
+
+          <div class="detail-price-box">
+            <div id="detail-price" class="detail-price-main">₱0</div>
+            <div id="detail-price-sqm" class="property-note">₱0 / sqm</div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <span class="metric-label">Lot Area</span>
+              <span id="detail-area" class="metric-value">0 sqm</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Category</span>
+              <span id="detail-type" class="metric-value">Residential</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Listed By</span>
+              <span id="detail-seller" class="metric-value">Seller</span>
+            </div>
+          </div>
+
+          <!-- Property Highlights Checklist -->
+          <div class="highlights-box">
+            <strong>Key Property Highlights</strong>
+            <ul id="detail-highlights" class="highlights-grid">
+              <!-- Populated dynamically from js/data.js -->
+            </ul>
+          </div>
+
+          <p><strong>Road Access:</strong> <span id="detail-road">Barangay Road</span></p>
+          <p id="detail-desc" class="mt-1">Property description...</p>
+
+          <!-- Primary Buyer Actions -->
+          <div class="detail-action-grid mt-3">
+            <button type="button" class="btn btn-primary" id="site-visit-btn">Request Site Visit</button>
+            <button type="button" class="btn btn-secondary" id="contact-seller-btn">Contact Seller</button>
+            <a href="reservation.html" class="btn btn-outline" id="reserve-property-link">Reserve Property (MVP)</a>
+            <button type="button" class="btn btn-outline" id="detail-save-btn">Save Listing</button>
+          </div>
+
+          <div class="safeguard-box">
+            <strong>YuTara Pre-Listing Verification Safeguards</strong>
+            <ul class="safeguard-list">
+              <li>&#10003; Initial review of Transfer Certificate of Title (TCT) &amp; Tax Declaration</li>
+              <li>&#10003; Direct site visit coordination with local Panabo City representative</li>
+              <li>&#10003; Milestone-tracked document transfer via partner real estate agency</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- More Panabo City Properties Section -->
+      <div class="mt-4">
+        <div class="section-header-row">
+          <div>
+            <span class="section-tag">Compare Panabo Parcels</span>
+            <h2 class="section-title">Other Verified Properties in Panabo City</h2>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline btn-sm">View All Listings &rarr;</a>
+        </div>
+        <div class="grid grid-3" id="related-grid"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Photo Zoom Lightbox Modal -->
+  <div class="modal-overlay hidden" id="photo-lightbox">
+    <div class="lightbox-box">
+      <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close photo">&times;</button>
+      <img id="lightbox-img" src="assets/panabo-lot-1.jpg" alt="Enlarged property view" />
+    </div>
+  </div>
+
+  <!-- Site Visit / Seller Inquiry Modal -->
+  <div class="modal-overlay hidden" id="action-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">Request Site Visit</h3>
+        <button type="button" class="btn btn-outline btn-sm" id="close-modal-btn">&times;</button>
+      </div>
+      <p class="mb-2">Submit your contact details to coordinate a property inspection or seller inquiry in Panabo City.</p>
+
+      <div id="modal-status" class="alert hidden"></div>
+
+      <form id="modal-form">
+        <div class="form-group">
+          <label class="form-label" for="modal-name">Your Full Name</label>
+          <input type="text" id="modal-name" class="form-control" placeholder="e.g., Juan Dela Cruz" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="modal-phone">Mobile Number</label>
+          <input type="text" id="modal-phone" class="form-control" placeholder="e.g., 0917-123-4567" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="modal-notes">Preferred Visit Date or Question</label>
+          <textarea id="modal-notes" class="form-textarea" placeholder="I would like to inspect the lot boundaries and review the clean title copy this Saturday."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Standardized 4-Column Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <img src="assets/yutara-logo.png" alt="YuTara Logo" class="footer-logo" />
+          <p>
+            YuTara is a localized digital land marketplace connecting buyers, landowners, and partner real estate agencies across Panabo City and the Davao Region.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-title">Quick Navigation</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="tracker.html">MVP Workflows</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Marketplace Categories</div>
+          <ul class="footer-links">
+            <li><a href="marketplace.html?type=Residential">Residential Lots</a></li>
+            <li><a href="marketplace.html?type=Commercial">Commercial Lots</a></li>
+            <li><a href="marketplace.html?type=Agricultural">Agricultural &amp; Farm Lots</a></li>
+            <li><a href="marketplace.html?type=Industrial">Industrial Parcels</a></li>
+            <li><a href="marketplace.html?location=Gredu">Brgy. Gredu Listings</a></li>
+            <li><a href="marketplace.html?location=New%20Pandan">Brgy. New Pandan Listings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Contact &amp; Official Channels</div>
+          <ul class="footer-links">
+            <li>Panabo City, Davao del Norte, Philippines</li>
+            <li>Email: <a href="mailto:YutaraPanabo@gmail.com">YutaraPanabo@gmail.com</a></li>
+            <li>
+              <a href="https://www.facebook.com/people/YuTara/61596442262970/" target="_blank" rel="noopener noreferrer">
+                Official YuTara Facebook Page &nearr;
+              </a>
+            </li>
+            <li>Team Cri-Ters &bull; Academic Startup Prototype</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 YuTara Land Marketplace System (Team Cri-Ters). All rights reserved.</span>
+        <button type="button" class="btn btn-outline btn-sm" id="reset-demo-btn">Reset Demo Data</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

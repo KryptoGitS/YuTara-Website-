@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YuTara — Panabo City Digital Land Marketplace</title>
+  <link rel="icon" type="image/png" href="assets/yutara-logo.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Sticky Navigation Bar -->
+  <header class="site-header">
+    <div class="container navbar" id="main-navbar">
+      <a href="index.html" class="brand" aria-label="YuTara Home">
+        <img src="assets/yutara-logo.png" alt="YuTara Logo" />
+      </a>
+
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">&#9776; Menu</button>
+
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="index.html" class="active">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="tracker.html">MVP Workflows</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html" class="btn btn-primary btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-register btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section (Two-Column Layout) -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="hero-eyebrow">Panabo City &bull; Davao del Norte Digital Land Marketplace</span>
+          <h1>Your Land. Your Opportunity. Your YuTara.</h1>
+          <p>
+            Discover clean-titled land opportunities across Panabo City and the Davao Region. Explore verified property listings, compare locations, and navigate your property journey with confidence.
+          </p>
+          <div class="hero-actions">
+            <a href="marketplace.html" class="btn btn-primary">Explore Marketplace</a>
+            <a href="#how-it-works" class="btn btn-secondary">How YuTara Works</a>
+          </div>
+          <div class="hero-trust-row">
+            <span class="hero-trust-pill"><span class="hero-trust-dot"></span> Pre-Listing Document Screening</span>
+            <span class="hero-trust-pill"><span class="hero-trust-dot"></span> Panabo City Focus</span>
+            <span class="hero-trust-pill"><span class="hero-trust-dot"></span> Agency-Assisted Transfer</span>
+          </div>
+        </div>
+
+        <!-- Featured Property Card -->
+        <aside class="hero-spotlight" aria-label="Featured Panabo Property Spotlight">
+          <div class="spotlight-tabs">
+            <button type="button" class="spotlight-tab active" data-spotlight-id="2">Brgy. New Pandan (₱1.6M)</button>
+            <button type="button" class="spotlight-tab" data-spotlight-id="1">Brgy. Gredu (229 sqm)</button>
+          </div>
+          <div class="spotlight-media">
+            <img id="spotlight-img" src="assets/panabo-lot-2.jpg" alt="Fenced 2-Room House & Lot Near Agriya" />
+            <div class="thumb-badges">
+              <span id="spotlight-badge" class="badge badge-warning">Markdown Price</span>
+              <span id="spotlight-cat" class="badge badge-solid-green">Residential</span>
+            </div>
+          </div>
+          <div class="spotlight-body">
+            <div class="spotlight-meta" id="spotlight-type">Lot Area: 200 sqm &bull; Residential</div>
+            <h2 class="spotlight-title" id="spotlight-title">Fenced 2-Room House &amp; Lot Near Agriya</h2>
+            <p class="spotlight-loc" id="spotlight-loc">Brgy. New Pandan, Panabo City</p>
+            <div class="spotlight-footer">
+              <div>
+                <div class="spotlight-price" id="spotlight-price">₱1,600,000</div>
+                <div class="property-note" id="spotlight-meta">Updated Tax &bull; 2 Rooms &amp; Fence &bull; Near Agriya</div>
+              </div>
+              <a id="spotlight-link" href="property.html?id=2" class="btn btn-primary btn-sm">View Property &rarr;</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Floating Property Search Panel -->
+    <div class="container">
+      <div class="search-panel">
+        <form id="home-search-form">
+          <div class="search-grid">
+            <div>
+              <label class="form-label" for="home-location">Location, Barangay or Landmark</label>
+              <input type="text" id="home-location" class="form-control" placeholder="e.g., Gredu, New Pandan, Agriya" />
+            </div>
+            <div>
+              <label class="form-label" for="home-type">Property Type</label>
+              <select id="home-type" class="form-select">
+                <option value="">All Property Types</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Agricultural">Agricultural</option>
+                <option value="Industrial">Industrial</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="home-min">Minimum Budget</label>
+              <input type="number" id="home-min" class="form-control" placeholder="₱ Min Price" min="0" />
+            </div>
+            <div>
+              <label class="form-label" for="home-max">Maximum Budget</label>
+              <input type="number" id="home-max" class="form-control" placeholder="₱ Max Price" min="0" />
+            </div>
+            <div>
+              <button type="submit" class="btn btn-primary btn-full">Search Properties</button>
+            </div>
+          </div>
+          <div class="quick-chips">
+            <span class="chip-label">Quick Panabo Areas:</span>
+            <button type="button" class="chip-btn" data-home-chip="Gredu">Brgy. Gredu</button>
+            <button type="button" class="chip-btn" data-home-chip="New Pandan">Brgy. New Pandan</button>
+            <button type="button" class="chip-btn" data-home-chip="San Vicente">San Vicente</button>
+            <button type="button" class="chip-btn" data-home-chip="Cagangohan">Cagangohan</button>
+            <button type="button" class="chip-btn" data-home-chip="">View All</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Section 6: Featured Property Listings -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-tag">Verified Panabo Listings</span>
+            <h2 class="section-title">Featured Property Listings</h2>
+            <p class="section-subtitle">Explore clean-titled residential, commercial, and agricultural parcels across Panabo City.</p>
+          </div>
+          <a href="marketplace.html" class="btn btn-outline">View All Listings &rarr;</a>
+        </div>
+
+        <div class="grid grid-3" id="featured-grid">
+          <!-- Populated dynamically from js/data.js via js/app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7A: Explore Properties by Location -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-tag">Local Neighborhood Guide</span>
+            <h2 class="section-title">Explore Properties by Location</h2>
+            <p class="section-subtitle">Browse Panabo City barangays based on road frontage, school proximity, and zoning focus.</p>
+          </div>
+          <a href="marketplace.html" class="btn btn-secondary btn-sm">Browse All 22 Barangays</a>
+        </div>
+
+        <div class="grid grid-4">
+          <a href="marketplace.html?location=Gredu" class="location-card">
+            <img src="assets/panabo-lot-1.jpg" alt="Brgy. Gredu Commercial and Residential Corridor" class="location-card-img" />
+            <div class="location-card-body">
+              <div class="location-card-meta">Commercial &amp; Mixed-Use</div>
+              <h3 class="location-card-title">Brgy. Gredu</h3>
+              <p class="location-card-desc">High-visibility road frontage near schools, ideal for stores, rentals, and boarding houses.</p>
+            </div>
+          </a>
+
+          <a href="marketplace.html?location=New%20Pandan" class="location-card">
+            <img src="assets/panabo-lot-2.jpg" alt="Brgy. New Pandan Residential District Near Agriya" class="location-card-img" />
+            <div class="location-card-body">
+              <div class="location-card-meta">Residential Hub</div>
+              <h3 class="location-card-title">Brgy. New Pandan</h3>
+              <p class="location-card-desc">Peaceful fenced lots near Agriya and Doña Nenita Elementary School with utility connections.</p>
+            </div>
+          </a>
+
+          <a href="marketplace.html?location=San%20Vicente" class="location-card">
+            <img src="assets/prop-1.jpg" alt="Brgy. San Vicente Family Neighborhoods" class="location-card-img" />
+            <div class="location-card-body">
+              <div class="location-card-meta">Suburban Residential</div>
+              <h3 class="location-card-title">Brgy. San Vicente</h3>
+              <p class="location-card-desc">Accessible neighborhood parcels within minutes of Panabo City center and public markets.</p>
+            </div>
+          </a>
+
+          <a href="marketplace.html?location=Cagangohan" class="location-card">
+            <img src="assets/prop-2.jpg" alt="Brgy. Cagangohan Agricultural and Farm Lots" class="location-card-img" />
+            <div class="location-card-body">
+              <div class="location-card-meta">Agricultural &amp; Farm Lots</div>
+              <h3 class="location-card-title">Brgy. Cagangohan</h3>
+              <p class="location-card-desc">Productive agricultural and coconut parcels with direct national and barangay road access.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7B: Why Choose YuTara? -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Platform Advantage</span>
+          <h2 class="section-title">Why Choose YuTara?</h2>
+          <p class="section-subtitle">Built specifically to solve fragmented, unverified social-media land listings in Panabo City.</p>
+        </div>
+
+        <div class="grid grid-4">
+          <div class="card">
+            <span class="badge badge-green mb-2">01 &bull; Trust</span>
+            <h3>Verified Property Listings</h3>
+            <p>Every listing undergoes pre-listing document screening for Transfer Certificate of Title (TCT) and updated Real Property Tax status.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-brown-soft mb-2">02 &bull; Hyperlocal</span>
+            <h3>Panabo City Focus</h3>
+            <p>Dedicated coverage across Panabo City barangays with accurate lot areas, landmark references, and road access details.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-green mb-2">03 &bull; Clarity</span>
+            <h3>Transparent Property Information</h3>
+            <p>Upfront pricing, price-per-sqm metrics, utility availability, and GPS coordinates so buyers can compare properties objectively.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-brown-soft mb-2">04 &bull; Guidance</span>
+            <h3>Agency-Assisted Transactions</h3>
+            <p>Coordinated site inspections and milestone-tracked document processing with partner real estate professionals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7C: How YuTara Works (5-Step Process) -->
+    <section class="section section-alt" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Structured Property Journey</span>
+          <h2 class="section-title">How YuTara Works</h2>
+          <p class="section-subtitle">A clear five-step workflow from property discovery to agency-assisted title transfer.</p>
+        </div>
+
+        <div class="grid grid-5">
+          <div class="step-card">
+            <div class="step-circle">1</div>
+            <h3>Explore Property Listings</h3>
+            <p>Filter Panabo City land parcels by barangay, property type, lot area, and budget range.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-circle">2</div>
+            <h3>Review Property Information</h3>
+            <p>Inspect clean-title status, photos, road access, utilities, and verified GPS coordinates.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-circle">3</div>
+            <h3>Submit an Inquiry</h3>
+            <p>Contact the verified seller or request a site visit directly through the listing page.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-circle">4</div>
+            <h3>Coordinate Property Inspection</h3>
+            <p>Conduct an on-site boundary walk and document inspection with an affiliated coordinator.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-circle">5</div>
+            <h3>Proceed with Agency-Assisted Transactions</h3>
+            <p>Track reservation, due diligence, and title transfer milestones in the MVP Workflow Hub.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7D: Our Services -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header-row">
+          <div>
+            <span class="section-tag">End-to-End PropTech Support</span>
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Core marketplace services connecting Panabo City buyers, landowners, and partner agencies.</p>
+          </div>
+          <a href="services.html" class="btn btn-outline btn-sm">View Full Service Breakdown &rarr;</a>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <span class="badge badge-green mb-2">For Land Buyers</span>
+            <h3>Property Discovery &amp; Comparison</h3>
+            <p>Search verified Panabo City parcels with standardized title badges, price-per-sqm breakdowns, and direct site visit scheduling.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-brown-soft mb-2">For Landowners</span>
+            <h3>Pre-Listing Intake &amp; Promotion</h3>
+            <p>Submit clean-titled properties through our structured seller intake workflow to reach serious local and OFW land buyers.</p>
+          </div>
+          <div class="card">
+            <span class="badge badge-green mb-2">For Partner Agencies</span>
+            <h3>Milestone &amp; Document Coordination</h3>
+            <p>Manage buyer reservations, document verification checklists, and transaction progress in one transparent workflow queue.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7E: Frequently Asked Questions (Accordion) -->
+    <section class="section section-alt" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Buyer &amp; Seller Guide</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">Answers to common questions about buying and listing land in Panabo City through YuTara.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item open">
+            <button type="button" class="faq-question" aria-expanded="true">
+              <span>How does YuTara verify property listings in Panabo City?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Before a parcel is highlighted as a Clean Title listing, our intake workflow screens the owner's Transfer Certificate of Title (TCT), updated Real Property Tax Declaration, and location details in Panabo City. Partner real estate professionals assist buyers during formal Registry of Deeds verification.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+              <span>Can I schedule an on-site visit for the Brgy. Gredu or Brgy. New Pandan lots?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Yes. Open any property detail page and click <strong>Request Site Visit</strong>. Enter your name, mobile number, and preferred schedule so a local Panabo City coordinator can arrange an accompanied inspection.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+              <span>Does YuTara collect real payments during this MVP prototype demonstration?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              No real funds are collected in this prototype. The reservation checkout and escrow metrics are clearly labeled as simulated MVP workflows to demonstrate how milestone tracking and agency verification operate end-to-end.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question" aria-expanded="false">
+              <span>How can a Panabo City landowner submit a property to the marketplace?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Navigate to <strong>MVP Workflows</strong> and select the <strong>Seller Intake Form</strong> tab. Fill in the property title, Panabo barangay, price, lot area in square meters, and road access type to publish the listing to your local demo marketplace immediately.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Section 7F: Standardized 4-Column Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <img src="assets/yutara-logo.png" alt="YuTara Logo" class="footer-logo" />
+          <p>
+            YuTara is a localized digital land marketplace connecting buyers, landowners, and partner real estate agencies across Panabo City and the Davao Region.
+          </p>
+        </div>
+
+        <div>
+          <div class="footer-title">Quick Navigation</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="marketplace.html">Marketplace</a></li>
+            <li><a href="tracker.html">MVP Workflows</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Marketplace Categories</div>
+          <ul class="footer-links">
+            <li><a href="marketplace.html?type=Residential">Residential Lots</a></li>
+            <li><a href="marketplace.html?type=Commercial">Commercial Lots</a></li>
+            <li><a href="marketplace.html?type=Agricultural">Agricultural &amp; Farm Lots</a></li>
+            <li><a href="marketplace.html?type=Industrial">Industrial Parcels</a></li>
+            <li><a href="marketplace.html?location=Gredu">Brgy. Gredu Listings</a></li>
+            <li><a href="marketplace.html?location=New%20Pandan">Brgy. New Pandan Listings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-title">Contact &amp; Official Channels</div>
+          <ul class="footer-links">
+            <li>Panabo City, Davao del Norte, Philippines</li>
+            <li>Email: <a href="mailto:YutaraPanabo@gmail.com">YutaraPanabo@gmail.com</a></li>
+            <li>
+              <a href="https://www.facebook.com/people/YuTara/61596442262970/" target="_blank" rel="noopener noreferrer">
+                Official YuTara Facebook Page &nearr;
+              </a>
+            </li>
+            <li>Team Cri-Ters &bull; Academic Startup Prototype</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 YuTara Land Marketplace System (Team Cri-Ters). All rights reserved.</span>
+        <button type="button" class="btn btn-outline btn-sm" id="reset-demo-btn">Reset Demo Data</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
