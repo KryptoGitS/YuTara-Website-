@@ -1298,15 +1298,16 @@ function initPropertyDetailPage() {
 
     if (propMsgs.length === 0) {
       msgThread.innerHTML =
-        '<div class="text-muted text-center py-3">No messages yet. Start the conversation below.</div>';
+        '<div class="msg-empty">No messages yet. Start the conversation below.</div>';
     } else {
       msgThread.innerHTML = propMsgs.map(function (m) {
         const isMine = m.senderEmail && m.senderEmail.toLowerCase() === currentUserEmail;
         const bubbleClass = isMine ? "msg-mine" : "msg-theirs";
         const senderLabel = isMine ? "You" : m.senderName || "Unknown";
+        const formattedTime = String(m.createdAt || "").replace("T", " ");
         return (
           '<div class="msg-bubble ' + bubbleClass + '">' +
-          '  <div class="msg-header"><strong>' + escapeHtml(senderLabel) + '</strong><span class="msg-time">' + escapeHtml(m.createdAt) + "</span></div>" +
+          '  <div class="msg-header"><strong>' + escapeHtml(senderLabel) + '</strong><span class="msg-time">' + escapeHtml(formattedTime) + "</span></div>" +
           '  <div class="msg-body">' + escapeHtml(m.message) + "</div>" +
           "</div>"
         );
@@ -1390,7 +1391,7 @@ function initReservationPage() {
     const quickBtn = document.getElementById("quick-demo-signin");
     if (quickBtn) {
       quickBtn.addEventListener("click", function () {
-        setSession({ name: "Juan Dela Cruz", email: "buyer@yutara.demo", role: "Buyer" });
+        setSession({ name: "Juan Dela Cruz", email: "user@yutara.ph", role: "User" });
         window.location.reload();
       });
     }
@@ -1448,8 +1449,8 @@ function initReservationPage() {
       escapeHtml(newTx.id) +
       ")!</strong> No real money was collected. Your request is now with <strong>" +
       escapeHtml(prop.seller) +
-      "</strong> for approval. You will be notified once the seller accepts." +
-      '<a href="tracker.html" class="inline-action-link" style="display: block; margin-top: 8px;">View My Reservations &rarr;</a>';
+      "</strong> for approval. You will be notified once the seller accepts.<br />" +
+      '<a href="tracker.html" class="inline-action-link inline-block-link">View My Reservations &rarr;</a>';
     feedback.classList.remove("hidden");
     form.reset();
     showToast("Reservation request " + newTx.id + " sent to seller");
@@ -2035,7 +2036,7 @@ function initTrackerPage() {
       if (formHeading) formHeading.textContent = "Add Land for Sale in Panabo City";
       if (formSubtitle) {
         formSubtitle.textContent =
-          "Enter your Panabo City land details and 3 required legal documents for Lucky Seven verification.";
+          "Enter your Panabo City land details. Your listing goes live on the Marketplace immediately; Lucky Seven verification supports your land transaction milestones.";
       }
       if (submitBtn) {
         submitBtn.innerHTML = "Submit Land for Sale &rarr;";
@@ -3105,8 +3106,12 @@ function initTrackerPage() {
               statusBadgeHtml = '<span class="badge badge-green">' + escapeHtml(tx.id) + " &bull; " + escapeHtml(txPriceDisplay) + "</span>";
             }
 
-            // Approve/Reject buttons for seller on pending requests
+            // Approve/Reject buttons for seller on pending requests + Direct Message link
             let actionButtonsHtml = "";
+            const msgBtnHtml =
+              '<a href="property.html?id=' +
+              Number(tx.propertyId || 1) +
+              '#msg-section" class="btn btn-outline btn-sm">Message</a>';
             if (isPending && isStandardUser) {
               const isSeller = (tx.sellerEmail && tx.sellerEmail.toLowerCase() === currentEmail.toLowerCase()) || tx.sellerName === currentName;
               if (isSeller) {
@@ -3114,8 +3119,13 @@ function initTrackerPage() {
                   '  <div class="mt-2 flex-wrap-gap">' +
                   '    <button type="button" class="btn btn-primary btn-sm" data-approve-tx-id="' + tx.id + '">Accept Reservation</button>' +
                   '    <button type="button" class="btn btn-outline btn-sm" data-reject-tx-id="' + tx.id + '">Reject Reservation</button>' +
+                  "    " + msgBtnHtml +
                   "  </div>";
+              } else {
+                actionButtonsHtml = '  <div class="mt-2 flex-wrap-gap">' + msgBtnHtml + "</div>";
               }
+            } else {
+              actionButtonsHtml = '  <div class="mt-2 flex-wrap-gap">' + msgBtnHtml + "</div>";
             }
 
             return (
@@ -3228,10 +3238,10 @@ function initTrackerPage() {
           '  <div class="ls-card-footer">' +
           '    <span class="ls-results-count">' + percent + "% complete</span>" +
           '    <div class="ls-action-group">' +
-          '      <button type="button" class="btn btn-ls-navy btn-sm" data-tx-id="' + tx.id + '" ' + (isDone || blockedByDocs ? "disabled" : "") + ">" +
+          '      <button type="button" class="btn btn-ls-navy btn-sm" data-advance-tx-id="' + tx.id + '" ' + (isDone || blockedByDocs ? "disabled" : "") + ">" +
           (isDone ? "Done ✓" : blockedByDocs ? "Blocked" : "Advance &rarr;") +
           "      </button>" +
-          '      <button type="button" class="btn btn-ls-outline btn-sm" data-tx-id="' + tx.id + '">Reset</button>' +
+          '      <button type="button" class="btn btn-ls-outline btn-sm" data-reset-tx-id="' + tx.id + '">Reset</button>' +
           "    </div>" +
           "  </div>" +
           "</article>"
@@ -3243,10 +3253,10 @@ function initTrackerPage() {
       bar.style.width = bar.getAttribute("data-agency-progress-width") + "%";
     });
 
-    agencyList.querySelectorAll("[data-advance-idx]").forEach(function (btn) {
+    agencyList.querySelectorAll("[data-advance-tx-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (!isVerifier) return;
-        const txId = btn.getAttribute("data-tx-id");
+        const txId = btn.getAttribute("data-advance-tx-id");
         const list = getTransactions();
         const tx = list.find(function (t) { return t.id === txId; });
         if (!tx || tx.stageIndex >= MILESTONE_STEPS.length - 1) return;
@@ -3266,10 +3276,10 @@ function initTrackerPage() {
       });
     });
 
-    agencyList.querySelectorAll("[data-reset-tx-idx]").forEach(function (btn) {
+    agencyList.querySelectorAll("[data-reset-tx-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (!isVerifier) return;
-        const txId = btn.getAttribute("data-tx-id");
+        const txId = btn.getAttribute("data-reset-tx-id");
         const list = getTransactions();
         const tx = list.find(function (t) { return t.id === txId; });
         if (tx) {
@@ -3579,11 +3589,11 @@ function initTrackerPage() {
     if (isVerified) {
       pillClass = "state-verified";
       pillText = "✓ Verified by Lucky Seven";
-      progressText = "Live on Marketplace";
+      progressText = "Verified on Marketplace";
     } else if (missingCount > 0) {
       pillClass = "state-missing";
       pillText = "Missing " + missingCount + " Legal Doc" + (missingCount > 1 ? "s" : "");
-      progressText = "Held from Marketplace";
+      progressText = "Live • Docs Needed for Verification";
     } else if (legitCount === 3) {
       pillClass = "state-pending";
       pillText = "Ready for Lucky Seven Approval";
