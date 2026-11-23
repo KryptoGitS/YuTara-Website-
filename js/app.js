@@ -2234,7 +2234,7 @@ function initTrackerPage() {
       " " +
       escapeHtml(prop.seller || "Owner") +
       "</span>" +
-      '          <span class="ls-meta-chip">' +
+      '          <span class="ls-meta-chip ls-meta-price">' +
       escapeHtml(formatPropertyPrice(prop)) +
       "</span>" +
       "        </div>" +
