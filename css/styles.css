@@ -5245,19 +5245,163 @@ h1, h2, h3, h4 {
   color: var(--status-error-text);
 }
 
-.seller-docs-box {
-  background-color: var(--soft-off-white);
+/* Clean Seller Listing Intake Form Card */
+.seller-form-shell {
+  padding: 28px 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(37, 51, 41, 0.05);
+}
+
+.seller-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.seller-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.seller-header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background-color: var(--green-tint);
   border: 1px solid var(--green-border);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin: 14px 0 18px;
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.seller-form-title {
+  margin-bottom: 4px;
+}
+
+.seller-form-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.seller-intake-form .grid {
+  gap: 16px;
+}
+
+.seller-intake-form .form-group {
+  margin-bottom: 16px;
+}
+
+.seller-step-group {
+  margin-bottom: 8px;
+}
+
+.seller-step-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--forest-green);
+  margin-bottom: 14px;
+}
+
+.seller-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label-hint {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.seller-docs-box {
+  background-color: #F6FAF2;
+  border: 1px solid #C9E2B7;
+  border-left: 3.5px solid var(--forest-green);
+  border-radius: 12px;
+  padding: 20px 22px 6px;
+  margin: 10px 0 22px;
+}
+
+.seller-docs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 6px;
+}
+
+.seller-docs-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--forest-green);
 }
 
 .seller-docs-title {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   font-weight: 700;
   color: var(--forest-green);
-  margin-bottom: 4px;
+}
+
+.seller-docs-req-pill {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--forest-green);
+  background-color: var(--white);
+  border: 1px solid #C9E2B7;
+  border-radius: 999px;
+  padding: 3px 11px;
+}
+
+.seller-docs-hint {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.seller-desc-area {
+  min-height: 98px;
+}
+
+.seller-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-top: 18px;
+  margin-top: 8px;
+  border-top: 1px solid #EEF1EC;
+}
+
+.seller-footer-note {
+  font-size: 0.83rem;
+  color: var(--text-muted);
 }
 
 .account-inline-select {
@@ -5439,4 +5583,25 @@ body.anim-debug-off {
   .doc-verify-grid {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 720px) {
+  .seller-form-shell {
+    padding: 20px 18px;
+  }
+  .seller-docs-box {
+    padding: 16px 16px 4px;
+  }
+  .seller-form-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Final Visibility Utility Override (ensures .btn.hidden and .alert.hidden stay hidden) */
+.hidden,
+.btn.hidden,
+.alert.hidden,
+.tab-panel.hidden {
+  display: none;
 }

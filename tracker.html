@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=18" />
+  <link rel="stylesheet" href="css/styles.css?v=19" />
 </head>
 <body>
 
@@ -184,7 +184,7 @@
             </div>
           </div>
           <div class="grid grid-2" id="user-land-grid">
-            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=18 -->
+            <!-- Populated dynamically with ONLY this account's listings via js/app.js?v=19 -->
           </div>
         </div>
 
@@ -192,7 +192,7 @@
           <div class="workspace-eyebrow">Reserved Land &amp; Milestone Status</div>
           <h2 class="section-title mb-2">My Active Reservations</h2>
           <div id="buyer-tracker-list">
-            <!-- Populated dynamically via js/app.js?v=18 -->
+            <!-- Populated dynamically via js/app.js?v=19 -->
           </div>
         </div>
       </div>
@@ -278,7 +278,7 @@
               </tr>
             </thead>
             <tbody id="admin-accounts-tbody">
-              <!-- Populated dynamically via js/app.js?v=18 -->
+              <!-- Populated dynamically via js/app.js?v=19 -->
             </tbody>
           </table>
         </div>
@@ -306,7 +306,7 @@
               </tr>
             </thead>
             <tbody id="admin-overview-listings-tbody">
-              <!-- Populated dynamically via js/app.js?v=18 -->
+              <!-- Populated dynamically via js/app.js?v=19 -->
             </tbody>
           </table>
         </div>
@@ -326,21 +326,29 @@
             </div>
           </div>
           <div id="managed-properties-list">
-            <!-- Populated dynamically via js/app.js?v=18 for Admin role only -->
+            <!-- Populated dynamically via js/app.js?v=19 for Admin role only -->
           </div>
         </div>
 
-        <div class="card" id="seller-form-card">
-          <div class="flex-between-wrap mb-2">
-            <div>
-              <div class="workspace-eyebrow" id="seller-form-tag">Submit Land Listing</div>
-              <h2 class="section-title" id="seller-form-heading">Submit a New Panabo City Land Listing</h2>
+        <div class="card seller-form-shell" id="seller-form-card">
+          <div class="seller-form-header">
+            <div class="seller-header-left">
+              <span class="seller-header-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </span>
+              <div>
+                <div class="workspace-eyebrow" id="seller-form-tag">Submit Land Listing</div>
+                <h2 class="section-title seller-form-title" id="seller-form-heading">Submit a New Panabo City Land Listing</h2>
+                <p class="seller-form-subtitle" id="seller-form-subtitle">
+                  Enter your parcel details and 3 required legal documents for Lucky Seven verification.
+                </p>
+              </div>
             </div>
             <button type="button" class="btn btn-outline btn-sm hidden" id="seller-cancel-edit-btn">Cancel Edit</button>
           </div>
-          <p class="mb-3 text-muted" id="seller-form-subtitle">
-            Enter your Panabo City parcel details and supporting legal documents for Lucky Seven Land Verifier screening.
-          </p>
 
           <div id="admin-edit-only-notice" class="alert alert-warning hidden">
             Admin Restriction: Administrators can only <strong>Edit</strong> or <strong>Delete</strong> existing properties. Click <strong>Edit</strong> on any listing above to load it into this editor.
@@ -348,48 +356,67 @@
 
           <div id="seller-feedback" class="alert hidden"></div>
 
-          <form id="seller-intake-form">
+          <form id="seller-intake-form" class="seller-intake-form">
             <input type="hidden" id="seller-edit-id" value="" />
-            <div class="grid grid-2">
-              <div class="form-group">
-                <label class="form-label" for="seller-title">Property Listing Title</label>
-                <input type="text" id="seller-title" class="form-control" placeholder="e.g., Clean-Titled Corner Lot Near Panabo Public Market" required />
+
+            <!-- Section 1: Parcel Details -->
+            <div class="seller-step-group">
+              <div class="seller-step-heading">
+                <span class="seller-step-num">1</span>
+                <span>Property Details</span>
               </div>
+
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="seller-title">Property Listing Title</label>
+                  <input type="text" id="seller-title" class="form-control" placeholder="e.g., Clean-Titled Corner Lot Near Panabo Public Market" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="seller-type">Property Category</label>
+                  <select id="seller-type" class="form-select">
+                    <option value="Residential">Residential</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Agricultural">Agricultural</option>
+                    <option value="Industrial">Industrial</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-3">
+                <div class="form-group">
+                  <label class="form-label" for="seller-barangay">Panabo City Barangay</label>
+                  <select id="seller-barangay" class="form-select"></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="seller-price">Asking Price (₱) <span class="label-hint">(0 = Negotiable)</span></label>
+                  <input type="number" id="seller-price" class="form-control" placeholder="e.g., 1850000" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="seller-area">Lot Area (sqm)</label>
+                  <input type="number" id="seller-area" class="form-control" placeholder="e.g., 250" min="1" required />
+                </div>
+              </div>
+
               <div class="form-group">
-                <label class="form-label" for="seller-type">Property Category</label>
-                <select id="seller-type" class="form-select">
-                  <option value="Residential">Residential</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Agricultural">Agricultural</option>
-                  <option value="Industrial">Industrial</option>
-                </select>
+                <label class="form-label" for="seller-road">Road Access &amp; Utilities</label>
+                <input type="text" id="seller-road" class="form-control" value="Accessible from Paved Barangay Road with Davao Light &amp; Water" required />
               </div>
             </div>
 
-            <div class="grid grid-3">
-              <div class="form-group">
-                <label class="form-label" for="seller-barangay">Panabo City Barangay</label>
-                <select id="seller-barangay" class="form-select"></select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="seller-price">Asking Price (₱) — 0 for Negotiable</label>
-                <input type="number" id="seller-price" class="form-control" placeholder="e.g., 1850000" min="0" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="seller-area">Lot Area (sqm)</label>
-                <input type="number" id="seller-area" class="form-control" placeholder="e.g., 250" min="1" required />
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="seller-road">Road Access &amp; Utilities</label>
-              <input type="text" id="seller-road" class="form-control" value="Accessible from Paved Barangay Road with Davao Light &amp; Water" required />
-            </div>
-
+            <!-- Section 2: Supporting Legal Documents -->
             <div class="seller-docs-box" id="seller-docs-section">
-              <div class="seller-docs-title">Supporting Legal Documents (Required for Lucky Seven Verification)</div>
-              <p class="text-muted mb-2">
-                Provide legitimate document reference numbers below. Listings missing any required document cannot be verified by Lucky Seven.
+              <div class="seller-docs-head">
+                <div class="seller-docs-title-row">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                  <span class="seller-docs-title">Supporting Legal Documents</span>
+                </div>
+                <span class="seller-docs-req-pill">Required for Lucky Seven Verification</span>
+              </div>
+              <p class="seller-docs-hint">
+                Enter all 3 legitimate document references below. Listings missing any document will be marked Blocked until complete.
               </p>
               <div class="grid grid-3">
                 <div class="form-group">
@@ -407,12 +434,18 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="seller-desc">Property Description &amp; Title Notes</label>
-              <textarea id="seller-desc" class="form-textarea" placeholder="Describe nearby landmarks, clean TCT status, updated Real Property Tax, and suitability for residential or commercial use."></textarea>
+            <!-- Section 3: Description & Publish Action -->
+            <div class="seller-step-group">
+              <div class="form-group">
+                <label class="form-label" for="seller-desc">Property Description &amp; Title Notes</label>
+                <textarea id="seller-desc" class="form-textarea seller-desc-area" placeholder="Describe nearby landmarks, clean TCT status, updated Real Property Tax, and suitability for residential or commercial use."></textarea>
+              </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="seller-submit-btn">Publish Listing to Marketplace &rarr;</button>
+            <div class="seller-form-footer">
+              <span class="seller-footer-note">Listings appear under My Account Listings and the live Marketplace.</span>
+              <button type="submit" class="btn btn-primary" id="seller-submit-btn">Publish Listing to Marketplace &rarr;</button>
+            </div>
           </form>
         </div>
       </div>
@@ -584,14 +617,14 @@
           </div>
 
           <div id="lucky-property-verification-list" class="mb-4">
-            <!-- Populated dynamically with sleek 3-zone horizontal property cards via js/app.js?v=18 -->
+            <!-- Populated dynamically with sleek 3-zone horizontal property cards via js/app.js?v=19 -->
           </div>
 
           <div class="ls-results-bar">
             <h2 class="ls-section-heading">Active Reservations</h2>
           </div>
           <div id="agency-queue-list">
-            <!-- Populated dynamically via js/app.js?v=18 -->
+            <!-- Populated dynamically via js/app.js?v=19 -->
           </div>
         </div>
       </div>
@@ -669,7 +702,7 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=18"></script>
-  <script src="js/app.js?v=18"></script>
+  <script src="js/data.js?v=19"></script>
+  <script src="js/app.js?v=19"></script>
 </body>
 </html>
