@@ -546,14 +546,28 @@ h1, h2, h3, h4 {
 }
 
 .hero h1 {
-  font-size: 2.65rem;
+  font-size: 2.35rem;
   letter-spacing: -0.02em;
   color: var(--white);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  line-height: 1.2;
 }
 
-.hero h1 span {
-  color: #D9E8B5;
+.hero-headline-top {
+  display: block;
+  color: var(--white);
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+.hero-brand-line {
+  display: block;
+  color: #DCECCB;
+  font-size: 3.65rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  margin-top: 6px;
 }
 
 .hero p,
