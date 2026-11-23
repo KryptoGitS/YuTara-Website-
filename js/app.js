@@ -1733,8 +1733,8 @@ function initTrackerPage() {
       if (adminCrudCard) adminCrudCard.classList.add("hidden");
       if (adminEditOnlyNotice) adminEditOnlyNotice.classList.add("hidden");
       if (sellerDocsSection) sellerDocsSection.classList.remove("hidden");
-      if (tabBtnSellerLabel) tabBtnSellerLabel.textContent = "Add Land";
-      if (tabBtnSeller) tabBtnSeller.setAttribute("title", "Add Land for Lucky Seven Verification");
+      if (tabBtnSellerLabel) tabBtnSellerLabel.textContent = "Add Land for Sale";
+      if (tabBtnSeller) tabBtnSeller.setAttribute("title", "Add Land for Sale");
       const lifecycleBarU = document.getElementById("seller-lifecycle-bar");
       const photoGroupU = document.getElementById("seller-photo-group");
       if (lifecycleBarU) lifecycleBarU.classList.remove("hidden");
@@ -1889,14 +1889,14 @@ function initTrackerPage() {
         submitBtn.disabled = true;
       }
     } else {
-      if (formTag) formTag.textContent = "Add Land for Verification";
-      if (formHeading) formHeading.textContent = "Add a New Panabo City Land";
+      if (formTag) formTag.textContent = "Add Land for Sale";
+      if (formHeading) formHeading.textContent = "Add Land for Sale in Panabo City";
       if (formSubtitle) {
         formSubtitle.textContent =
-          "Submit your Panabo City parcel details and 3 required legal documents for Lucky Seven Land Verification.";
+          "Enter your Panabo City land details and 3 required legal documents for Lucky Seven verification.";
       }
       if (submitBtn) {
-        submitBtn.innerHTML = "Submit Land for Lucky Seven Verification &rarr;";
+        submitBtn.innerHTML = "Submit Land for Sale &rarr;";
         submitBtn.disabled = false;
       }
     }
@@ -3429,7 +3429,7 @@ function initTrackerPage() {
           '  <p class="mb-2">You have not submitted any land listings under ' +
           escapeHtml(currentEmail) +
           ' yet. Add a Panabo City land parcel to start Lucky Seven verification.</p>' +
-          '  <button type="button" class="btn btn-primary btn-sm" id="user-empty-add-land-btn">+ Add Land for Verification</button>' +
+          '  <button type="button" class="btn btn-primary btn-sm" id="user-empty-add-land-btn">+ Add Land for Sale</button>' +
           "</div>";
         const emptyAddBtn = document.getElementById("user-empty-add-land-btn");
         if (emptyAddBtn) {
