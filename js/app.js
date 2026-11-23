@@ -1736,6 +1736,7 @@ function initTrackerPage() {
   const mobileDrawerBtn = document.getElementById("mobile-sidebar-btn");
   const mobileBackdrop = document.getElementById("sidebar-mobile-backdrop");
   const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
+  const lsTopLogoutBtn = document.getElementById("ls-top-logout-btn");
 
   if (collapseBtn && workspaceShellEl) {
     collapseBtn.addEventListener("click", function () {
@@ -1760,6 +1761,10 @@ function initTrackerPage() {
 
   if (mobileLogoutBtn) {
     mobileLogoutBtn.addEventListener("click", requestLogoutConfirmation);
+  }
+
+  if (lsTopLogoutBtn) {
+    lsTopLogoutBtn.addEventListener("click", requestLogoutConfirmation);
   }
 
   function activateTab(targetId) {
@@ -2024,13 +2029,40 @@ function initTrackerPage() {
     shieldCheck:
       '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>',
     shieldOff:
-      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.69 14a6.9 6.9 0 0 0 .31-2V5l-8-3-3.16 1.18"></path><path d="M4.73 4.73 4 5v7c0 6 8 10 8 10a20.29 20.29 0 0 0 5.62-4.38"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.69 14a6.9 6.9 0 0 0 .31-2V5l-8-3-3.16 1.18"></path><path d="M4.73 4.73 4 5v7c0 6 8 10 8 10a20.29 20.29 0 0 0 5.62-4.38"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>',
+    ban:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>',
+    parcel:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>',
+    lock:
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>',
+    dotCheck:
+      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    dotPending:
+      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"></line></svg>',
+    dotAlert:
+      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="6" x2="12" y2="13"></line><circle cx="12" cy="17.5" r="0.8" fill="currentColor"></circle></svg>'
   };
 
   const LS_DOC_META = {
-    tct: { shortTitle: "TCT / OCT", icon: LS_ICONS.fileText, category: "Land Title Registry" },
-    taxDec: { shortTitle: "Tax Clearance", icon: LS_ICONS.receipt, category: "Panabo City Assessor" },
-    ownerId: { shortTitle: "Owner ID", icon: LS_ICONS.idCard, category: "Owner Identity Proof" }
+    tct: {
+      shortTitle: "TCT / OCT",
+      tileTitle: "Land Title (TCT/OCT)",
+      icon: LS_ICONS.fileText,
+      category: "Land Title Registry"
+    },
+    taxDec: {
+      shortTitle: "Tax Clearance",
+      tileTitle: "Tax Clearance",
+      icon: LS_ICONS.receipt,
+      category: "Panabo City Assessor"
+    },
+    ownerId: {
+      shortTitle: "Owner ID",
+      tileTitle: "Owner ID",
+      icon: LS_ICONS.idCard,
+      category: "Owner Identity Proof"
+    }
   };
 
   const lsSearchInput = document.getElementById("ls-search-input");
@@ -2089,7 +2121,7 @@ function initTrackerPage() {
         key: "Blocked",
         label: "Blocked",
         pillClass: "status-blocked",
-        pillIcon: LS_ICONS.shieldAlert,
+        pillIcon: LS_ICONS.ban,
         summaryClass: "sum-blocked",
         summaryText:
           "Blocked: Missing " +
@@ -2120,57 +2152,49 @@ function initTrackerPage() {
   }
 
   function buildLuckyDocumentPanelHTML(prop, docKey, doc) {
-    const meta = LS_DOC_META[docKey] || { shortTitle: doc.label, icon: LS_ICONS.fileText };
+    const meta = LS_DOC_META[docKey] || { tileTitle: doc.label, icon: LS_ICONS.fileText };
     const stateClass = !doc.submitted
       ? "doc-state-missing"
       : doc.legitimate
       ? "doc-state-valid"
       : "doc-state-pending";
-    const badgeClass = !doc.submitted
-      ? "badge-missing"
+    const statusLabel = !doc.submitted ? "Missing" : doc.legitimate ? "Verified" : "Pending";
+    const dotIcon = !doc.submitted
+      ? LS_ICONS.dotAlert
       : doc.legitimate
-      ? "badge-valid"
-      : "badge-pending";
-    const badgeLabel = !doc.submitted ? "Missing" : doc.legitimate ? "Valid" : "Pending";
-    const shortRef = !doc.submitted ? "Not uploaded" : doc.refNo || "Submitted";
+      ? LS_ICONS.dotCheck
+      : LS_ICONS.dotPending;
+    const tooltipRef = !doc.submitted
+      ? meta.tileTitle + ": Missing — Click to view requirements"
+      : meta.tileTitle + " (" + (doc.refNo || "Submitted") + ") — Click to inspect";
 
     return (
-      '<div class="ls-doc-panel ls-doc-compact ' +
+      '<button type="button" class="ls-doc-panel ls-doc-tile ' +
       stateClass +
-      '">' +
-      '  <div class="ls-doc-top">' +
-      '    <label class="ls-doc-check-toggle" title="Toggle authenticity check">' +
-      '      <input type="checkbox" data-doc-prop-id="' +
-      prop.id +
-      '" data-doc-key="' +
-      docKey +
-      '" ' +
-      (doc.submitted && doc.legitimate ? "checked " : "") +
-      (!doc.submitted ? "disabled " : "") +
-      "/>" +
-      '      <span class="ls-doc-short-title">' +
-      escapeHtml(meta.shortTitle) +
-      "</span>" +
-      "    </label>" +
-      '    <span class="ls-doc-badge ' +
-      badgeClass +
-      '">' +
-      badgeLabel +
-      "</span>" +
-      "  </div>" +
-      '  <div class="ls-doc-bottom">' +
-      '    <span class="ls-doc-ref" title="' +
-      escapeHtml(shortRef) +
-      '">' +
-      escapeHtml(shortRef) +
-      "</span>" +
-      '    <button type="button" class="ls-doc-inspect-link" data-open-doc-prop-id="' +
+      '" data-open-doc-prop-id="' +
       prop.id +
       '" data-open-doc-key="' +
       docKey +
-      '" title="Inspect document">View</button>' +
-      "  </div>" +
-      "</div>"
+      '" title="' +
+      escapeHtml(tooltipRef) +
+      '">' +
+      '  <span class="ls-doc-tile-head">' +
+      '    <span class="ls-doc-tile-ico" aria-hidden="true">' +
+      meta.icon +
+      "</span>" +
+      '    <span class="ls-doc-tile-name">' +
+      escapeHtml(meta.tileTitle) +
+      "</span>" +
+      "  </span>" +
+      '  <span class="ls-doc-tile-foot">' +
+      '    <span class="ls-doc-state-dot" aria-hidden="true">' +
+      dotIcon +
+      "</span>" +
+      "    <span>" +
+      statusLabel +
+      "</span>" +
+      "  </span>" +
+      "</button>"
     );
   }
 
@@ -2190,84 +2214,115 @@ function initTrackerPage() {
       })
       .join("");
 
-    const primaryAdminBtn = state.isVerified
-      ? '<button type="button" class="btn btn-ls-danger btn-sm" data-open-revoke-prop-id="' +
+    let actionButtonsHtml = "";
+    if (state.isVerified) {
+      actionButtonsHtml =
+        '<button type="button" class="btn btn-ls-navy ls-row-main-btn" data-open-doc-prop-id="' +
         prop.id +
-        '">' +
+        '" data-open-doc-key="tct">' +
+        LS_ICONS.eye +
+        " <span>View Docs</span></button>" +
+        '<a href="property.html?id=' +
+        prop.id +
+        '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
+        LS_ICONS.externalLink +
+        "</a>" +
+        '<button type="button" class="btn btn-ls-danger ls-row-icon-btn" data-open-revoke-prop-id="' +
+        prop.id +
+        '" title="Revoke Lucky Seven Verification" aria-label="Revoke Lucky Seven Verification">' +
         LS_ICONS.shieldOff +
-        " <span>Revoke</span></button>"
-      : '<button type="button" class="btn btn-ls-verify btn-sm" data-verify-prop-id="' +
+        "</button>";
+    } else if (state.allDocsLegit) {
+      actionButtonsHtml =
+        '<button type="button" class="btn btn-ls-verify ls-row-main-btn" data-verify-prop-id="' +
         prop.id +
-        '" ' +
-        (!state.allDocsLegit ? "disabled" : "") +
-        ' title="' +
-        (state.allDocsLegit ? "Verify this land property" : "Missing required documents") +
-        '">' +
+        '" title="All 3 legitimate documents verified — Click to approve">' +
         LS_ICONS.shieldCheck +
-        " <span>" +
-        (state.allDocsLegit ? "Verify" : "Blocked") +
-        "</span></button>";
+        " <span>Verify Lot</span></button>" +
+        '<button type="button" class="btn btn-ls-navy ls-row-icon-btn" data-open-doc-prop-id="' +
+        prop.id +
+        '" data-open-doc-key="tct" title="Inspect Submitted Documents" aria-label="Inspect Submitted Documents">' +
+        LS_ICONS.eye +
+        "</button>" +
+        '<a href="property.html?id=' +
+        prop.id +
+        '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
+        LS_ICONS.externalLink +
+        "</a>";
+    } else {
+      actionButtonsHtml =
+        '<button type="button" class="btn btn-ls-navy ls-row-main-btn" data-open-doc-prop-id="' +
+        prop.id +
+        '" data-open-doc-key="tct">' +
+        LS_ICONS.eye +
+        " <span>View Docs</span></button>" +
+        '<a href="property.html?id=' +
+        prop.id +
+        '" class="btn btn-ls-outline ls-row-icon-btn" title="Inspect Property Listing" aria-label="Inspect Property Listing">' +
+        LS_ICONS.externalLink +
+        "</a>" +
+        '<button type="button" class="btn btn-ls-verify ls-row-icon-btn" data-verify-prop-id="' +
+        prop.id +
+        '" disabled title="Blocked: All 3 legitimate documents are required" aria-label="Verification Blocked">' +
+        LS_ICONS.lock +
+        "</button>";
+    }
+
+    const areaText = prop.area
+      ? Number(prop.area).toLocaleString() + " sqm (" + escapeHtml(prop.type || "Land") + ")"
+      : escapeHtml(prop.type || "Land Lot");
 
     return (
-      '<article class="ls-prop-card anim-fade-up" data-anim="ytFadeInUp">' +
-      '  <div class="ls-prop-header">' +
-      '    <div class="ls-prop-identity">' +
-      '      <img src="' +
+      '<article class="ls-prop-card ls-prop-row-card anim-fade-up" data-anim="ytFadeInUp">' +
+      '  <div class="ls-row-prop-zone">' +
+      '    <img src="' +
       escapeHtml(prop.image) +
       '" alt="' +
       escapeHtml(prop.title) +
       '" class="ls-prop-thumb" onerror="this.src=\'assets/property-hero.png\'" />' +
-      "      <div>" +
-      '        <h3 class="ls-prop-title">#' +
+      '    <div class="ls-row-prop-info">' +
+      '      <h3 class="ls-prop-title">#' +
       prop.id +
       " " +
       escapeHtml(prop.title) +
       "</h3>" +
-      '        <div class="ls-prop-meta-row">' +
-      '          <span class="ls-meta-chip">' +
+      '      <div class="ls-prop-meta-row">' +
+      '        <span class="ls-meta-chip">' +
       LS_ICONS.mapPin +
       " " +
       escapeHtml(prop.barangay) +
-      "</span>" +
-      '          <span class="ls-meta-chip">' +
+      ", Panabo City</span>" +
+      '        <span class="ls-meta-chip">' +
       LS_ICONS.user +
       " " +
       escapeHtml(prop.seller || "Owner") +
       "</span>" +
-      '          <span class="ls-meta-chip ls-meta-price">' +
+      "      </div>" +
+      '      <div class="ls-prop-sub-row">' +
+      '        <span class="ls-meta-chip">' +
+      LS_ICONS.parcel +
+      " " +
+      areaText +
+      "</span>" +
+      '        <span class="ls-meta-price">' +
       escapeHtml(formatPropertyPrice(prop)) +
       "</span>" +
-      "        </div>" +
       "      </div>" +
       "    </div>" +
-      '    <div class="ls-prop-badges">' +
-      '      <span class="ls-status-pill ' +
+      "  </div>" +
+      '  <div class="ls-row-docs-zone">' +
+      docPanelsHtml +
+      "  </div>" +
+      '  <div class="ls-row-action-zone">' +
+      '    <span class="ls-status-pill ' +
       state.pillClass +
       '">' +
       state.pillIcon +
-      " " +
+      " <span>" +
       escapeHtml(shortStatusLabel) +
-      "</span>" +
-      "    </div>" +
-      "  </div>" +
-      '  <div class="ls-doc-grid">' +
-      docPanelsHtml +
-      "  </div>" +
-      '  <div class="ls-card-footer">' +
-      '    <div class="ls-action-group">' +
-      '      <button type="button" class="btn btn-ls-navy btn-sm" data-open-doc-prop-id="' +
-      prop.id +
-      '" data-open-doc-key="tct">' +
-      LS_ICONS.eye +
-      " <span>Docs</span></button>" +
-      '      <a href="property.html?id=' +
-      prop.id +
-      '" class="btn btn-ls-outline btn-sm">' +
-      LS_ICONS.externalLink +
-      " <span>Lot</span></a>" +
-      "    </div>" +
-      '    <div class="ls-action-group">' +
-      primaryAdminBtn +
+      "</span></span>" +
+      '    <div class="ls-row-btn-group">' +
+      actionButtonsHtml +
       "    </div>" +
       "  </div>" +
       "</article>"
@@ -2632,7 +2687,7 @@ function initTrackerPage() {
     });
 
     if (lsResultsSummary) {
-      lsResultsSummary.textContent = filtered.length + " / " + properties.length;
+      lsResultsSummary.textContent = String(filtered.length);
     }
 
     if (filtered.length === 0) {
