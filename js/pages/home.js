@@ -6,6 +6,7 @@
    2. Hero Spotlight Switcher  ([data-spotlight-id] — switches Brgy. New Pandan / Gredu)
    3. Quick Search Bar         (#home-search-form -> marketplace.html?location=...)
    4. Quick Barangay Chips     ([data-home-chip] -> marketplace.html?location=...)
+   5. Promotional Video Player (#yutara-promo-video — play overlay & hero CTA trigger)
    ========================================================================== */
 
 function initHomePage() {
@@ -117,6 +118,49 @@ function initHomePage() {
         : "marketplace.html";
     });
   });
+
+  // Step 5: Promotional Video Player (#yutara-promo-video)
+  const promoStage = document.getElementById("promo-video-stage");
+  const promoVideo = document.getElementById("yutara-promo-video");
+  const promoPlayBtn = document.getElementById("promo-play-btn");
+  const heroWatchBtn = document.getElementById("hero-watch-promo-btn");
+
+  if (promoStage && promoVideo && promoPlayBtn) {
+    // Hide browser bottom bar while custom poster overlay is shown; enable on play
+    promoVideo.controls = false;
+
+    function startPromoPlayback() {
+      promoStage.classList.add("has-started");
+      promoVideo.controls = true;
+      promoVideo.play().catch(function (err) {
+        reportDiagnostic("HomeUI", "PromoVideo", "startPromoPlayback", err);
+      });
+    }
+
+    promoPlayBtn.addEventListener("click", startPromoPlayback);
+
+    promoVideo.addEventListener("play", function () {
+      promoStage.classList.add("has-started");
+      promoVideo.controls = true;
+    });
+
+    promoVideo.addEventListener("ended", function () {
+      promoVideo.controls = false;
+      promoStage.classList.remove("has-started");
+      promoVideo.load();
+    });
+
+    if (heroWatchBtn) {
+      heroWatchBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        const sectionEl = document.getElementById("promo-video");
+        if (sectionEl) {
+          sectionEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        startPromoPlayback();
+      });
+    }
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initHomePage);

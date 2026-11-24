@@ -58,6 +58,7 @@ Every JS and CSS file begins with a **`QUICK DEBUG INDEX`** comment block so you
 | Common Live Debugging Task | Exact File | Symbol / Section to Edit |
 | :--- | :--- | :--- |
 | **Change brand colors, fonts, or border radius** | `css/base.css` | `:root` variables (`--forest-green`, `--font-display`, `--font-sans`) |
+| **Swap or customize the Promotional Video** | `index.html` & `js/pages/home.js` | `#promo-video` (`assets/yutara-promo.mp4` & Step 5 player handler) |
 | **Add/edit default properties, barangays, or demo accounts** | `js/data.js` | `PANABO_BARANGAYS`, `DEFAULT_PROPERTIES`, `DEMO_ACCOUNTS` |
 | **Edit the 5 reservation milestone stages** | `js/data.js` | `MILESTONE_STEPS` |
 | **Change items per page or filter/sort logic** | `js/pages/marketplace.js` | `ITEMS_PER_PAGE` (default `4`), `filterProperties()` |
