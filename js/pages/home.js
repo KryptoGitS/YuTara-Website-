@@ -119,35 +119,82 @@ function initHomePage() {
     });
   });
 
-  // Step 5: Promotional Video Player (#yutara-promo-video)
+  // Step 5: Promotional Video Player & Interactive Scene Chapters (#yutara-promo-video)
   const promoStage = document.getElementById("promo-video-stage");
   const promoVideo = document.getElementById("yutara-promo-video");
   const promoPlayBtn = document.getElementById("promo-play-btn");
   const heroWatchBtn = document.getElementById("hero-watch-promo-btn");
+  const chapterBtns = document.querySelectorAll("[data-promo-seek]");
 
   if (promoStage && promoVideo && promoPlayBtn) {
-    // Hide browser bottom bar while custom poster overlay is shown; enable on play
     promoVideo.controls = false;
 
-    function startPromoPlayback() {
+    // Pre-buffer into an in-memory Blob on http:// so seeking works even on python -m http.server
+    if (window.location.protocol.indexOf("http") === 0) {
+      fetch("assets/yutara-promo.mp4")
+        .then(function (res) {
+          return res.ok ? res.blob() : null;
+        })
+        .then(function (blob) {
+          if (blob && promoVideo.paused && promoVideo.currentTime === 0) {
+            promoVideo.src = URL.createObjectURL(blob);
+          }
+        })
+        .catch(function (err) {
+          reportDiagnostic("HomeUI", "PromoVideo", "preloadBlob", err);
+        });
+    }
+
+    function syncActiveChapter(currentSec) {
+      let activeIndex = 0;
+      chapterBtns.forEach(function (btn, idx) {
+        const seekSec = Number(btn.getAttribute("data-promo-seek")) || 0;
+        if (currentSec >= seekSec) {
+          activeIndex = idx;
+        }
+      });
+      chapterBtns.forEach(function (btn, idx) {
+        btn.classList.toggle("active", idx === activeIndex);
+      });
+    }
+
+    function startPromoPlayback(seekSeconds) {
       promoStage.classList.add("has-started");
       promoVideo.controls = true;
+      if (typeof seekSeconds === "number" && !isNaN(seekSeconds)) {
+        promoVideo.currentTime = seekSeconds;
+        syncActiveChapter(seekSeconds);
+      }
       promoVideo.play().catch(function (err) {
         reportDiagnostic("HomeUI", "PromoVideo", "startPromoPlayback", err);
       });
     }
 
-    promoPlayBtn.addEventListener("click", startPromoPlayback);
+    promoPlayBtn.addEventListener("click", function () {
+      startPromoPlayback();
+    });
+
+    chapterBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const targetSec = Number(btn.getAttribute("data-promo-seek")) || 0;
+        startPromoPlayback(targetSec);
+      });
+    });
 
     promoVideo.addEventListener("play", function () {
       promoStage.classList.add("has-started");
       promoVideo.controls = true;
     });
 
+    promoVideo.addEventListener("timeupdate", function () {
+      syncActiveChapter(promoVideo.currentTime || 0);
+    });
+
     promoVideo.addEventListener("ended", function () {
       promoVideo.controls = false;
+      promoVideo.currentTime = 0;
       promoStage.classList.remove("has-started");
-      promoVideo.load();
+      syncActiveChapter(0);
     });
 
     if (heroWatchBtn) {
